@@ -3,9 +3,9 @@
 
 import os
 
-# os.chdir('C:/Users/Iter/PycharmProjects/pythonProject/venv/Include')
+os.chdir('C:/Users/Iter/PycharmProjects/loaddata')
 # os.chdir('C:/Users/SMK/PycharmProjects/loaddata/venv/')
-os.chdir('C:/Users/SMK/PycharmProjects/loaddata/venv/')
+# os.chdir('C:/Users/SMK/PycharmProjects/loaddata/venv/')
 import time
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
