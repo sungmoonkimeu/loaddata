@@ -1,12 +1,6 @@
 """Analysing datafiles from OFDR device.
 """
 
-
-import os
-
-# os.chdir('C:/Users/Iter/PycharmProjects/loaddata')
-# os.chdir('C:/Users/SMK/PycharmProjects/loaddata/venv/')
-# os.chdir('C:/Users/SMK/PycharmProjects/loaddata/venv/')
 import time
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
@@ -29,24 +23,6 @@ import pandas as pd
 # plt.rcParams['font.family']='sans-serif'
 # plt.rcParams['font.sans-serif']='Comic Sans MS'
 
-# ##patch start###
-from mpl_toolkits.mplot3d.axis3d import Axis
-
-if not hasattr(Axis, "_get_coord_info_old"):
-    def _get_coord_info_new(self, renderer):
-        mins, maxs, centers, deltas, tc, highs = self._get_coord_info_old(renderer)
-        mins += deltas / 4
-        maxs -= deltas / 4
-        return mins, maxs, centers, deltas, tc, highs
-
-
-    Axis._get_coord_info_old = Axis._get_coord_info
-    Axis._get_coord_info = _get_coord_info_new
-
-
-# ##patch end###
-
-
 # noinspection PyPep8Naming
 class OOMFormatter(matplotlib.ticker.ScalarFormatter):
     def __init__(self, order=0, fformat="%1.1f", offset=True, mathText=True):
@@ -63,24 +39,41 @@ class OOMFormatter(matplotlib.ticker.ScalarFormatter):
             self.format = r'$\mathdefault{%s}$' % self.format
 
 
-# V_I = loadtxt('EWOFS_fig3_saved.dat',unpack=True, usecols=[0])
-mydata = pd.read_table('Data1//compensation_pol1_Upper.txt')
-# DataIN = loadtxt('Data1\compensation_pol1_Upper.txt',unpack=True)
-time = mydata['Time (ns)']
-signal = mydata['Amplitude (dB)']
-fig, ax = plt.subplots(figsize=(6, 5))
-ax.plot(time, signal, lw='1')
+import os
 
-mydata2 = pd.read_table('Data1//compensation_pol2_Upper.txt')
-time = mydata2['Time (ns)']
-signal = mydata2['Amplitude (dB)']
-ax.plot(time, signal, lw='1')
+# os.chdir('C:/Users/Iter/PycharmProjects/loaddata')
+# os.chdir('C:/Users/SMK/PycharmProjects/loaddata/venv/')
+# os.chdir('C:/Users/SMK/PycharmProjects/loaddata/venv/')
 
-mydata3 = pd.read_table('Data1//compensation_pol3_Upper.txt')
-time = mydata3['Time (ns)']
-signal = mydata3['Amplitude (dB)']
-ax.plot(time, signal, lw='1')
+path_dir = 'Data3_edited'
+file_list = os.listdir(path_dir)
 
-# test
+'''
+for nn in range(len(file_list)):
+    fn = path_dir + "//" + file_list[nn]
+    data = pd.read_table(fn)
+    time = data['Time (ns)']
+    signal = data['Amplitude (dB)']
+    fig, ax = plt.subplots(figsize=(6, 5))
+    ax.plot(time, signal, lw='1', label=file_list[nn])
+    ax.legend(loc="upper right")
+    ax.set(xlim=(124, 134), ylim=(-135, -120))
+plt.show()
+'''
+
+a = arange(30, 360, 30)
+count = 0
+fig, ax = plt.subplots(len(a), figsize=(6, 5))
+
+for nn in a:
+
+    fn2 = path_dir + "//" + "9turns_" + str(nn) + "deg_Upper_edited.txt"
+    data = pd.read_table(fn2)
+    time = data['Time (ns)']
+    signal = data['Amplitude (dB)']
+    ax[count].plot(time, signal, lw='1', label="9turns_"+str(nn)+"deg")
+    ax[count].legend(loc="upper right")
+    ax[count].set(xlim=(124, 134), ylim=(-135, -120))
+    count = count+1
 
 plt.show()
