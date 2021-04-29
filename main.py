@@ -45,8 +45,7 @@ import os
 # os.chdir('C:/Users/SMK/PycharmProjects/loaddata/venv/')
 # os.chdir('C:/Users/SMK/PycharmProjects/loaddata/venv/')
 
-path_dir = 'Data3_edited'
-file_list = os.listdir(path_dir)
+
 
 '''
 for nn in range(len(file_list)):
@@ -61,6 +60,7 @@ for nn in range(len(file_list)):
 plt.show()
 '''
 
+'''
 a = arange(30, 360, 30)
 count = 0
 fig, ax = plt.subplots(len(a), figsize=(6, 5))
@@ -71,9 +71,152 @@ for nn in a:
     data = pd.read_table(fn2)
     time = data['Time (ns)']
     signal = data['Amplitude (dB)']
-    ax[count].plot(time, signal, lw='1', label="9turns_"+str(nn)+"deg")
-    ax[count].legend(loc="upper right")
+    ax[count].plot(time, signal, lw='1', label=str(nn)+"deg")
+    ax[count].legend(loc="upper left")
     ax[count].set(xlim=(124, 134), ylim=(-135, -120))
     count = count+1
+
+'''
+path_dir = 'Data3_edited'
+file_list = os.listdir(path_dir)
+
+a = arange(30, 360, 30)
+count = 0
+#fig, ax = plt.subplots(len(a), figsize=(6, 5), left=0.093, bottom = 0.07, right = 0.96, top = 0.967, wspace = 0.2, hspace = 0 )
+fig, ax = plt.subplots(len(a), figsize=(6, 5))
+plt.subplots_adjust(left=0.145, bottom=0.07, right=0.96, top=0.967, wspace=0.2, hspace=0)
+
+for nn in a:
+
+    fn2 = path_dir + "//" + "9turns_" + str(nn) + "deg_Upper_edited.txt"
+    data = pd.read_table(fn2)
+    time = data['Time (ns)']
+    signal = data['Amplitude (dB)']
+    ax[count].plot(time/10, signal, lw='1', label=str(nn)+"deg_2nd")
+    ax[count].legend(loc="upper left")
+    ax[count].set(xlim=(11.8, 13.7), ylim=(-135, -120))
+    count = count+1
+
+path_dir = 'Data2_edited'
+file_list = os.listdir(path_dir)
+
+a = arange(30, 360, 30)
+count = 0
+for nn in a:
+
+    fn2 = path_dir + "//" + "9_" + str(nn) + "deg_hibi_Upper_edited.txt"
+    data = pd.read_table(fn2)
+    time = data['Time (ns)']
+    signal = data['Amplitude (dB)']
+    ax[count].plot(time/10, signal, lw='1', label=str(nn)+"deg_1st")
+    ax[count].legend(loc="upper left")
+    ax[count].set(xlim=(11.8, 13.7), ylim=(-135, -120))
+    count = count+1
+
+plt.xlabel("length (m)")
+fig.text(0.03, 0.5, 'Amplitue (dB/mm)', ha='center', va='center', rotation='vertical')
+
+# polarization change
+path_dir = 'Data2_edited'
+file_list = os.listdir(path_dir)
+a = arange(1, 10, 1)
+fig, ax = plt.subplots(len(a), figsize=(6, 5))
+
+count = 0
+for nn in a:
+
+    fn2 = path_dir + "//" + "9turns" + str(nn) + "_hibi_Upper_edited.txt"
+    data = pd.read_table(fn2)
+    time = data['Time (ns)']
+    signal = data['Amplitude (dB)']
+    ax[count].plot(time/10, signal, lw='1', label='pol. state '+str(nn))
+    ax[count].legend(loc="upper left")
+    ax[count].set(xlim=(11.8, 13.7), ylim=(-137, -120))
+    count = count+1
+
+plt.xlabel("length (m)")
+fig.text(0.03, 0.5, 'Amplitue (dB/mm)', ha='center', va='center', rotation='vertical')
+
+plt.subplots_adjust(left=0.145, bottom=0.07, right=0.96, top=0.967, wspace=0.2, hspace=0)
+
+# large scale
+
+path_dir = 'Data2_edited'
+file_list = os.listdir(path_dir)
+a = arange(9, 20, 1)
+fig, ax = plt.subplots(len(a), figsize=(6, 5))
+
+count = 0
+for nn in a:
+
+    fn2 = path_dir + "//" + str(nn) + "_hibi_Upper_edited.txt"
+
+    if nn == 9:
+        fn2 = path_dir + "//" + str(nn) + "turns1_hibi_Upper_edited.txt"
+
+    data = pd.read_table(fn2)
+    time = data['Time (ns)']
+    signal = data['Amplitude (dB)']
+    ax[count].plot(time/10, signal, lw='1', label=str(nn)+"turns")
+    ax[count].legend(loc="upper left")
+    ax[count].set(xlim=(11.8, 13.7), ylim=(-137, -120))
+    count = count+1
+
+plt.xlabel("length (m)")
+fig.text(0.03, 0.5, 'Amplitue (dB/mm)', ha='center', va='center', rotation='vertical')
+
+plt.subplots_adjust(left=0.145, bottom=0.07, right=0.96, top=0.967, wspace=0.2, hspace=0)
+
+# Opposite direction
+
+
+path_dir = 'Data2_edited'
+file_list = os.listdir(path_dir)
+a = arange(12, 7, -1)
+fig, ax = plt.subplots(len(a), figsize=(6, 5))
+
+count = 0
+for nn in a:
+
+    fn2 = path_dir + "//" + "opp_" + str(nn) + "turns_hibi_Upper_edited.txt"
+
+    if nn == 7:
+        fn2 = path_dir + "//after twisting_0turn_hibi_Upper_edited.txt"
+
+    data = pd.read_table(fn2)
+    time = data['Time (ns)']
+    signal = data['Amplitude (dB)']
+    if nn == 7:
+        ax[count].plot(time/10, signal, lw='1', label="0 turns")
+    else:
+        ax[count].plot(time / 10, signal, lw='1', label="- " + str(nn) + "turns")
+
+    ax[count].legend(loc="upper left")
+    ax[count].set(xlim=(11.8, 13.7), ylim=(-137, -120))
+    count = count+1
+
+plt.xlabel("length (m)")
+fig.text(0.03, 0.5, 'Amplitue (dB/mm)', ha='center', va='center', rotation='vertical')
+
+plt.subplots_adjust(left=0.145, bottom=0.07, right=0.96, top=0.967, wspace=0.2, hspace=0)
+
+# inspection
+path_dir = 'Data3_edited'
+file_list = os.listdir(path_dir)
+
+a = 180
+# fig, ax = plt.subplots(len(a), figsize=(6, 5), left=0.093, bottom = 0.07, right = 0.96, top = 0.967, wspace = 0.2, hspace = 0 )
+fig, ax = plt.subplots(figsize=(6, 5))
+plt.subplots_adjust(left=0.145, bottom=0.07, right=0.96, top=0.967, wspace=0.2, hspace=0)
+
+fn2 = path_dir + "//" + "9turns_180deg_Upper_edited.txt"
+data = pd.read_table(fn2)
+time = data['Time (ns)']
+signal = data['Amplitude (dB)']
+ax.plot(time/10, signal, lw='1', label=str(a)+"deg_2nd")
+ax.legend(loc="upper left")
+ax.set(xlim=(11.8, 13.7), ylim=(-135, -120))
+count = count+1
+
 
 plt.show()
