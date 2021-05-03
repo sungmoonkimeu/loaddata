@@ -3,7 +3,7 @@
 
 import string
 import os
-path_dir = 'Data3'
+path_dir = 'Data2'
 file_list = os.listdir(path_dir)
 
 for nn in range(len(file_list)):
@@ -14,7 +14,7 @@ for nn in range(len(file_list)):
     # fn2 = 'Data2_edited//9_30deg_hibi_Upper2.txt'
     tmp = file_list[nn].split('.')
 
-    fn2 = 'Data3_edited//' + tmp[0] + '_edited.txt'
+    fn2 = 'Data2_edited//' + tmp[0] + '_edited.txt'
     with open(fn) as fp:
         for i, line in enumerate(fp):
             if i > 11:
