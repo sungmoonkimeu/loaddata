@@ -94,13 +94,13 @@ for nn in range(len(file_list)):
     draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn])
 
     ax[0].plot(time, S0)
-    ax[0].set(xlim=(0, 0.5), ylim=(-1, 1))
+    #ax[0].set(xlim=(0, 0.5), ylim=(-1, 1))
     ax[1].plot(time, S1)
-    ax[1].set(xlim=(0, 0.5), ylim=(-1, 1))
+    #ax[1].set(xlim=(0, 0.5), ylim=(-1, 1))
     ax[2].plot(time, S2)
-    ax[2].set(xlim=(0, 0.5), ylim=(-1, 1))
+    #ax[2].set(xlim=(0, 0.5), ylim=(-1, 1))
     ax[3].plot(time, S3)
-    ax[3].set(xlim=(0, 0.5), ylim=(-1, 1))
+    #ax[3].set(xlim=(0, 0.5), ylim=(-1, 1))
 
     '''
     for nn in a:

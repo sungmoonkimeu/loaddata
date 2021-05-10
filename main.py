@@ -41,7 +41,7 @@ class OOMFormatter(matplotlib.ticker.ScalarFormatter):
 
 import os
 
-# os.chdir('C:/Users/Iter/PycharmProjects/loaddata')
+os.chdir('C:/Users/Iter/PycharmProjects/loaddata')
 # os.chdir('C:/Users/SMK/PycharmProjects/loaddata/venv/')
 # os.chdir('C:/Users/SMK/PycharmProjects/loaddata/venv/')
 
@@ -91,12 +91,42 @@ for nn in a:
     fn2 = path_dir + "//" + "9turns_" + str(nn) + "deg_Upper_edited.txt"
     data = pd.read_table(fn2)
     time = data['Time (ns)']
-    signal = data['Amplitude (dB)']
+    signal = 10**(data['Amplitude (dB)']/10)
     ax[count].plot(time/10, signal, lw='1', label=str(nn)+"deg_2nd")
     ax[count].legend(loc="upper left")
-    ax[count].set(xlim=(11.8, 13.7), ylim=(-135, -120))
+    #ax[count].set(xlim=(11.8, 13.7), ylim=(-135, -120))
+    ax[count].set(xlim=(11.8, 13.7), ylim=(10**(-13.7), 10**(-12.5)))
     count = count+1
 
+
+a = arange(120, 270, 30)
+fig, ax = plt.subplots(figsize=(6, 5))
+plt.subplots_adjust(left=0.145, bottom=0.07, right=0.96, top=0.967, wspace=0.2, hspace=0)
+
+for nn in a:
+
+    fn2 = path_dir + "//" + "9turns_" + str(nn) + "deg_Upper_edited.txt"
+    data = pd.read_table(fn2)
+    time = data['Time (ns)']
+    signal = (10**(data['Amplitude (dB)']/10))
+    ax.plot(time/10, signal, lw='1', label=str(nn)+"deg_2nd")
+    ax.legend(loc="upper left")
+    #ax.set(xlim=(11.8, 13.7), ylim=(-135, -120))
+    ax.set(xlim=(11.8, 13.7), ylim=(10**(-13.7), 10**(-12.5)))
+    count = count+1
+
+#tmpdata = -0.70e-13*cos(2*pi*0.4*(time+10))+1.2e-13
+# for 120 deg matching
+# tmpdata = -0.65e-13*cos(2*pi*0.445*(time+10))+1.1e-13
+# for 150 deg matching
+# tmpdata = -0.66e-13*cos(2*pi*0.43*(time+10))+1.15e-13
+# for 180 deg matching
+tmpdata = -0.70e-13*cos(2*pi*0.42*(time+10))+1.15e-13
+# for 240 deg matching
+# tmpdata = -0.72e-13*cos(2*pi*0.40*(time+10))+1.10e-13
+
+ax.plot((time+134.7) / 10, tmpdata, lw='2', label="tested")
+'''
 path_dir = 'Data2_edited'
 file_list = os.listdir(path_dir)
 
@@ -218,5 +248,6 @@ ax.legend(loc="upper left")
 ax.set(xlim=(11.8, 13.7), ylim=(-135, -120))
 count = count+1
 
+'''
 
 plt.show()
