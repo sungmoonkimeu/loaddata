@@ -4,7 +4,7 @@
 
 import string
 import os
-path_dir = 'Data_pol'
+path_dir = 'Data_pol3'
 file_list = os.listdir(path_dir)
 
 for nn in range(len(file_list)):
@@ -18,7 +18,7 @@ for nn in range(len(file_list)):
     # Data starting from n th line
 
     databeginning = 4
-    fn2 = 'Data_pol_edited//' + tmp[0] + '_edited.txt'
+    fn2 = 'Data_pol3_edited//' + tmp[0] + '_edited.txt'
     with open(fn) as fp:
         for i, line in enumerate(fp):
             if i > databeginning:

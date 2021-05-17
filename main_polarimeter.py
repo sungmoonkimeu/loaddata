@@ -50,7 +50,7 @@ import os
 # os.chdir('C:/Users/SMK/PycharmProjects/loaddata/venv/')
 # os.chdir('C:/Users/SMK/PycharmProjects/loaddata/venv/')
 
-path_dir = 'Data_pol_edited'
+path_dir = 'Data_pol2_edited'
 file_list = os.listdir(path_dir)
 
 '''
@@ -91,7 +91,7 @@ for nn in range(len(file_list)):
     SS = np.vstack((Sn, S1, S2, S3))
 
     Out = Sv.from_matrix(SS.T)
-    draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn])
+    draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 4])
 
     ax[0].plot(time, S0)
     #ax[0].set(xlim=(0, 0.5), ylim=(-1, 1))

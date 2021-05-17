@@ -99,7 +99,7 @@ for nn in a:
     count = count+1
 
 
-a = arange(120, 270, 30)
+a = arange(240, 270, 30)
 fig, ax = plt.subplots(figsize=(6, 5))
 plt.subplots_adjust(left=0.145, bottom=0.07, right=0.96, top=0.967, wspace=0.2, hspace=0)
 
@@ -120,10 +120,10 @@ for nn in a:
 # tmpdata = -0.65e-13*cos(2*pi*0.445*(time+10))+1.1e-13
 # for 150 deg matching
 # tmpdata = -0.66e-13*cos(2*pi*0.43*(time+10))+1.15e-13
-# for 180 deg matching
-tmpdata = -0.70e-13*cos(2*pi*0.42*(time+10))+1.15e-13
+# for 180 deg matching3
+# tmpdata = -0.70e-13*cos(2*pi*0.42*(time+10))+1.15e-13
 # for 240 deg matching
-# tmpdata = -0.72e-13*cos(2*pi*0.40*(time+10))+1.10e-13
+tmpdata = -0.72e-13*cos(2*pi*0.38*(time+10))+1.10e-13
 
 ax.plot((time+134.7) / 10, tmpdata, lw='2', label="tested")
 '''
