@@ -41,8 +41,8 @@ class OOMFormatter(matplotlib.ticker.ScalarFormatter):
 
 import os
 
-os.chdir('C:/Users/Iter/PycharmProjects/loaddata')
-# os.chdir('C:/Users/SMK/PycharmProjects/loaddata/venv/')
+# os.chdir('C:/Users/Iter/PycharmProjects/loaddata')
+os.chdir('C:/Users/SMK/PycharmProjects/loaddata/')
 # os.chdir('C:/Users/SMK/PycharmProjects/loaddata/venv/')
 
 
@@ -77,10 +77,10 @@ for nn in a:
     count = count+1
 
 '''
-path_dir = 'Data3_edited'
+path_dir = 'Data_OFDR_edited'
 file_list = os.listdir(path_dir)
 
-a = arange(30, 360, 30)
+a = arange(30, 361, 30)
 count = 0
 #fig, ax = plt.subplots(len(a), figsize=(6, 5), left=0.093, bottom = 0.07, right = 0.96, top = 0.967, wspace = 0.2, hspace = 0 )
 fig, ax = plt.subplots(len(a), figsize=(6, 5))
@@ -99,9 +99,10 @@ for nn in a:
     count = count+1
 
 
-a = arange(240, 270, 30)
-fig, ax = plt.subplots(figsize=(6, 5))
-plt.subplots_adjust(left=0.145, bottom=0.07, right=0.96, top=0.967, wspace=0.2, hspace=0)
+'''
+a = arange(120, 150, 30)
+fig, ax = plt.subplots(figsize=(6, 3))
+plt.subplots_adjust(left=0.145, bottom= 0.07, right=0.96, top=0.967, wspace=0.2, hspace=0)
 
 for nn in a:
 
@@ -109,23 +110,40 @@ for nn in a:
     data = pd.read_table(fn2)
     time = data['Time (ns)']
     signal = (10**(data['Amplitude (dB)']/10))
-    ax.plot(time/10, signal, lw='1', label=str(nn)+"deg_2nd")
+    #ax.plot(time/10, signal, lw='1', label=str(nn)+"deg_2nd")
+    ax.plot(time / 10, signal, lw='1', label="9turns + " + str(nn) + "deg (" + str(round(9 + nn/360, 2)) + "turns)")
     ax.legend(loc="upper left")
     #ax.set(xlim=(11.8, 13.7), ylim=(-135, -120))
     ax.set(xlim=(11.8, 13.7), ylim=(10**(-13.7), 10**(-12.5)))
     count = count+1
+'''
+fig, ax = plt.subplots(figsize=(6, 3))
+plt.subplots_adjust(left=0.145, bottom=0.07, right=0.96, top=0.967, wspace=0.2, hspace=0)
+ax.set(xlim=(11.8, 13.7), ylim=(10 ** (-13.7), 10 ** (-12.5)))
 
 #tmpdata = -0.70e-13*cos(2*pi*0.4*(time+10))+1.2e-13
 # for 120 deg matching
-# tmpdata = -0.65e-13*cos(2*pi*0.445*(time+10))+1.1e-13
+tmpdata = -0.72e-13*cos(2*pi*0.445*(time+10))+1.2e-13
+ax.plot((time+134.7) / 10, tmpdata, lw='2', label="fitting for " + str(round(9 + 120/360, 2)) + "turns")
 # for 150 deg matching
-# tmpdata = -0.66e-13*cos(2*pi*0.43*(time+10))+1.15e-13
+#tmpdata = -0.73e-13*cos(2*pi*0.43*(time+10))+1.18e-13
+#ax.plot((time+134.7) / 10, tmpdata, lw='2', label="fitting for " + str(round(9 + 150/360, 2)) + "turns")
 # for 180 deg matching3
-# tmpdata = -0.70e-13*cos(2*pi*0.42*(time+10))+1.15e-13
+#tmpdata = -0.82e-13*cos(2*pi*0.418*(time+10))+1.24e-13
+#ax.plot((time+134.7) / 10, tmpdata, lw='2', label="fitting for " + str(round(9 + 180/360, 2)) + "turns")
 # for 240 deg matching
-tmpdata = -0.72e-13*cos(2*pi*0.38*(time+10))+1.10e-13
+tmpdata = -0.92e-13*cos(2*pi*0.395*(time+10))+1.4e-13
+ax.plot((time+134.7) / 10, tmpdata, lw='2', label="fitting for " + str(round(9 + 240/360, 2)) + "turns")
+# for 360 deg matching
+tmpdata = -1.01e-13*cos(2*pi*0.36*(time+10))+1.5e-13
+ax.plot((time+134.7) / 10, tmpdata, lw='2', label="fitting for " + str(round(9 + 360/360, 2)) + "turns")
 
-ax.plot((time+134.7) / 10, tmpdata, lw='2', label="tested")
+ax.legend(loc="upper left")
+
+#plt.rc('text', usetex=True)
+ax.set_xlabel('Length (m)')
+ax.set_ylabel('Power (mW/mm)')
+
 '''
 path_dir = 'Data2_edited'
 file_list = os.listdir(path_dir)
