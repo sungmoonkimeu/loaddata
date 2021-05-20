@@ -4,7 +4,7 @@
 
 import string
 import os
-path_dir = 'Data_pol4'
+path_dir = 'Data_20_05'
 file_list = os.listdir(path_dir)
 
 for nn in range(len(file_list)):

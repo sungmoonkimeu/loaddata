@@ -51,7 +51,7 @@ import os
 # os.chdir('C:/Users/SMK/PycharmProjects/loaddata/venv/')
 # os.chdir('C:/Users/SMK/PycharmProjects/loaddata/venv/')
 
-path_dir = 'Data_pol3_edited'
+path_dir = 'Data_20_05_edited'
 file_list = os.listdir(path_dir)
 
 '''
@@ -66,7 +66,7 @@ for nn in range(len(file_list)):
     ax.set(xlim=(124, 134), ylim=(-135, -120))
 plt.show()
 '''
-fig, ax = plt.subplots(4, figsize=(6, 5))
+#fig, ax = plt.subplots(figsize=(6, 5))
 Ev = Jones_vector('Output_J')
 Sv = create_Stokes('Output_S')
 Out = create_Stokes('Output_S2')
@@ -77,6 +77,7 @@ diff_azi_V = np.ones(len(file_list))
 diff_ellip_V = np.ones(len(file_list))
 
 for nn in range(len(file_list)):
+    fig, ax = plt.subplots(4, figsize=(6, 5))
     fn2 = path_dir + "//" + file_list[nn]
     count = 0
     cstm_color = ['c', 'm', 'y', 'k', 'r']
@@ -98,7 +99,7 @@ for nn in range(len(file_list)):
 
     azi_V = Out.parameters.azimuth()
     ellip_V = Out.parameters.ellipticity_angle()
-    diff_azi_V[nn] = azi_V.max() - azi_V.min()
+    diff_azi_V[nn] = azi_V[0:1000].max() - azi_V[0:1000].min()
     diff_ellip_V[nn] = ellip_V.max() - ellip_V.min()
 
     ax[0].plot(time, S0)
@@ -109,7 +110,9 @@ for nn in range(len(file_list)):
     # ax[2].set(xlim=(0, 0.5), ylim=(-1, 1))
     ax[3].plot(time, S3)
     # ax[3].set(xlim=(0, 0.5), ylim=(-1, 1))
-
+    ax[3].set_xlabel("Time (s)")
+    ax[3].set_ylabel("Stokes parameter")
+    ax[0].set_title(file_list[nn])
     '''
     for nn in a:
 
@@ -123,8 +126,7 @@ for nn in range(len(file_list)):
         count = count+1
     '''
 
-ax[3].set_xlabel("Time (s)")
-ax[3].set_ylabel("Stokes parameter")
+
 #ax[3].set(xlim=(0, 2000), ylim=(0,1))
 
 fig3, ax3 = plt.subplots(figsize=(6, 5))
@@ -135,7 +137,7 @@ ax3.scatter(frequency, diff_ellip_V*180/pi, label="ellipticity (deg)")
 #label=r'$\theta$'
 ax3.scatter(frequency, sqrt(diff_azi_V**2 + diff_ellip_V**2)*180/pi, label="sqrt(azimuth^2 + ellipticity^2)")
 #label=r'sqrt(\phi + \theta)')
-ax3.legend(loc="best ")
+ax3.legend(loc="best")
 ax3.set_xlabel("Input pol. state")
 ax3.set_ylabel("Angle change (deg)")
 ax3.set(xlim=(0.5, 6.5), ylim=(0, 5))

@@ -51,7 +51,7 @@ import os
 # os.chdir('C:/Users/SMK/PycharmProjects/loaddata/venv/')
 # os.chdir('C:/Users/SMK/PycharmProjects/loaddata/venv/')
 
-path_dir = 'Data_pol4_edited'
+path_dir = 'Data_pol2_edited'
 file_list = os.listdir(path_dir)
 
 '''
@@ -72,7 +72,8 @@ Sv = create_Stokes('Output_S')
 Out = create_Stokes('Output_S2')
 
 fig2, ax2 = Sv.draw_poincare(figsize=(7, 7), angle_view=[0.2, 1.2], kind='line')
-frequency = arange(10,31,1)
+frequency = arange(10, 31, 1)
+#frequency = np.hstack((0,frequency))
 diff_azi_V = np.ones(len(file_list))
 diff_ellip_V = np.ones(len(file_list))
 
@@ -127,19 +128,22 @@ ax[3].set_xlabel("Time (s)")
 ax[3].set_ylabel("Stokes parameter")
 #ax[3].set(xlim=(0, 2000), ylim=(0,1))
 
-fig3, ax3 = plt.subplots(figsize=(6, 5))
+fig3, ax3 = plt.subplots(figsize=(5, 4))
 #plt.rc('text', usetex=True)
 #r'$\phi$'
-ax3.plot(frequency, diff_azi_V*180/pi, label="azimuth (deg)", marker="o")
-ax3.plot(frequency, diff_ellip_V*180/pi, label="ellipticity (deg)", marker="v")
-#label=r'$\theta$'
-ax3.plot(frequency, sqrt(diff_azi_V**2 + diff_ellip_V**2)*180/pi, label="sqrt(azimuth^2 + ellipticity^2)", marker="^")
+
+ax3.plot(frequency, diff_azi_V * 180 / pi, label="azimuth (deg)", marker="o")
+ax3.plot(frequency, diff_ellip_V * 180 / pi, label="ellipticity (deg)", marker="v")
+# label=r'$\theta$'
+ax3.plot(frequency, sqrt(diff_azi_V ** 2 + diff_ellip_V ** 2) * 180 / pi, label="sqrt(azimuth^2 + ellipticity^2)",
+         marker="^")
+
 #label=r'sqrt(\phi + \theta)')
 ax3.legend(loc="upper right")
-ax3.set_xlabel("Frequency (Hz)")
+ax3.set_xlabel("Vibration frequency (Hz)")
 ax3.set_ylabel("Angle change (deg)")
-ax3.set(xlim=(10, 30), ylim=(0,1))
-
+ax3.set(xlim=(10, 30), ylim=(0, 1.7))
+plt.subplots_adjust(left=0.125, bottom=0.14, right=0.9, top=0.9, wspace=0.2, hspace=0.2)
 
 
 plt.show()
