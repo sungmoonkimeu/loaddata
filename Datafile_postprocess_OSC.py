@@ -1,0 +1,37 @@
+"""Analysing datafiles from Oscilloscope device.
+"""
+
+import string
+import os
+
+path_dir = 'Data_Vib//Acceleration2'
+file_list = os.listdir(path_dir)
+
+
+def createfolder(directory):
+    try:
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+    except OSError:
+        print('Error: Creating directory')
+
+target_path = path_dir + "_edited"
+createfolder(target_path)
+
+for nn in range(len(file_list)):
+    fn = path_dir + "//" + file_list[nn]
+
+    # test
+    # fn = 'Data2//9_30deg_hibi_Upper.txt'
+    # fn2 = 'Data2_edited//9_30deg_hibi_Upper2.txt'
+    tmp = file_list[nn].split('.')
+
+    fn2 = target_path + '//' + tmp[0] + '_edited.txt'
+    with open(fn) as fp:
+        for i, line in enumerate(fp):
+            if i >= 0:
+                #print(line)  # 26th line
+                with open(fn2, 'a') as fp2:
+                    fp2.writelines(fp)
+
+# mydatax = pd.read_table('Data2//9_30deg_hibi_Upper.txt')

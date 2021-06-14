@@ -4,7 +4,7 @@
 
 import string
 import os
-path_dir = 'Data_20_05'
+path_dir = 'Data_pol_laser'
 file_list = os.listdir(path_dir)
 
 for nn in range(len(file_list)):
@@ -17,7 +17,7 @@ for nn in range(len(file_list)):
     # Removing file header
     # Data starting from n th line
 
-    databeginning = 4
+    databeginning = 5 # 4 is normal
     fn2 = path_dir + '_edited//' + tmp[0] + '_edited.txt'
     with open(fn) as fp:
         for i, line in enumerate(fp):

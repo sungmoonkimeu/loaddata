@@ -28,6 +28,7 @@ from py_pol.jones_vector import Jones_vector, degrees
 from py_pol.stokes import Stokes, create_Stokes
 from py_pol.drawings import draw_stokes_points, draw_poincare, draw_ellipse
 
+
 # noinspection PyPep8Naming
 class OOMFormatter(matplotlib.ticker.ScalarFormatter):
     def __init__(self, order=0, fformat="%1.1f", offset=True, mathText=True):
@@ -53,18 +54,7 @@ import os
 path_dir = 'Data_pol_laser_edited'
 file_list = os.listdir(path_dir)
 
-'''
-for nn in range(len(file_list)):
-    fn = path_dir + "//" + file_list[nn]
-    data = pd.read_table(fn)
-    time = data['Time (ns)']
-    signal = data['Amplitude (dB)']
-    fig, ax = plt.subplots(figsize=(6, 5))
-    ax.plot(time, signal, lw='1', label=file_list[nn])
-    ax.legend(loc="upper right")
-    ax.set(xlim=(124, 134), ylim=(-135, -120))
-plt.show()
-'''
+
 fig, ax = plt.subplots(4, figsize=(6, 5))
 Ev = Jones_vector('Output_J')
 Sv = create_Stokes('Output_S')
@@ -73,46 +63,40 @@ Out = create_Stokes('Output_S2')
 fig2, ax2 = Sv.draw_poincare(figsize=(7, 7), angle_view=[0.2, 1.2], kind='line')
 
 for nn in range(len(file_list)):
-
     fn2 = path_dir + "//" + file_list[nn]
     count = 0
     cstm_color = ['c', 'm', 'y', 'k', 'r', 'g', 'b']
 
-#    fn2 = path_dir + "//10Hz_edited.txt"
+    #  fn2 = path_dir + "//10Hz_edited.txt"
     data = pd.read_table(fn2, delimiter=r"\s+")
-    time = pd.to_numeric(data['Index'])/10000
-    S0 = pd.to_numeric(data['S0(mW)'])
-    S1 = pd.to_numeric(data['S1'])
-    S2 = pd.to_numeric(data['S2'])
-    S3 = pd.to_numeric(data['S3'])
+    if nn == 0:
+        S0 = pd.to_numeric(data['S0(mW)'])
+        S1 = pd.to_numeric(data['S1'])
+        S2 = pd.to_numeric(data['S2'])
+        S3 = pd.to_numeric(data['S3'])
+        time = pd.to_numeric(data['Index']) / 10000
 
-    Sn = np.ones((len(S0)))
-    #SS = np.vstack((S0, S1, S2, S3))
-    SS = np.vstack((Sn, S1, S2, S3))
+    else:
+        S0 = pd.concat((S0, pd.to_numeric(data['S0(mW)'])))
+        S1 = pd.concat((S1, pd.to_numeric(data['S1'])))
+        S2 = pd.concat((S2, pd.to_numeric(data['S2'])))
+        S3 = pd.concat((S3, pd.to_numeric(data['S3'])))
+        time = pd.concat((time, pd.to_numeric(data['Index'])/10000))
+Sn = np.ones((len(S0)))
+# SS = np.vstack((S0, S1, S2, S3))
+SS = np.vstack((Sn, S1, S2, S3))
 
-    Out = Sv.from_matrix(SS.T)
-    draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 5])
+Out = Sv.from_matrix(SS.T)
+draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 5])
 
-    ax[0].plot(time, S0)
-    #ax[0].set(xlim=(0, 0.5), ylim=(-1, 1))
-    ax[1].plot(time, S1)
-    #ax[1].set(xlim=(0, 0.5), ylim=(-1, 1))
-    ax[2].plot(time, S2)
-    #ax[2].set(xlim=(0, 0.5), ylim=(-1, 1))
-    ax[3].plot(time, S3)
-    #ax[3].set(xlim=(0, 0.5), ylim=(-1, 1))
+ax[0].plot(time, S0)
+# ax[0].set(xlim=(0, 0.5), ylim=(-1, 1))
+ax[1].plot(time, S1)
+# ax[1].set(xlim=(0, 0.5), ylim=(-1, 1))
+ax[2].plot(time, S2)
+# ax[2].set(xlim=(0, 0.5), ylim=(-1, 1))
+ax[3].plot(time, S3)
+# ax[3].set(xlim=(0, 0.5), ylim=(-1, 1))
 
-    '''
-    for nn in a:
-    
-        fn2 = path_dir + "//" + "9turns_" + str(nn) + "deg_Upper_edited.txt"
-        data = pd.read_table(fn2)
-        time = data['Time (ns)']
-        signal = data['Amplitude (dB)']
-        ax[count].plot(time, signal, lw='1', label="9turns_"+str(nn)+"deg")
-        ax[count].legend(loc="upper right")
-        ax[count].set(xlim=(124, 134), ylim=(-135, -120))
-        count = count+1
-    '''
 
 plt.show()

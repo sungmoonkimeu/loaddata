@@ -41,8 +41,8 @@ class OOMFormatter(matplotlib.ticker.ScalarFormatter):
 
 import os
 
-# os.chdir('C:/Users/Iter/PycharmProjects/loaddata')
-os.chdir('C:/Users/SMK/PycharmProjects/loaddata/')
+os.chdir('C:/Users/Iter/PycharmProjects/loaddata')
+#os.chdir('C:/Users/SMK/PycharmProjects/loaddata/')
 # os.chdir('C:/Users/SMK/PycharmProjects/loaddata/venv/')
 
 
