@@ -44,30 +44,32 @@ class OOMFormatter(matplotlib.ticker.ScalarFormatter):
         if self._useMathText:
             self.format = r'$\mathdefault{%s}$' % self.format
 
-
+# Switching OS folder
+path2 = 'C:/Users/Iter/PycharmProjects/loaddata'
+path1 = 'C:/Users/SMK/PycharmProjects/loaddata'
 import os
+def switch_osfolder():
+    try:
+        if os.path.exists(path1):
+            os.chdir(path1)
+        else:
+            os.chdir(path2)
+    except OSError:
+        print('Error: Changing OS directory')
 
-# os.chdir('C:/Users/Iter/PycharmProjects/loaddata')
-# os.chdir('C:/Users/SMK/PycharmProjects/loaddata/venv/')
-# os.chdir('C:/Users/SMK/PycharmProjects/loaddata/venv/')
+switch_osfolder()
+foldername = 'Data_pol6'
+
+path_dir = os.getcwd() + '//Data_Vib_0_(Polarimeter)//' + foldername + '_edited'
+file_list = os.listdir(path_dir)
 
 #fig, ax = plt.subplots(figsize=(6, 5))
-E1 = Jones_vector('Output_1')
-E2 = Jones_vector('Output_2')
-
-E1.linear_light(amplitude=1)
-phase_m = arange(0, 2*pi, 0.01)
-E2.linear_light(amplitude=0.02, azimuth=pi/2,  global_phase=phase_m)
-
-E3 = E1+E2
-E3.normalize()
-
+Ev = Jones_vector('Output_J')
 Sv = create_Stokes('Output_S')
 Out = create_Stokes('Output_S2')
 
-Sv.from_Jones(E3)
 fig2, ax2 = Sv.draw_poincare(figsize=(7, 7), angle_view=[0.2, 1.2], kind='line')
-frequency = arange(1,7,1)
+frequency = arange(1, 7, 1)
 diff_azi_V = np.ones(len(file_list))
 diff_ellip_V = np.ones(len(file_list))
 
@@ -75,7 +77,7 @@ for nn in range(len(file_list)):
     fig, ax = plt.subplots(4, figsize=(6, 5))
     fn2 = path_dir + "//" + file_list[nn]
     count = 0
-    cstm_color = ['c', 'm', 'y', 'k', 'r']
+    cstm_color = ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'w']
 
     #    fn2 = path_dir + "//10Hz_edited.txt"
     data = pd.read_table(fn2, delimiter=r"\s+")
@@ -86,11 +88,10 @@ for nn in range(len(file_list)):
     S3 = pd.to_numeric(data['S3'])
 
     Sn = np.ones((len(S0)))
-    # SS = np.vstack((S0, S1, S2, S3))
     SS = np.vstack((Sn, S1, S2, S3))
 
     Out = Sv.from_matrix(SS.T)
-    draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 4])
+    draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 8])
 
     azi_V = Out.parameters.azimuth()
     ellip_V = Out.parameters.ellipticity_angle()
@@ -122,24 +123,17 @@ for nn in range(len(file_list)):
     '''
 
 
-#ax[3].set(xlim=(0, 2000), ylim=(0,1))
-
 fig3, ax3 = plt.subplots(figsize=(6, 5))
-#plt.rc('text', usetex=True)
-#r'$\phi$'
 ax3.scatter(frequency, diff_azi_V*180/pi, label="azimuth (deg)")
 ax3.scatter(frequency, diff_ellip_V*180/pi, label="ellipticity (deg)")
-#label=r'$\theta$'
 ax3.scatter(frequency, sqrt(diff_azi_V**2 + diff_ellip_V**2)*180/pi, label="sqrt(azimuth^2 + ellipticity^2)")
-#label=r'sqrt(\phi + \theta)')
 ax3.legend(loc="best")
 ax3.set_xlabel("Input pol. state")
 ax3.set_ylabel("Angle change (deg)")
 ax3.set(xlim=(0.5, 6.5), ylim=(0, 5))
 
-my_xticks = ['LHP','LVP','L45P','L135P','LCP','RCP']
-plt.xticks(frequency,my_xticks)
-
+my_xticks = ['LHP', 'LVP', 'L45P', 'L135P', 'LCP', 'RCP']
+plt.xticks(frequency, my_xticks)
 
 
 plt.show()

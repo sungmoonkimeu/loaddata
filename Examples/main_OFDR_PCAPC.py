@@ -38,17 +38,24 @@ class OOMFormatter(matplotlib.ticker.ScalarFormatter):
         if self._useMathText:
             self.format = r'$\mathdefault{%s}$' % self.format
 
-
+# Switching OS folder
+path2 = 'C:/Users/Iter/PycharmProjects/loaddata'
+path1 = 'C:/Users/SMK/PycharmProjects/loaddata'
 import os
+def switch_osfolder():
+    try:
+        if os.path.exists(path1):
+            os.chdir(path1)
+        else:
+            os.chdir(path2)
+    except OSError:
+        print('Error: Changing OS directory')
 
-# os.chdir('C:/Users/Iter/PycharmProjects/loaddata')
-os.chdir('C:/Users/SMK/PycharmProjects/loaddata/')
-# os.chdir('C:/Users/SMK/PycharmProjects/loaddata/venv/')
+switch_osfolder()
 
+foldername = 'Data_OFDR'
 
-
-
-path_dir = 'Data_OFDR_edited'
+path_dir = os.getcwd() + '//Data_Twsiting_(OFDR)//' + foldername + '_edited'
 file_list = os.listdir(path_dir)
 
 for nn in range(len(file_list)):

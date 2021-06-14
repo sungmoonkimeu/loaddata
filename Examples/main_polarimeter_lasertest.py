@@ -47,13 +47,25 @@ class OOMFormatter(matplotlib.ticker.ScalarFormatter):
 
 import os
 
-# os.chdir('C:/Users/Iter/PycharmProjects/loaddata')
-# os.chdir('C:/Users/SMK/PycharmProjects/loaddata/venv/')
-# os.chdir('C:/Users/SMK/PycharmProjects/loaddata/venv/')
 
-path_dir = 'Data_pol_laser_edited'
+# Switching OS folder
+path2 = 'C:/Users/Iter/PycharmProjects/loaddata'
+path1 = 'C:/Users/SMK/PycharmProjects/loaddata'
+import os
+def switch_osfolder():
+    try:
+        if os.path.exists(path1):
+            os.chdir(path1)
+        else:
+            os.chdir(path2)
+    except OSError:
+        print('Error: Changing OS directory')
+
+switch_osfolder()
+foldername = 'Data_pol_laser'
+
+path_dir = os.getcwd() + '//Data_Vib_0_(Polarimeter)//' + foldername + '_edited'
 file_list = os.listdir(path_dir)
-
 
 fig, ax = plt.subplots(4, figsize=(6, 5))
 Ev = Jones_vector('Output_J')

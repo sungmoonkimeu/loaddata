@@ -4,20 +4,27 @@
 
 import string
 import os
-path_dir = 'Data_pol_laser'
+path_dir = os.getcwd() + '/Data_Vib_0_(Polarimeter)/Data_pol6'
 file_list = os.listdir(path_dir)
+
+def createfolder(directory):
+    try:
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+    except OSError:
+        print('Error: Creating directory')
+
+
+target_path = path_dir + "_edited"
+createfolder(target_path)
 
 for nn in range(len(file_list)):
     fn = path_dir + "//" + file_list[nn]
-
-    # test
-    # fn = 'Data2//9_30deg_hibi_Upper.txt'
-    # fn2 = 'Data2_edited//9_30deg_hibi_Upper2.txt'
     tmp = file_list[nn].split('.')
     # Removing file header
     # Data starting from n th line
 
-    databeginning = 5 # 4 is normal
+    databeginning = 4   # 4 is normal, sometimes it should be changed to 5
     fn2 = path_dir + '_edited//' + tmp[0] + '_edited.txt'
     with open(fn) as fp:
         for i, line in enumerate(fp):

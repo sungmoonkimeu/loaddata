@@ -45,27 +45,26 @@ class OOMFormatter(matplotlib.ticker.ScalarFormatter):
             self.format = r'$\mathdefault{%s}$' % self.format
 
 
+
+# Switching OS folder
+path2 = 'C:/Users/Iter/PycharmProjects/loaddata'
+path1 = 'C:/Users/SMK/PycharmProjects/loaddata'
 import os
+def switch_osfolder():
+    try:
+        if os.path.exists(path1):
+            os.chdir(path1)
+        else:
+            os.chdir(path2)
+    except OSError:
+        print('Error: Changing OS directory')
 
-# os.chdir('C:/Users/Iter/PycharmProjects/loaddata')
-# os.chdir('C:/Users/SMK/PycharmProjects/loaddata/venv/')
-# os.chdir('C:/Users/SMK/PycharmProjects/loaddata/venv/')
+switch_osfolder()
+foldername = 'Data_pol2'
 
-path_dir = 'Data_pol2_edited'
+path_dir = os.getcwd() + '//Data_Vib_0_(Polarimeter)//' + foldername + '_edited'
 file_list = os.listdir(path_dir)
 
-'''
-for nn in range(len(file_list)):
-    fn = path_dir + "//" + file_list[nn]
-    data = pd.read_table(fn)
-    time = data['Time (ns)']
-    signal = data['Amplitude (dB)']
-    fig, ax = plt.subplots(figsize=(6, 5))
-    ax.plot(time, signal, lw='1', label=file_list[nn])
-    ax.legend(loc="upper right")
-    ax.set(xlim=(124, 134), ylim=(-135, -120))
-plt.show()
-'''
 fig, ax = plt.subplots(4, figsize=(6, 5))
 Ev = Jones_vector('Output_J')
 Sv = create_Stokes('Output_S')
@@ -73,7 +72,7 @@ Out = create_Stokes('Output_S2')
 
 fig2, ax2 = Sv.draw_poincare(figsize=(7, 7), angle_view=[0.2, 1.2], kind='line')
 frequency = arange(10, 31, 1)
-#frequency = np.hstack((0,frequency))
+
 diff_azi_V = np.ones(len(file_list))
 diff_ellip_V = np.ones(len(file_list))
 
