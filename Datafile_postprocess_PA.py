@@ -4,7 +4,10 @@
 
 import string
 import os
-path_dir = os.getcwd() + '/Data_Vib_0_(Polarimeter)/Data_pol6'
+
+foldername = 'Const_Freq_Polarimeter'
+
+path_dir = os.getcwd() + '/Data_Vib_1_(Oscillo_Polarimeter)/' + foldername
 file_list = os.listdir(path_dir)
 
 def createfolder(directory):

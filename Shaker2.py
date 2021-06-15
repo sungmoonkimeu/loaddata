@@ -42,7 +42,7 @@ class OOMFormatter(matplotlib.ticker.ScalarFormatter):
 ## CHOOSE A FOLDER THAT CONTAINS DATA
 ## CHOOSE A FOLDER THAT CONTAINS DATA
 
-foldername = 'Acceleration2'
+foldername = 'Const_disp_OSC'
 
 ## CHOOSE A FOLDER THAT CONTAINS DATA
 ## CHOOSE A FOLDER THAT CONTAINS DATA
@@ -75,7 +75,8 @@ x0 = zeros(len(file_list))
 y0 = zeros(len(file_list))
 for nn in range(len(file_list)):
 
-    fn2 = path_dir + "//" + "saf" + str(nn+1) + "_edited.txt"
+    fn2 = path_dir + "//" + "scope_" + str(nn) + "_edited.txt"
+    #fn2 = path_dir + "//" + "a" + str(nn) + "_edited.txt"
     data = pd.read_table(fn2, sep=",")
     time = data['second']
     signal0 = data['Volt']
@@ -85,7 +86,7 @@ for nn in range(len(file_list)):
     ax[nn].legend(loc="upper left")
     #ax[count].set(xlim=(11.8, 13.7), ylim=(-135, -120))
     #ax[count].set(xlim=(11.8, 13.7), ylim=(10**(-13.7), 10**(-12.5)))
-    x0[nn] = 10 + nn*2
+    x0[nn] = 10 + nn
     y0[nn] = (max(signal1) - min(signal1))*10
 
 fig, ax = plt.subplots(figsize=(6, 3))
@@ -110,12 +111,13 @@ x0 = zeros(len(file_list))
 y0 = zeros(len(file_list))
 for nn in range(len(file_list)):
 
-    fn2 = path_dir + "//" + "saf" + str(nn+1) + "_edited.txt"
+    fn2 = path_dir + "//" + "scope_" + str(nn) + "_edited.txt"
+    #fn2 = path_dir + "//" + "a" + str(nn) + "_edited.txt"
     data = pd.read_table(fn2, sep=",")
     time = data['second']
     signal0 = data['Volt']
     signal1 = data['Volt.1']
-    x0[nn] = 10 + nn*2
+    x0[nn] = 10+nn
     y0[nn] = (max(signal1) - min(signal1))*10
 
     ax[0].plot(time, signal1*10, lw='1', label=str(x0[nn]) + "Hz")

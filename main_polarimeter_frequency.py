@@ -60,7 +60,8 @@ def switch_osfolder():
         print('Error: Changing OS directory')
 
 switch_osfolder()
-foldername = 'Data_pol2'
+
+foldername = 'Const_acc_Polarimeter'
 
 path_dir = os.getcwd() + '//Data_Vib_0_(Polarimeter)//' + foldername + '_edited'
 file_list = os.listdir(path_dir)
