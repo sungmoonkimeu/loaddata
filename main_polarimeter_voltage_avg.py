@@ -79,6 +79,14 @@ diff_ellip_V = np.ones(len(file_list))
 new_diff_azi_V = np.ones(len(file_list))
 new_diff_ellip_V = np.ones(len(file_list))
 
+mean_azi_V = np.ones(len(file_list))
+err_azi_V = np.ones(len(file_list))
+mean_ellip_V = np.ones(len(file_list))
+err_ellip_V = np.ones(len(file_list))
+mean_nor_SOP_V = np.ones(len(file_list))
+err_nor_SOP_V = np.ones(len(file_list))
+
+
 
 for nn in range(len(file_list)):
     fn2 = path_dir + "//" + str(400+nn*200) + "mV_edited.txt"
@@ -104,6 +112,15 @@ for nn in range(len(file_list)):
     ellip_V = Out.parameters.ellipticity_angle()
     diff_azi_V[nn] = azi_V.max() - azi_V.min()
     diff_ellip_V[nn] = ellip_V.max() - ellip_V.min()
+    nor_SOP_V = sqrt((azi_V - azi_V.mean())**2 + (ellip_V - ellip_V.mean())**2)
+    nor_SOP_V = nor_SOP_V-nor_SOP_V.mean()
+
+    mean_azi_V[nn] = azi_V.mean()
+    err_azi_V[nn] = azi_V.std()
+    mean_ellip_V[nn] = ellip_V.mean()
+    err_ellip_V[nn] = ellip_V.std()
+    mean_nor_SOP_V[nn] = nor_SOP_V.mean()
+    err_nor_SOP_V[nn] = nor_SOP_V.std()
 
     nwindow = 10
     rS1 = S1.rolling(window=nwindow)
@@ -175,10 +192,54 @@ ax3.plot(applied_V, sqrt(new_diff_azi_V ** 2 + new_diff_ellip_V ** 2) * 180 / pi
 
 #label=r'sqrt(\phi + \theta)')
 ax3.legend(loc="upper right")
-ax3.set_xlabel("Vibration frequency (Hz)")
+ax3.set_xlabel("Applied voltage (V)")
 ax3.set_ylabel("Angle change (deg)")
 #ax3.set(xlim=(10, 30), ylim=(0, 1.7))
 plt.subplots_adjust(left=0.125, bottom=0.14, right=0.9, top=0.9, wspace=0.2, hspace=0.2)
+
+
+fig3, ax3 = plt.subplots(figsize=(5, 4))
+plt.subplots_adjust(left=0.157, bottom=0.11, right=0.955, top=0.886, wspace=0.2, hspace=0.2)
+#ax3.errorbar(frequency, mean_azi_V * 180 / pi, yerr=0.25,
+ax3.scatter(applied_V, mean_azi_V * 180 / pi, s=10, c='black', label="mean value", marker='o', zorder=100)
+
+ax3.errorbar(applied_V, mean_azi_V * 180 / pi, yerr=0.25,
+             label="uncertainty of device",  ls="None", c='black', ecolor='lightgray', elinewidth=3, capsize=6)
+ax3.errorbar(applied_V, mean_azi_V * 180 / pi,  yerr=err_azi_V*180/pi,
+             label="standard deviation", ls="None", c='black', ecolor='g', capsize=4, zorder=5)
+
+ax3.legend(loc="upper right")
+ax3.xaxis.set_major_locator(MaxNLocator(5))
+ax3.set_xlabel("Applied voltage (V)")
+ax3.set_ylabel("Azimuth (deg)")
+ax3.set(xlim=(0, 4.2), ylim=(147.5, 148.5))
+
+fig3, ax3 = plt.subplots(figsize=(5, 4))
+plt.subplots_adjust(left=0.157, bottom=0.11, right=0.955, top=0.886, wspace=0.2, hspace=0.2)
+ax3.scatter(applied_V, mean_ellip_V * 180 / pi, s=10, c='black', label="mean value", marker='o', zorder=100)
+ax3.errorbar(applied_V, mean_ellip_V * 180 / pi, yerr=0.25,
+             label="uncertainty of device", ls="None", ecolor='lightgray', elinewidth=3, capsize=6)
+ax3.errorbar(applied_V, mean_ellip_V * 180 / pi, yerr=err_ellip_V*180/pi,
+             label="standard deviation", ls="None", ecolor='g', capsize=4, zorder=5)
+ax3.legend(loc="lower right")
+ax3.xaxis.set_major_locator(MaxNLocator(5))
+ax3.set_xlabel("Applied voltage (V)")
+ax3.set_ylabel("Ellipticity (deg)")
+ax3.set(xlim=(0, 4.2), ylim=(-17.7, -16.7))
+
+
+fig3, ax3 = plt.subplots(figsize=(5, 4))
+plt.subplots_adjust(left=0.157, bottom=0.11, right=0.955, top=0.886, wspace=0.2, hspace=0.2)
+
+ax3.errorbar(applied_V, mean_nor_SOP_V * 180 / pi, yerr=0.25,
+             label="Device's uncertainty", ecolor='lightgray', elinewidth=3, capsize=6)
+ax3.errorbar(applied_V, mean_nor_SOP_V * 180 / pi, yerr=err_nor_SOP_V*180/pi,
+             label="STD", fmt='o', ecolor='g', capsize=4)
+ax3.legend(loc="upper right")
+ax3.xaxis.set_major_locator(MaxNLocator(5))
+ax3.set_xlabel("Applied voltage (V)")
+ax3.set_ylabel("Normalized SOP uncertainty (deg)")
+
 
 plt.show()
 
