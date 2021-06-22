@@ -73,6 +73,7 @@ Out = create_Stokes('Output_S2')
 
 fig2, ax2 = Sv.draw_poincare(figsize=(7, 7), angle_view=[0.2, 1.2], kind='line')
 applied_V = arange(0.4, 4.2, 0.2)
+applied_V = np.hstack((0, applied_V))
 
 diff_azi_V = np.ones(len(file_list))
 diff_ellip_V = np.ones(len(file_list))
@@ -89,7 +90,10 @@ err_nor_SOP_V = np.ones(len(file_list))
 
 
 for nn in range(len(file_list)):
-    fn2 = path_dir + "//" + str(400+nn*200) + "mV_edited.txt"
+    if nn == 0:
+        fn2 = path_dir + "//0mV_edited.txt"
+    else:
+        fn2 = path_dir + "//" + str(400+(nn-1)*200) + "mV_edited.txt"
     count = 0
     cstm_color = ['c', 'm', 'y', 'k', 'r']
 
@@ -151,10 +155,10 @@ for nn in range(len(file_list)):
     ax[3].plot(time, S3)
     # ax[3].set(xlim=(0, 0.5), ylim=(-1, 1))
 
-    ax[0].plot(time, S0)
-    ax[1].plot(time, new_S1)
-    ax[2].plot(time, new_S2)
-    ax[3].plot(time, new_S3)
+    #ax[0].plot(time, S0)
+    #ax[1].plot(time, new_S1)
+    #ax[2].plot(time, new_S2)
+    #ax[3].plot(time, new_S3)
 
 
     '''
@@ -184,11 +188,11 @@ ax3.plot(applied_V, diff_ellip_V * 180 / pi, label="ellipticity (deg)", marker="
 ax3.plot(applied_V, sqrt(diff_azi_V ** 2 + diff_ellip_V ** 2) * 180 / pi, label="sqrt(azimuth^2 + ellipticity^2)",
          marker="^")
 
-ax3.plot(applied_V, new_diff_azi_V * 180 / pi, label="azimuth (deg)2", marker="x")
-ax3.plot(applied_V, new_diff_ellip_V * 180 / pi, label="ellipticity (deg)2", marker="x")
+#ax3.plot(applied_V, new_diff_azi_V * 180 / pi, label="azimuth (deg)2", marker="x")
+#ax3.plot(applied_V, new_diff_ellip_V * 180 / pi, label="ellipticity (deg)2", marker="x")
 # label=r'$\theta$'
-ax3.plot(applied_V, sqrt(new_diff_azi_V ** 2 + new_diff_ellip_V ** 2) * 180 / pi, label="sqrt(azimuth^2 + ellipticity^2)2",
-         marker="x")
+#ax3.plot(applied_V, sqrt(new_diff_azi_V ** 2 + new_diff_ellip_V ** 2) * 180 / pi, label="sqrt(azimuth^2 + ellipticity^2)2",
+#         marker="x")
 
 #label=r'sqrt(\phi + \theta)')
 ax3.legend(loc="upper right")
