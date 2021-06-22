@@ -5,7 +5,7 @@
 import string
 import os
 
-foldername = 'Const_Freq_Polarimeter'
+foldername = 'Const_disp_Polarimeter2'
 
 path_dir = os.getcwd() + '/Data_Vib_1_(Oscillo_Polarimeter)/' + foldername
 file_list = os.listdir(path_dir)

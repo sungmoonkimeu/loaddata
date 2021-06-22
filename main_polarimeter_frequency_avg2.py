@@ -80,7 +80,7 @@ new_diff_azi_V = np.ones(len(file_list))
 new_diff_ellip_V = np.ones(len(file_list))
 
 
-for nn in range(len(file_list)):
+for nn in range(len(file_list)-20):
     fn2 = path_dir + "//" + file_list[nn]
     count = 0
     cstm_color = ['c', 'm', 'y', 'k', 'r']
@@ -134,10 +134,10 @@ for nn in range(len(file_list)):
     ax[3].plot(time, S3)
     # ax[3].set(xlim=(0, 0.5), ylim=(-1, 1))
 
-    ax[0].plot(time, S0)
-    ax[1].plot(time, new_S1)
-    ax[2].plot(time, new_S2)
-    ax[3].plot(time, new_S3)
+    #ax[0].plot(time, S0)
+    #ax[1].plot(time, new_S1)
+    #ax[2].plot(time, new_S2)
+    #ax[3].plot(time, new_S3)
 
 
     '''

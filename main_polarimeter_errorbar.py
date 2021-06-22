@@ -15,6 +15,10 @@ from matplotlib.ticker import (MaxNLocator,
 from scipy.interpolate import interp1d
 import matplotlib.transforms
 import pandas as pd
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib.collections import PolyCollection
+from matplotlib import colors as mcolors
+
 # matplotlib.rcParams['mathtext.fontset'] = 'custom'
 # matplotlib.rcParams['font.family'] = 'serif'
 # matplotlib.rcParams['font.serif'] = 'Computer Modern'
@@ -61,12 +65,12 @@ def switch_osfolder():
 
 switch_osfolder()
 
-foldername = 'Const_acc_Polarimeter'
+#foldername = 'Const_acc_Polarimeter'
+foldername = 'Const_disp_Polarimeter2'
 
 path_dir = os.getcwd() + '//Data_Vib_1_(Oscillo_Polarimeter)//' + foldername + '_edited'
 file_list = os.listdir(path_dir)
 
-fig, ax = plt.subplots(4, figsize=(6, 5))
 Ev = Jones_vector('Output_J')
 Sv = create_Stokes('Output_S')
 Out = create_Stokes('Output_S2')
@@ -85,6 +89,9 @@ mean_ellip_V = np.ones(len(file_list))
 err_ellip_V = np.ones(len(file_list))
 mean_nor_SOP_V = np.ones(len(file_list))
 err_nor_SOP_V = np.ones(len(file_list))
+
+
+fig, ax = plt.subplots(2,2, figsize=(6, 5))
 
 
 for nn in range(len(file_list)):
@@ -121,7 +128,7 @@ for nn in range(len(file_list)):
     mean_nor_SOP_V[nn] = nor_SOP_V.mean()
     err_nor_SOP_V[nn] = nor_SOP_V.std()
 
-    nwindow = 10
+    nwindow = 20
     rS1 = S1.rolling(window=nwindow)
     rS2 = S2.rolling(window=nwindow)
     rS3 = S3.rolling(window=nwindow)
@@ -141,24 +148,26 @@ for nn in range(len(file_list)):
     new_diff_azi_V[nn] = new_azi_V.max() - new_azi_V.min()
     new_diff_ellip_V[nn] = new_ellip_V.max() - new_ellip_V.min()
 
-    ax[0].plot(time, S0)
+    ax[0,0].plot(time, S0)
     # ax[0].set(xlim=(0, 0.5), ylim=(-1, 1))
-    ax[1].plot(time, S1)
+    ax[0,0].set(xlim=(0, 0.2))
+    ax[0,1].plot(time, new_S1)
+    ax[0, 1].set(xlim=(0, 0.2))
     # ax[1].set(xlim=(0, 0.5), ylim=(-1, 1))
-    ax[2].plot(time, S2)
+    ax[1,0].plot(time, new_S2)
+    ax[1, 0].set(xlim=(0, 0.2))
     # ax[2].set(xlim=(0, 0.5), ylim=(-1, 1))
-    ax[3].plot(time, S3)
+    ax[1,1].plot(time, new_S3)
+    ax[1, 1].set(xlim=(0, 0.2))
     # ax[3].set(xlim=(0, 0.5), ylim=(-1, 1))
 
-    ax[0].plot(time, S0)
-    ax[1].plot(time, new_S1)
-    ax[2].plot(time, new_S2)
-    ax[3].plot(time, new_S3)
+    #ax[0].plot(time, S0)
+    #ax[1].plot(time, new_S1)
+    #ax[2].plot(time, new_S2)
+    #ax[3].plot(time, new_S3)
 
-
-
-ax[3].set_xlabel("Time (s)")
-ax[3].set_ylabel("Stokes parameter")
+#ax[3].set_xlabel("Time (s)")
+#ax[3].set_ylabel("Stokes parameter")
 #ax[3].set(xlim=(0, 2000), ylim=(0,1))
 
 fig3, ax3 = plt.subplots(figsize=(5, 4))
@@ -171,11 +180,11 @@ ax3.plot(frequency, diff_ellip_V * 180 / pi, label="ellipticity (deg)", marker="
 ax3.plot(frequency, sqrt(diff_azi_V ** 2 + diff_ellip_V ** 2) * 180 / pi, label="sqrt(azimuth^2 + ellipticity^2)",
          marker="^")
 
-ax3.plot(frequency, new_diff_azi_V * 180 / pi, label="azimuth (deg)2", marker="x")
-ax3.plot(frequency, new_diff_ellip_V * 180 / pi, label="ellipticity (deg)2", marker="x")
+#ax3.plot(frequency, new_diff_azi_V * 180 / pi, label="azimuth (deg)2", marker="x")
+#ax3.plot(frequency, new_diff_ellip_V * 180 / pi, label="ellipticity (deg)2", marker="x")
 # label=r'$\theta$'
-ax3.plot(frequency, sqrt(new_diff_azi_V ** 2 + new_diff_ellip_V ** 2) * 180 / pi, label="sqrt(azimuth^2 + ellipticity^2)2",
-         marker="x")
+#ax3.plot(frequency, sqrt(new_diff_azi_V ** 2 + new_diff_ellip_V ** 2) * 180 / pi, label="sqrt(azimuth^2 + ellipticity^2)2",
+#         marker="x")
 
 #label=r'sqrt(\phi + \theta)')
 ax3.legend(loc="upper right")
@@ -217,15 +226,15 @@ ax3.set(xlim=(9, 31), ylim=(-16.9, -15.8))
 
 fig3, ax3 = plt.subplots(figsize=(5, 4))
 plt.subplots_adjust(left=0.157, bottom=0.11, right=0.955, top=0.886, wspace=0.2, hspace=0.2)
-
+ax3.scatter(frequency, mean_nor_SOP_V * 180 / pi, s=10, c='black', label="mean value", marker='o', zorder=100)
 ax3.errorbar(frequency, mean_nor_SOP_V * 180 / pi, yerr=0.25,
-             label="Device's uncertainty", ecolor='lightgray', elinewidth=3, capsize=6)
+             label="uncertainty of device", ls = "None", ecolor='lightgray', elinewidth=3, capsize=6)
 ax3.errorbar(frequency, mean_nor_SOP_V * 180 / pi, yerr=err_nor_SOP_V*180/pi,
-             label="STD", fmt='o', ecolor='g', capsize=4)
+             label="standard deviation", ls="None", ecolor='g', capsize=4, zorder = 5)
 ax3.legend(loc="upper right")
 ax3.xaxis.set_major_locator(MaxNLocator(5))
 ax3.set_xlabel("Frequency (Hz)")
-ax3.set_ylabel("Normalized SOP uncertainty (deg)")
+ax3.set_ylabel("Normalized SOP (deg)")
 
 plt.show()
 

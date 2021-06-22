@@ -90,21 +90,21 @@ for nn in range(len(file_list)):
     y0[nn] = (max(signal1) - min(signal1))*10
 
 # Acceleration calculation
-fig, ax = plt.subplots(figsize=(6, 3))
-#plt.subplots_adjust(left=0.145, bottom=0.07, right=0.96, top=0.967, wspace=0.2, hspace=0)
+fig, ax = plt.subplots(2, figsize=(6, 3))
+plt.subplots_adjust(left=0.138, bottom=0.13, right=0.926, top=0.945, wspace=0.2, hspace=0.19)
 plt.subplots_adjust(bottom=0.155)
-#ax.set(xlim=(11.8, 13.7), ylim=(10 ** (-13.7), 10 ** (-12.5)))
-#ax.legend(loc="upper left")
-#plt.rc('text', usetex=True)
-ax.plot(x0, y0, lw='1', label="ff")
-ax.set_xlabel('Applied voltage (Vp-p)')
-ax.set_ylabel('Acceleration (g)')
 
-fig2, ax2 = plt.subplots(figsize=(6, 3))
-plt.subplots_adjust(bottom=0.155)
-ax2.plot(x0, y0/(20**2)*1000, lw='1', label="ff")
-ax2.set_xlabel('Applied voltage (Vp-p)')
-ax2.set_ylabel('Displacement (mm)')
+ax[0].plot(x0, y0, lw='1', label="ff", marker='o')
+ax[0].set_xlabel('Applied voltage. (Vp-p)')
+ax[0].set_ylabel('Acc. (g)')
+ax[0].set(xlim=(0, 4.5), ylim=(0, 12))
+
+ax[1].plot(x0, y0/(20**2)*1000, lw='1', label="ff", marker='o')
+ax[1].set_xlabel('Applied voltage (Vp-p)')
+ax[1].set_ylabel('Displacement (mm)')
+ax[1].set(xlim=(0, 4.5), ylim=(0, 30))
+fig.align_ylabels()
+
 
 fig, ax = plt.subplots(2, figsize=(6, 5))
 plt.subplots_adjust(left=0.145, bottom=0.117, right=0.76, top=0.967, wspace=0.2, hspace=0.288)
