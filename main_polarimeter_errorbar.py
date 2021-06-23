@@ -65,8 +65,8 @@ def switch_osfolder():
 
 switch_osfolder()
 
-#foldername = 'Const_acc_Polarimeter'
-foldername = 'Const_disp_Polarimeter2'
+foldername = 'Const_acc_Polarimeter'
+#foldername = 'Const_disp_Polarimeter2'
 
 path_dir = os.getcwd() + '//Data_Vib_1_(Oscillo_Polarimeter)//' + foldername + '_edited'
 file_list = os.listdir(path_dir)

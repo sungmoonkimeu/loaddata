@@ -61,12 +61,14 @@ def switch_osfolder():
 
 switch_osfolder()
 
-foldername = 'Const_disp_Polarimeter2'
+foldername = 'Const_appl_vol_Polarimeter'
 
 path_dir = os.getcwd() + '//Data_Vib_1_(Oscillo_Polarimeter)//' + foldername + '_edited'
 file_list = os.listdir(path_dir)
 
 fig, ax = plt.subplots(4, figsize=(6, 5))
+plt.subplots_adjust(left=0.14, bottom=0.112, right=0.93, top=0.93, wspace=0.2, hspace=0)
+
 Ev = Jones_vector('Output_J')
 Sv = create_Stokes('Output_S')
 Out = create_Stokes('Output_S2')
@@ -80,7 +82,7 @@ new_diff_azi_V = np.ones(len(file_list))
 new_diff_ellip_V = np.ones(len(file_list))
 
 
-for nn in range(len(file_list)-20):
+for nn in range(len(file_list)):
     fn2 = path_dir + "//" + file_list[nn]
     count = 0
     cstm_color = ['c', 'm', 'y', 'k', 'r']
@@ -125,14 +127,16 @@ for nn in range(len(file_list)-20):
     new_diff_azi_V[nn] = new_azi_V.max() - new_azi_V.min()
     new_diff_ellip_V[nn] = new_ellip_V.max() - new_ellip_V.min()
 
-    ax[0].plot(time, S0)
-    # ax[0].set(xlim=(0, 0.5), ylim=(-1, 1))
-    ax[1].plot(time, S1)
-    # ax[1].set(xlim=(0, 0.5), ylim=(-1, 1))
-    ax[2].plot(time, S2)
-    # ax[2].set(xlim=(0, 0.5), ylim=(-1, 1))
-    ax[3].plot(time, S3)
-    # ax[3].set(xlim=(0, 0.5), ylim=(-1, 1))
+    if nn == 0 or nn == len(file_list)-1:
+        ax[0].plot(time, S0)
+        # ax[0].set(xlim=(0, 0.5), ylim=(-1, 1))
+        ax[1].plot(time, S1)
+        # ax[1].set(xlim=(0, 0.5), ylim=(-1, 1))
+        ax[2].plot(time, S2)
+        # ax[2].set(xlim=(0, 0.5), ylim=(-1, 1))
+        ax[3].plot(time, S3)
+        # ax[3].set(xlim=(0, 0.5), ylim=(-1, 1))
+
 
     #ax[0].plot(time, S0)
     #ax[1].plot(time, new_S1)
@@ -153,8 +157,13 @@ for nn in range(len(file_list)-20):
         count = count+1
     '''
 
+
+for nn in range(len(ax)):
+    ax[nn].set_ylabel("S"+str(nn))
 ax[3].set_xlabel("Time (s)")
-ax[3].set_ylabel("Stokes parameter")
+fig.align_ylabels()
+
+
 #ax[3].set(xlim=(0, 2000), ylim=(0,1))
 
 fig3, ax3 = plt.subplots(figsize=(5, 4))
@@ -166,12 +175,13 @@ ax3.plot(frequency, diff_ellip_V * 180 / pi, label="ellipticity (deg)", marker="
 # label=r'$\theta$'
 ax3.plot(frequency, sqrt(diff_azi_V ** 2 + diff_ellip_V ** 2) * 180 / pi, label="sqrt(azimuth^2 + ellipticity^2)",
          marker="^")
+ax3.xaxis.set_major_locator(MaxNLocator(5))
 
-ax3.plot(frequency, new_diff_azi_V * 180 / pi, label="azimuth (deg)2", marker="x")
-ax3.plot(frequency, new_diff_ellip_V * 180 / pi, label="ellipticity (deg)2", marker="x")
+#ax3.plot(frequency, new_diff_azi_V * 180 / pi, label="azimuth (deg)2", marker="x")
+#ax3.plot(frequency, new_diff_ellip_V * 180 / pi, label="ellipticity (deg)2", marker="x")
 # label=r'$\theta$'
-ax3.plot(frequency, sqrt(new_diff_azi_V ** 2 + new_diff_ellip_V ** 2) * 180 / pi, label="sqrt(azimuth^2 + ellipticity^2)2",
-         marker="x")
+#ax3.plot(frequency, sqrt(new_diff_azi_V ** 2 + new_diff_ellip_V ** 2) * 180 / pi, label="sqrt(azimuth^2 + ellipticity^2)2",
+#         marker="x")
 
 #label=r'sqrt(\phi + \theta)')
 ax3.legend(loc="upper right")
