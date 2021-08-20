@@ -12,7 +12,7 @@ from numpy import cos,pi,mat,concatenate,ones,zeros,arctan,arcsin,tan,sin,arange
 from numpy.linalg import norm
 import matplotlib.pyplot as plt
 LB0    = 0.32                #beat lenth
-SP    = 0.075                #spun period [m / 1 turn]
+SP    = 0.08               #spun period [m / 1 turn]
 L     = 0.7#0.85#0.45      #length of the fiber
 A_P   = 45*(pi/180)#pi/2    #polarization angle
 STR   = 2*pi/SP             #spin rate  [rad / m]
@@ -50,11 +50,11 @@ V_dz     = dz*ones(len(V_L)) #vector of element lengths
 BW = 20
 #PB  = zeros([len(delta_wl), len(V_L)])
 maximum_ER = 8  # maximum extinction ratio[db] noise level is -8 dBm
-applied_twist = arange(9.5, 9.7, 0.1)
+applied_twist = arange(9, 10, 0.1)
 PB  = zeros([len(applied_twist), len(V_L)])
 PB2 = zeros([len(applied_twist), len(V_L)])
 twist0 = L/SP
-avg_length = 100  # 50 mm average
+avg_length = 10  # 50 mm average
 avg_number = int(L/dz*avg_length/1000)  # 10 mm average number
 for j, twist in enumerate(applied_twist):
     LB = LB0
