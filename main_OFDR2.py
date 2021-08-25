@@ -99,7 +99,6 @@ for nn in a:
     # ax[count].set(xlim=(3.5, 4.6), ylim=(-134, -116))
     ax[count].set(xlim=(10.9, 12.0), ylim=(-140, -125))
 
-    ax2.plot(length, signal, lw='1', label=str(nn)+"turn")
     ax2.plot(length, signal, lw='1', label=str(nn) + "turn")
     ax2.legend(loc="upper left")
     # ax2.set(xlim=(3.5, 4.6), ylim=(-134, -116))
@@ -390,5 +389,54 @@ ax[-1].set_xlabel('Length (m)')
 ax[int(len(ax)/2)].set_ylabel('Power (dB/mm)')
 ax2.set_xlabel('Length (m)')
 ax2.set_ylabel('Power (dB/mm)')
+
+
+# FFT    ddddddddddddddddddddddddd
+# ddddddddddddddddddddddddddddddddd
+fig2, ax2 = plt.subplots(figsize=(6, 5))
+#fn2 = path_dir + "//lin_biref_base_mes_Upper_edited.txt"
+fn2 = path_dir + "//2t_ac_Upper_edited.txt"
+
+data = pd.read_table(fn2)
+time = data['Time (ns)']
+signal = data['Amplitude (dB)']
+length = time / 10
+ax2.plot(length, signal, lw='1', label="0 turn")
+ax2.set(xlim=(10.9, 12.0), ylim=(-140, -125))
+ax2.legend(loc="upper left")
+
+ax2.plot(length, signal, lw='1', label="0 turn")
+ax2.set(xlim=(10.9, 12.0), ylim=(-140, -125))
+
+xi = 11.04
+xf = 11.6
+
+data = np.array([])
+for nn, x in enumerate(length):
+    if xi < x < xf:
+        data = np.append(data, 10**(signal[nn]/10))
+data = data - data.mean()
+fig2, ax2 = plt.subplots(figsize=(6,5))
+ax2.plot(data)
+
+fig2, ax2 = plt.subplots(figsize=(6,5))
+fs = 1/0.002
+#fs = length[2]-length[1]
+fdata = np.fft.fft(data)
+xdata = np.linspace(0, fs, len(fdata))
+ax2.plot(xdata, abs(fdata))
+'''
+fs = 1000
+t = np.arange(0, 10, 1/fs)
+sig = np.sin(2*np.pi * 100 * t)
+sp = np.fft.fft(sig)
+trange = np.linspace(0, fs, len(t))
+
+fig, ax = plt.subplots(3, figsize=(6, 5))
+ax[0].plot(trange, np.abs(sp)/len(sig)*2, label="FFT")
+ax[1].plot(trange, (np.abs(sp)**2)*2*np.pi/(fs*len(sig)), label="PSD")
+
+'''
+
 
 plt.show()
