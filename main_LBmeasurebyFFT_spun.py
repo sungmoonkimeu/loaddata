@@ -56,9 +56,9 @@ path2 = 'C:/Users/Iter/PycharmProjects/loaddata'
 path1 = 'C:/Users/SMK/PycharmProjects/loaddata'
 switch_osfolder(path1, path2)
 
-#foldername = 'Data_1308//spunfiber//1st'
+foldername = 'Data_1308//spunfiber//1st'
 #foldername = 'Data_1308//withouthspun'
-foldername = 'Data_1308//spunfiber//2nd'
+#foldername = 'Data_1308//spunfiber//2nd'
 
 path_dir = os.getcwd() + '//Data_Twsiting_(OFDR)//' + foldername + '_edited'
 file_list = os.listdir(path_dir)
@@ -75,7 +75,7 @@ def plotsignal(length, signal, ax, xmin, xmax, ymin, ymax, legend=None):
 
 list_fn = []
 legend = []
-
+'''
 a = arange(9, 16, 1)
 for nn in a:
     if 8 < nn < 12:
@@ -104,7 +104,7 @@ for nn in a:
         fn = path_dir + "//" + str(nn) + "t_Upper_edited.txt"
         list_fn = np.append(list_fn, fn)
         legend = np.append(legend, str(nn) + " turn")
-'''
+
 fig, ax = plt.subplots(len(list_fn), figsize=(6, 5))
 for nn, fn in enumerate(list_fn):
     data = pd.read_table(fn)

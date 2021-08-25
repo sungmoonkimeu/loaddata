@@ -13,15 +13,15 @@ from numpy.linalg import norm
 import matplotlib.pyplot as plt
 LB0    = 0.32                #beat lenth
 SP    = 0.08               #spun period [m / 1 turn]
-L     = 0.7#0.85#0.45      #length of the fiber
+L     = 3#0.85#0.45      #length of the fiber
 A_P   = 45*(pi/180)#pi/2    #polarization angle
 STR   = 2*pi/SP             #spin rate  [rad / m]
 
 #V_in  = mat([[0.707], [-0.707*1j]])#mat([[cos(A_P)],[sin(A_P)]])        #Normalized input Jones vector
-th    = 43 * pi/180
+th    = 45 * pi/180
 #V_in  = mat([[0.707], [0.707]])        #Normalized input Jones vector
 
-V_in  = mat([[cos(th)], [sin(th)]])        #Normalized input Jones vector
+V_in  = mat([[cos(th)], [sin(th)*1j]])        #Normalized input Jones vector
 M_P   = mat([[(cos(A_P))**2, (sin(A_P)*cos(A_P))],
             [(sin(A_P)*cos(A_P)), (sin(A_P))**2]])   #polarizer matrix
 
@@ -49,8 +49,8 @@ V_L      = append(arange(dz,L,dz),L) #length vector
 V_dz     = dz*ones(len(V_L)) #vector of element lengths
 BW = 20
 #PB  = zeros([len(delta_wl), len(V_L)])
-maximum_ER = 8  # maximum extinction ratio[db] noise level is -8 dBm
-applied_twist = arange(9, 10, 0.1)
+maximum_ER = 10  # maximum extinction ratio[db] noise level is -8 dBm
+applied_twist = arange(21, 60, 2.5)
 PB  = zeros([len(applied_twist), len(V_L)])
 PB2 = zeros([len(applied_twist), len(V_L)])
 twist0 = L/SP
@@ -129,7 +129,7 @@ for j, twist in enumerate(applied_twist):
         elif i < avg_number:
             PB2[j, i] = np.average(PB[j, 0:i])
         else:
-            PB2[j,i] = np.average(PB[j, i-avg_number:i])
+            PB2[j, i] = np.average(PB[j, i-avg_number:i])
 
 
     #plt.plot(V_L, 10 * np.log10(PB[j]), label='80% compensation')  # 10*np.log10(PB)
@@ -144,8 +144,38 @@ for j in range(len(applied_twist)):
              label=str(applied_twist[j]) + "turns, " +  str(int((applied_twist[j] - twist0)/twist0*100)) + '% compensation')#10*np.log10(PB)
     plt.legend()
 
-'''
-fig, ax = plt.subplots(figsize=(6, 3))
-plt.plot(V_L, 10*np.log10(PB_avg), label='80% compensation')#10*np.log10(PB)
-'''
+
+## FFT
+
+fig, ax = plt.subplots(len(applied_twist), figsize=(6, 5))
+fig2, ax2 = plt.subplots(figsize=(6, 5))
+#fig3, ax3 = plt.subplots(len(applied_twist), figsize=(6, 5))
+
+maxdatay = np.array([])
+maxdatax = np.array([])
+#PB2 = zeros([len(applied_twist), len(V_L)])
+
+for nn, fn in enumerate(PB2):
+    data = PB2[nn]
+    length = V_L
+
+    xmin = 3.8
+    xmax = 4.5
+    ymin = -134
+    ymax = -116
+    data2 = 10**(data/10)
+    data2 = data2 - data2.mean()
+    fs = 1 / (length[2]-length[1])
+
+    fdata = np.fft.fft(data2)/len(data2)
+    xdata = np.linspace(0, fs, len(fdata))
+    ax[nn].plot(xdata, 2*abs(fdata), lw='1', label=str(nn))
+    ax[nn].set(xlim=(0, 50), ylim=(0, 0.2))
+
+    maxdatax = np.append(maxdatax, nn)
+    maxdatay = np.append(maxdatay, 2/xdata[np.argmax(abs(fdata[0:100]))])
+    print(np.argmax(abs(fdata)))
+
+ax2.plot(maxdatax, maxdatay)
+
 plt.show()
