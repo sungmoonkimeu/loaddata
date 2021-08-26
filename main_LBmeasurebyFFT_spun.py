@@ -75,8 +75,9 @@ def plotsignal(length, signal, ax, xmin, xmax, ymin, ymax, legend=None):
 
 list_fn = []
 legend = []
-'''
-a = arange(9, 16, 1)
+
+# 1st measurement
+a = arange(1, 16, 1)
 for nn in a:
     if 8 < nn < 12:
         fn = path_dir + "//" + str(nn) + "t_Upper_edited.txt"
@@ -104,7 +105,7 @@ for nn in a:
         fn = path_dir + "//" + str(nn) + "t_Upper_edited.txt"
         list_fn = np.append(list_fn, fn)
         legend = np.append(legend, str(nn) + " turn")
-
+'''
 fig, ax = plt.subplots(len(list_fn), figsize=(6, 5))
 for nn, fn in enumerate(list_fn):
     data = pd.read_table(fn)
@@ -161,18 +162,22 @@ for nn, fn in enumerate(list_fn):
     fdata = np.fft.fft(data2)/len(data2)
     xdata = np.linspace(0, fs, len(fdata))
     ax[nn].plot(xdata, 2*abs(fdata), lw='1', label=legend[nn])
-    ax[nn].set(xlim=(0, 50), ylim=(0, 5e-13))
+    ax[nn].set(xlim=(0, 30), ylim=(0, 5e-13))
+    ax[nn].legend(loc="upper right")
 
 
     f, pxx_den = welch(data2, fs)
     ax3[nn].plot(f, pxx_den, lw='1', label=legend[nn])
     #ax3[nn].psd(data2, int(len(data2)/1), fs, label=legend[nn])
     ax3[nn].legend(loc="upper right")
-    #ax3[nn].set(xlim=(0, 50), ylim=(0, 4e-26))
+    ax3[nn].set(xlim=(0, 30), ylim=(0, 4e-26))
 
     maxdatax = np.append(maxdatax, nn)
     maxdatay = np.append(maxdatay, 2/xdata[np.argmax(abs(fdata[0:100]))])
     print(np.argmax(abs(fdata)))
+
+ax[-1].set_xlabel('Frequency (1/m)')
+ax[int(len(ax)/2)].set_ylabel('FFT')
 
 ax2.plot(maxdatax, maxdatay)
 

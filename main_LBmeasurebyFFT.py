@@ -150,6 +150,6 @@ for nn, fn in enumerate(list_fn):
 
     ax2.plot(xdata, 2*abs(fdata), label=legend[nn])
     ax2.legend(loc="upper right")
-    ax2.set(xlim=(0, 20), ylim=(0, 2e-14))
+    ax2.set(xlim=(0, 30), ylim=(0, 2e-14))
 
 plt.show()

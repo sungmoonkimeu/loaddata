@@ -13,7 +13,7 @@ from numpy.linalg import norm
 import matplotlib.pyplot as plt
 LB0    = 0.32                #beat lenth
 SP    = 0.08               #spun period [m / 1 turn]
-L     = 3#0.85#0.45      #length of the fiber
+L     = 0.8 #0.85#0.45      #length of the fiber
 A_P   = 45*(pi/180)#pi/2    #polarization angle
 STR   = 2*pi/SP             #spin rate  [rad / m]
 
@@ -50,7 +50,7 @@ V_dz     = dz*ones(len(V_L)) #vector of element lengths
 BW = 20
 #PB  = zeros([len(delta_wl), len(V_L)])
 maximum_ER = 10  # maximum extinction ratio[db] noise level is -8 dBm
-applied_twist = arange(21, 60, 2.5)
+applied_twist = arange(2, 18, 1)
 PB  = zeros([len(applied_twist), len(V_L)])
 PB2 = zeros([len(applied_twist), len(V_L)])
 twist0 = L/SP
@@ -169,12 +169,17 @@ for nn, fn in enumerate(PB2):
 
     fdata = np.fft.fft(data2)/len(data2)
     xdata = np.linspace(0, fs, len(fdata))
-    ax[nn].plot(xdata, 2*abs(fdata), lw='1', label=str(nn))
-    ax[nn].set(xlim=(0, 50), ylim=(0, 0.2))
+    ax[nn].plot(xdata, 2*abs(fdata), lw='1',
+                label=str(applied_twist[nn]) + "turns, ")
+    ax[nn].set(xlim=(0, 30), ylim=(0, 0.2))
+    ax[nn].legend(loc="upper right")
 
     maxdatax = np.append(maxdatax, nn)
     maxdatay = np.append(maxdatay, 2/xdata[np.argmax(abs(fdata[0:100]))])
     print(np.argmax(abs(fdata)))
+
+ax[-1].set_xlabel('Frequency (1/m)')
+ax[int(len(ax)/2)].set_ylabel('FFT')
 
 ax2.plot(maxdatax, maxdatay)
 
