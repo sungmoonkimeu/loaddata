@@ -178,9 +178,17 @@ for nn, fn in enumerate(PB2):
     maxdatay = np.append(maxdatay, 2/xdata[np.argmax(abs(fdata[0:100]))])
     print(np.argmax(abs(fdata)))
 
+    if nn == 5:
+        figx, axx = plt.subplots()
+        axx.plot(xdata, 2 * abs(fdata))
+        print(xdata[0:20])
+        print(2 * abs(fdata[0:20]))
+
 ax[-1].set_xlabel('Frequency (1/m)')
 ax[int(len(ax)/2)].set_ylabel('FFT')
-
 ax2.plot(maxdatax, maxdatay)
+
+
+
 
 plt.show()
