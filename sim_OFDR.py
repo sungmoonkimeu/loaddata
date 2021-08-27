@@ -21,7 +21,7 @@ STR   = 2*pi/SP             #spin rate  [rad / m]
 th    = 45 * pi/180
 #V_in  = mat([[0.707], [0.707]])        #Normalized input Jones vector
 
-V_in  = mat([[cos(th)], [sin(th)*1j]])        #Normalized input Jones vector
+V_in  = mat([[cos(th)], [sin(th)*np.exp(1j*30*pi/180)]])        #Normalized input Jones vector
 M_P   = mat([[(cos(A_P))**2, (sin(A_P)*cos(A_P))],
             [(sin(A_P)*cos(A_P)), (sin(A_P))**2]])   #polarizer matrix
 
