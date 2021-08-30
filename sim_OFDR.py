@@ -11,6 +11,8 @@ import numpy as np
 from numpy import cos,pi,mat,concatenate,ones,zeros,arctan,arcsin,tan,sin,arange,sqrt,append
 from numpy.linalg import norm
 import matplotlib.pyplot as plt
+from scipy.signal import find_peaks
+
 LB0    = 0.32                #beat lenth
 SP    = 0.08               #spun period [m / 1 turn]
 L     = 0.8 #0.85#0.45      #length of the fiber
@@ -50,7 +52,7 @@ V_dz     = dz*ones(len(V_L)) #vector of element lengths
 BW = 20
 #PB  = zeros([len(delta_wl), len(V_L)])
 maximum_ER = 10  # maximum extinction ratio[db] noise level is -8 dBm
-applied_twist = arange(2, 18, 1)
+applied_twist = arange(6, 18, 1)
 PB  = zeros([len(applied_twist), len(V_L)])
 PB2 = zeros([len(applied_twist), len(V_L)])
 twist0 = L/SP
@@ -151,8 +153,10 @@ fig, ax = plt.subplots(len(applied_twist), figsize=(6, 5))
 fig2, ax2 = plt.subplots(figsize=(6, 5))
 #fig3, ax3 = plt.subplots(len(applied_twist), figsize=(6, 5))
 
-maxdatay = np.array([])
-maxdatax = np.array([])
+maxdatay1 = np.array([])
+maxdatay2 = np.array([])
+maxdatax1 = np.array([])
+maxdatax2 = np.array([])
 #PB2 = zeros([len(applied_twist), len(V_L)])
 
 for nn, fn in enumerate(PB2):
@@ -165,30 +169,50 @@ for nn, fn in enumerate(PB2):
     ymax = -116
     data2 = 10**(data/10)
     data2 = data2 - data2.mean()
-    fs = 1 / (length[2]-length[1])
+    #fs = 1 / (length[2]-length[1])
+    fs = 10000
 
     fdata = np.fft.fft(data2)/len(data2)
-    xdata = np.linspace(0, fs, len(fdata))
+    #xdata = np.linspace(0, fs, len(fdata))
+    xdata = np.fft.fftfreq(len(fdata))*fs
+
     ax[nn].plot(xdata, 2*abs(fdata), lw='1',
                 label=str(applied_twist[nn]) + "turns, ")
     ax[nn].set(xlim=(0, 30), ylim=(0, 0.2))
     ax[nn].legend(loc="upper right")
 
-    maxdatax = np.append(maxdatax, nn)
-    maxdatay = np.append(maxdatay, 2/xdata[np.argmax(abs(fdata[0:100]))])
-    print(np.argmax(abs(fdata)))
+    indexes, _ = find_peaks(abs(fdata[0:200]), distance=1, height=0.005)
+    print(indexes)
+    print(indexes.size)
+    xval = ((1-g)*2*pi/L*applied_twist[nn] - STR)/STR
+    if indexes.size == 1 and indexes[0] < 5:
+        maxdatay2 = np.append(maxdatay2, 2 / xdata[indexes[0]])
+        maxdatax2 = np.append(maxdatax2, xval)
+    elif indexes.size == 1 and indexes[0] > 5:
+        maxdatay1 = np.append(maxdatay1, 1 / xdata[indexes[0]])
+        maxdatax1 = np.append(maxdatax1, xval)
+    elif indexes.size > 1:
+        maxdatay1 = np.append(maxdatay1, 1 / xdata[indexes[0]])
+        maxdatax1 = np.append(maxdatax1, xval)
+        maxdatay2 = np.append(maxdatay2, 2 / xdata[indexes[1]])
+        maxdatax2 = np.append(maxdatax2, xval)
 
-    if nn == 5:
-        figx, axx = plt.subplots()
-        axx.plot(xdata, 2 * abs(fdata))
-        print(xdata[0:20])
-        print(2 * abs(fdata[0:20]))
+    #if nn == 5:
+    #    figx, axx = plt.subplots()
+    #    axx.plot(xdata, 2 * abs(fdata))
+        #print(xdata[0:20])
+        #print(2 * abs(fdata[0:20]))
 
 ax[-1].set_xlabel('Frequency (1/m)')
 ax[int(len(ax)/2)].set_ylabel('FFT')
-ax2.plot(maxdatax, maxdatay)
+ax2.scatter(maxdatax1, maxdatay1)
+ax2.scatter(maxdatax2, maxdatay2)
+print(maxdatay1)
+print(maxdatay2)
 
+STR3 = np.arange(-1, 1.05, 0.01)
+Lb_a = 2*pi/sqrt((2*pi/LB0)**2 + (STR3*2*STR)**2)
 
-
+ax2.plot(STR3, Lb_a)
 
 plt.show()
