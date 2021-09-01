@@ -61,9 +61,10 @@ def switch_osfolder():
 
 switch_osfolder()
 
-foldername = 'Const_acc_Polarimeter'
+#foldername = 'Const_acc_Polarimeter'
+foldername = '010921_HIBI_Const_Disp_Polarimeter/RHC'
 
-path_dir = os.getcwd() + '//Data_Vib_0_(Polarimeter)//' + foldername + '_edited'
+path_dir = os.getcwd() + '//Data_Vib_1_(Oscillo_Polarimeter)//' + foldername + '_edited'
 file_list = os.listdir(path_dir)
 
 fig, ax = plt.subplots(4, figsize=(6, 5))
@@ -142,7 +143,7 @@ ax3.plot(frequency, sqrt(diff_azi_V ** 2 + diff_ellip_V ** 2) * 180 / pi, label=
 ax3.legend(loc="upper right")
 ax3.set_xlabel("Vibration frequency (Hz)")
 ax3.set_ylabel("Angle change (deg)")
-ax3.set(xlim=(10, 30), ylim=(0, 1.7))
+ax3.set(xlim=(10, 30), ylim=(0, 5))
 plt.subplots_adjust(left=0.125, bottom=0.14, right=0.9, top=0.9, wspace=0.2, hspace=0.2)
 
 

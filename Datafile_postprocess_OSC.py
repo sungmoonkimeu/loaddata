@@ -4,7 +4,8 @@
 import string
 import os
 
-path_dir = os.getcwd() + '//Data_Vib_1_(Oscillo_Polarimeter)//Const_acc_OSC2'
+#path_dir = os.getcwd() + '//Data_Vib_1_(Oscillo_Polarimeter)//Const_acc_OSC2'
+path_dir = os.getcwd() + '//Data_Vib_1_(Oscillo_Polarimeter)//010921 Vibration in second part_OSC//3.5V input'
 file_list = os.listdir(path_dir)
 
 
