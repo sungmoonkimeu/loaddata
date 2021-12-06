@@ -6,9 +6,11 @@ import string
 import os
 
 #foldername = 'Const_Freq_Polarimeter'
-foldername = '/010921_HIBI_Const_Disp_Polarimeter/RHC'
+#foldername = '/010921_HIBI_Const_Disp_Polarimeter/RHC'
+foldername = '/SCK'
 
-path_dir = os.getcwd() + '/Data_Vib_1_(Oscillo_Polarimeter)/' + foldername
+#path_dir = os.getcwd() + '/Data_Vib_1_(Oscillo_Polarimeter)/' + foldername
+path_dir = os.getcwd() + foldername
 file_list = os.listdir(path_dir)
 
 def createfolder(directory):
@@ -28,7 +30,7 @@ for nn in range(len(file_list)):
     # Removing file header
     # Data starting from n th line
 
-    databeginning = 4   # 4 is normal, sometimes it should be changed to 5
+    databeginning = 5   # 4 is normal, sometimes it should be changed to 5
     fn2 = path_dir + '_edited//' + tmp[0] + '_edited.txt'
     with open(fn) as fp:
         for i, line in enumerate(fp):
