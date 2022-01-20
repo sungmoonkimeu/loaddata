@@ -61,9 +61,9 @@ def switch_osfolder():
 
 switch_osfolder()
 
+#foldername = 'Const_acc_Polarimeter'
+foldername = '010921_HIBI_Const_Disp_Polarimeter/RHC'
 #foldername = 'Const_disp_Polarimeter2'
-#foldername = '010921_HIBI_Const_Disp_Polarimeter/LP45'
-foldername = 'Const_disp_Polarimeter2'
 
 path_dir = os.getcwd() + '//Data_Vib_1_(Oscillo_Polarimeter)//' + foldername + '_edited'
 file_list = os.listdir(path_dir)
@@ -108,6 +108,7 @@ for nn in range(len(file_list)):
     diff_ellip_V[nn] = ellip_V.max() - ellip_V.min()
 
     nwindow = 10
+
     rS1 = S1.rolling(window=nwindow)
     rS2 = S2.rolling(window=nwindow)
     rS3 = S3.rolling(window=nwindow)

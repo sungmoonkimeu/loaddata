@@ -42,8 +42,8 @@ class OOMFormatter(matplotlib.ticker.ScalarFormatter):
 ## CHOOSE A FOLDER THAT CONTAINS DATA
 ## CHOOSE A FOLDER THAT CONTAINS DATA
 
-#foldername = 'Const_disp_OSC2'
-foldername = '010921 Vibration in second part_OSC//3.5V input'
+foldername = 'Const_disp_OSC2'
+#foldername = '010921 Vibration in second part_OSC//3.5V input'
 
 ## CHOOSE A FOLDER THAT CONTAINS DATA
 ## CHOOSE A FOLDER THAT CONTAINS DATA
