@@ -61,13 +61,17 @@ def switch_osfolder():
 
 switch_osfolder()
 
-#foldername = 'Const_acc_Polarimeter'
-foldername = '010921_HIBI_Const_Disp_Polarimeter/RHC'
+#foldername = 'Const_appl_vol_Polarimeter'
+#foldername = '0_RHC_losen'
+foldername = '1_RHC_Fasten'
 
-path_dir = os.getcwd() + '//Data_Vib_1_(Oscillo_Polarimeter)//' + foldername + '_edited'
+
+path_dir = os.getcwd() + '//Data_Vib_2_(Hibi_losen_fasten)//' + foldername + '_edited'
 file_list = os.listdir(path_dir)
 
 fig, ax = plt.subplots(4, figsize=(6, 5))
+plt.subplots_adjust(left=0.14, bottom=0.112, right=0.93, top=0.93, wspace=0.2, hspace=0)
+
 Ev = Jones_vector('Output_J')
 Sv = create_Stokes('Output_S')
 Out = create_Stokes('Output_S2')
@@ -77,6 +81,9 @@ frequency = arange(10, 31, 1)
 
 diff_azi_V = np.ones(len(file_list))
 diff_ellip_V = np.ones(len(file_list))
+new_diff_azi_V = np.ones(len(file_list))
+new_diff_ellip_V = np.ones(len(file_list))
+
 
 for nn in range(len(file_list)):
     fn2 = path_dir + "//" + file_list[nn]
@@ -92,10 +99,10 @@ for nn in range(len(file_list)):
     S3 = pd.to_numeric(data['S3'])
 
     Sn = np.ones((len(S0)))
-    # SS = np.vstack((S0, S1, S2, S3))
     SS = np.vstack((Sn, S1, S2, S3))
-
     Out = Sv.from_matrix(SS.T)
+
+
     draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 4])
 
     azi_V = Out.parameters.azimuth()
@@ -103,18 +110,42 @@ for nn in range(len(file_list)):
     diff_azi_V[nn] = azi_V.max() - azi_V.min()
     diff_ellip_V[nn] = ellip_V.max() - ellip_V.min()
 
-    ax[0].plot(time, S0, label="applied voltage")
-    ax[0].set(xlim=(0, 0.5))
-    # ax[0].set(xlim=(0, 0.5), ylim=(-1, 1))
-    ax[1].plot(time, S1, label="applied voltage")
-    ax[1].set(xlim=(0, 0.5))
-    # ax[1].set(xlim=(0, 0.5), ylim=(-1, 1))
-    ax[2].plot(time, S2, label="applied voltage")
-    ax[2].set(xlim=(0, 0.5))
-    # ax[2].set(xlim=(0, 0.5), ylim=(-1, 1))
-    ax[3].plot(time, S3, label="applied voltage")
-    ax[3].set(xlim=(0, 0.5))
-    # ax[3].set(xlim=(0, 0.5), ylim=(-1, 1))
+    nwindow = 1
+    rS1 = S1.rolling(window=nwindow)
+    rS2 = S2.rolling(window=nwindow)
+    rS3 = S3.rolling(window=nwindow)
+
+    new_S1 = rS1.mean()
+    new_S2 = rS2.mean()
+    new_S3 = rS3.mean()
+    new_S1[0:nwindow] = new_S1[nwindow]
+    new_S2[0:nwindow] = new_S2[nwindow]
+    new_S3[0:nwindow] = new_S3[nwindow]
+
+    new_SS = np.vstack((Sn, new_S1, new_S2, new_S3))
+    new_Out = Sv.from_matrix(new_SS.T)
+
+    new_azi_V = new_Out.parameters.azimuth()
+    new_ellip_V = new_Out.parameters.ellipticity_angle()
+    new_diff_azi_V[nn] = new_azi_V.max() - new_azi_V.min()
+    new_diff_ellip_V[nn] = new_ellip_V.max() - new_ellip_V.min()
+
+    if nn == 0 or nn == len(file_list)-1:
+        ax[0].plot(time, S0)
+        # ax[0].set(xlim=(0, 0.5), ylim=(-1, 1))
+        ax[1].plot(time, new_S1)
+        # ax[1].set(xlim=(0, 0.5), ylim=(-1, 1))
+        ax[2].plot(time, new_S2)
+        # ax[2].set(xlim=(0, 0.5), ylim=(-1, 1))
+        ax[3].plot(time, new_S3)
+        # ax[3].set(xlim=(0, 0.5), ylim=(-1, 1))
+
+
+    #ax[0].plot(time, S0)
+    #ax[1].plot(time, new_S1)
+    #ax[2].plot(time, new_S2)
+    #ax[3].plot(time, new_S3)
+
 
     '''
     for nn in a:
@@ -129,9 +160,12 @@ for nn in range(len(file_list)):
         count = count+1
     '''
 
+
+for nn in range(len(ax)):
+    ax[nn].set_ylabel("S"+str(nn))
 ax[3].set_xlabel("Time (s)")
-ax[0].set_title("Stokes parameter")
-plt.legend(loc="center left", bbox_to_anchor=(1.04, 1.2))
+fig.align_ylabels()
+
 
 #ax[3].set(xlim=(0, 2000), ylim=(0,1))
 
@@ -139,19 +173,26 @@ fig3, ax3 = plt.subplots(figsize=(5, 4))
 #plt.rc('text', usetex=True)
 #r'$\phi$'
 
-ax3.plot(frequency, diff_azi_V * 180 / pi, label="azimuth (deg)", marker="o")
-ax3.plot(frequency, diff_ellip_V * 180 / pi, label="ellipticity (deg)", marker="v")
+ax3.plot(frequency, new_diff_azi_V * 180 / pi, label="azimuth (deg)", marker="o")
+ax3.plot(frequency, new_diff_ellip_V * 180 / pi, label="ellipticity (deg)", marker="v")
 # label=r'$\theta$'
-ax3.plot(frequency, sqrt(diff_azi_V ** 2 + diff_ellip_V ** 2) * 180 / pi, label="sqrt(azimuth^2 + ellipticity^2)",
+ax3.plot(frequency, sqrt(new_diff_azi_V ** 2 + new_diff_ellip_V ** 2) * 180 / pi, label="sqrt(azimuth^2 + ellipticity^2)",
          marker="^")
+ax3.xaxis.set_major_locator(MaxNLocator(5))
+
+#ax3.plot(frequency, new_diff_azi_V * 180 / pi, label="azimuth (deg)2", marker="x")
+#ax3.plot(frequency, new_diff_ellip_V * 180 / pi, label="ellipticity (deg)2", marker="x")
+# label=r'$\theta$'
+#ax3.plot(frequency, sqrt(new_diff_azi_V ** 2 + new_diff_ellip_V ** 2) * 180 / pi, label="sqrt(azimuth^2 + ellipticity^2)2",
+#         marker="x")
 
 #label=r'sqrt(\phi + \theta)')
 ax3.legend(loc="upper right")
 ax3.set_xlabel("Vibration frequency (Hz)")
 ax3.set_ylabel("Angle change (deg)")
-ax3.set(xlim=(10, 30), ylim=(0, 5))
+#ax3.set(xlim=(10, 30), ylim=(0, 1.7))
 plt.subplots_adjust(left=0.125, bottom=0.14, right=0.9, top=0.9, wspace=0.2, hspace=0.2)
 
-
 plt.show()
+
 

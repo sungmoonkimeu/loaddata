@@ -130,6 +130,8 @@ for nn in a:
 '''
 
 fig, ax = plt.subplots(len(list_fn), figsize=(6, 5))
+fig3, ax3 = plt.subplots(figsize=(6, 5))
+
 for nn, fn in enumerate(list_fn):
     data = pd.read_table(fn)
     time = data['Time (ns)']
@@ -142,12 +144,17 @@ for nn, fn in enumerate(list_fn):
     ymax = -116
 
     plotsignal(length, signal, ax[nn], xmin, xmax, ymin, ymax, legend[nn])
+    if nn == 12:
+        ax3.plot(length, signal, lw='1', label="9turn")
+        ax3.legend(loc="upper left")
+        ax3.set(xlim=(xmin, xmax), ylim=(ymin, ymax))
+        ax3.set_xlabel("length [m]")
+        ax3.set_ylabel("Power [dB/m]")
 
 ax[-1].set_xlabel('Length (m)')
 ax[int(len(ax)/2)].set_ylabel('Power (dB/mm)')
 #ax2.set_xlabel('Length (m)')
 #ax2.set_ylabel('Power (dB/mm)')
-
 
 # FFT    ddddddddddddddddddddddddd
 # ddddddddddddddddddddddddddddddddd
@@ -164,7 +171,6 @@ maxdatay2_err_upper = np.array([])
 maxdatay2_err_lower = np.array([])
 maxdatax1 = np.array([])
 maxdatax2 = np.array([])
-
 for nn, fn in enumerate(list_fn):
     data = pd.read_table(fn)
     time = data['Time (ns)']
@@ -198,6 +204,7 @@ for nn, fn in enumerate(list_fn):
     indexes, _ = find_peaks(abs(fdata[0:200]), distance=1, height=0.2e-13)
     print(nn, indexes)
 
+
 ax[-1].set_xlabel('Frequency (1/m)')
 ax[int(len(ax)/2)].set_ylabel('FFT')
 
@@ -224,38 +231,129 @@ maxdatay1 = 1 / np.array([4, 4, 6, 8, 9])
 maxdatax2 = np.array([9, 9.5, 10, 10.5, 11, 11.5])
 maxdatay2 = 2 / np.array([5, 5, 5, 6, 8, 9])
 '''
-ax2.scatter(maxdatax1, maxdatay1)
-ax2.scatter(maxdatax2, maxdatay2)
+ax2.scatter(maxdatax1, maxdatay1, label="Meas.(FFT 1st peak)")
+ax2.scatter(maxdatax2, maxdatay2, label="Meas.(FFT 2nd peak)")
 
 twist = np.arange(1, 16, 0.01)
-Lf = 0.65        # fiber length
-LB0 = 0.23          # intrinsic beatlength (estimation)
-LB1 = 0.32
+Lf = 0.68       # fiber length
+LB0 = 1          # intrinsic beatlength (estimation)
+LB1 = 0.5
+LB2 = 0.3
 
 SP0 = 0.08       # spin  r atio [/m]      (estimation)
 STR0 = 2*pi/SP0
 STR = 2*pi*twist/Lf
-g = 0.15
-#Lb_a = 2*pi/sqrt((2*pi/LB0)**2 + (2*STR)**2)
+g = 0.08
 Lb_a = 2*pi/sqrt((2*pi/LB0)**2 + 4*(STR0 - (1-g)*STR)**2)
 Lb_b = 2*pi/sqrt((2*pi/LB1)**2 + 4*(STR0 - (1-g)*STR)**2)
-ax2.plot(twist, Lb_a)
-ax2.plot(twist, Lb_b)
+Lb_c = 2*pi/sqrt((2*pi/LB2)**2 + 4*(STR0 - (1-g)*STR)**2)
+
+ax2.plot(twist, Lb_a, label="Sim.(LB0 = 1 m)")
+ax2.plot(twist, Lb_b, label="Sim.(LB0 = 0.5 m)")
+ax2.plot(twist, Lb_c, label="Sim.(LB0 = 0.3 m)")
+ax2.set_xlabel("# of twsiting [turns]")
+ax2.set_ylabel("Beatlength [m]")
+ax2.legend(loc="upper left")
+
+# ploting with SP variable
+fig2, ax2 = plt.subplots(figsize=(6, 5))
+ax2.scatter(maxdatax1, maxdatay1, label="Meas.(FFT 1st peak)")
+ax2.scatter(maxdatax2, maxdatay2, label="Meas.(FFT 2nd peak)")
+
+twist = np.arange(1, 16, 0.01)
+LB0 = 0.3          # intrinsic beatlength (estimation)
+
+SP0 = 0.08       # spin  r atio [/m]      (estimation)
+SP1 = 0.07
+SP2 = 0.06
+
+STR0 = 2*pi/SP0
+STR1 = 2*pi/SP1
+STR2 = 2*pi/SP2
+
+STR = 2*pi*twist/Lf
+g = 0.08
+Lb_a = 2*pi/sqrt((2*pi/LB0)**2 + 4*(STR0 - (1-g)*STR)**2)
+Lb_b = 2*pi/sqrt((2*pi/LB0)**2 + 4*(STR1 - (1-g)*STR)**2)
+Lb_c = 2*pi/sqrt((2*pi/LB0)**2 + 4*(STR2 - (1-g)*STR)**2)
+
+ax2.plot(twist, Lb_a, label="Sim.(SP = 0.08 m)")
+ax2.plot(twist, Lb_b, label="Sim.(SP = 0.07 m)")
+ax2.plot(twist, Lb_c, label="Sim.(SP = 0.06 m)")
+ax2.set_xlabel("# of twsiting [turns]")
+ax2.set_ylabel("Beatlength [m]")
+ax2.legend(loc="upper left")
+
+
+# ploting with g variable
+fig2, ax2 = plt.subplots(figsize=(6, 5))
+ax2.scatter(maxdatax1, maxdatay1, label="Meas.(FFT 1st peak)")
+ax2.scatter(maxdatax2, maxdatay2, label="Meas.(FFT 2nd peak)")
+
+twist = np.arange(1, 16, 0.01)
+LB0 = 0.3          # intrinsic beatlength (estimation)
+
+SP0 = 0.08       # spin  r atio [/m]      (estimation)
+
+STR0 = 2*pi/SP0
+
+STR = 2*pi*twist/Lf
+g = 0.073
+g1 = 0.11
+g2 = 0.15
+
+Lb_a = 2*pi/sqrt((2*pi/LB0)**2 + 4*(STR0 - (1-g)*STR)**2)
+Lb_b = 2*pi/sqrt((2*pi/LB0)**2 + 4*(STR0 - (1-g1)*STR)**2)
+Lb_c = 2*pi/sqrt((2*pi/LB0)**2 + 4*(STR0 - (1-g2)*STR)**2)
+
+ax2.plot(twist, Lb_a, label="Sim.(g = 0.073)")
+ax2.plot(twist, Lb_b, label="Sim.(g = 0.11)")
+ax2.plot(twist, Lb_c, label="Sim.(g = 0.15)")
+ax2.set_xlabel("# of twsiting [turns]")
+ax2.set_ylabel("Beatlength [m]")
+ax2.legend(loc="upper left")
+
+
+# Conclusion
+fig2, ax2 = plt.subplots(figsize=(6, 5))
+ax2.scatter(maxdatax1, maxdatay1, label="Meas.(FFT 1st peak)")
+ax2.scatter(maxdatax2, maxdatay2, label="Meas.(FFT 2nd peak)")
+
+twist = np.arange(1, 16, 0.01)
+SP0 = 0.08       # spin  r atio [/m]      (estimation)
+
+LB0 = 0.25          # intrinsic beatlength (estimation)
+LB1 = 0.3
+LB2 = 0.35
+STR0 = 2*pi/SP0
+STR = 2*pi*twist/Lf
+g = 0.11
+
+Lb_a = 2*pi/sqrt((2*pi/LB0)**2 + 4*(STR0 - (1-g)*STR)**2)
+Lb_b = 2*pi/sqrt((2*pi/LB1)**2 + 4*(STR0 - (1-g)*STR)**2)
+Lb_c = 2*pi/sqrt((2*pi/LB2)**2 + 4*(STR0 - (1-g)*STR)**2)
+
+
+ax2.plot(twist, Lb_a, label="Sim.(LB = 0.25 m)")
+ax2.plot(twist, Lb_b, label="Sim.(LB = 0.30 m)")
+ax2.plot(twist, Lb_c, label="Sim.(LB = 0.35 m)")
+ax2.set_xlabel("# of twsiting [turns]")
+ax2.set_ylabel("Beatlength [m]")
+ax2.legend(loc="upper left")
+
 
 fig2, ax2 = plt.subplots(figsize=(6, 5))
-
-Lf = 0.58        # fiber length
+Lf = 0.68        # fiber length
 LB0 = 0.30      # intrinsic beatlength (estimation)
-SP0 = 0.066       # spin  r atio [/m]      (estimation)
-SP1 = 0.072       # spin  r atio [/m]      (estimation)
-SP2 = 0.080       # spin  r atio [/m]      (estimation)
+SP0 = 0.080     # spin  r atio [/m]      (estimation)
+
 STR0 = 2*pi/SP0
 STR1 = 2*pi/SP1
 STR2 = 2*pi/SP2
 STR = 2*pi*twist/Lf
-g0 = 0.073
-g1 = 0.15
-g2 = 0.24
+
+g0 = 0.11
+
 #Lb_a = 2*pi/sqrt((2*pi/LB0)**2 + (2*STR)**2)
 Lb_c = 2*pi/sqrt((2*pi/LB0)**2 + 4*(STR0 - (1-g0)*STR)**2)
 Lb_d = 2*pi/sqrt((2*pi/LB0)**2 + 4*(STR1 - (1-g1)*STR)**2)
@@ -267,12 +365,14 @@ ax2.scatter(maxdatax1, maxdatay1, label="Meas.(FFT 1st peak)")
 ax2.errorbar(maxdatax2, maxdatay2, yerr=[maxdatay2 - maxdatay2_err_lower, maxdatay2_err_upper-maxdatay2], ls="None", c='black', ecolor='lightgray', elinewidth=3, capsize=6)
 ax2.scatter(maxdatax2, maxdatay2, label="Meas.(FFT 2nd peak)")
 
-ax2.plot(twist, Lb_c, label="Sim.(g=0.073, SP=0.66m)")
-ax2.plot(twist, Lb_d, label="Sim.(g=0.15, SP=0.72m)")
-ax2.plot(twist, Lb_e, label="Sim.(g=0.24, SP=0.80m)")
+ax2.plot(twist, Lb_c, label="Sim.(g=0.11, SP=0.08m)")
+#ax2.plot(twist, Lb_d, label="Sim.(g=0.15, SP=0.72m)")
+#ax2.plot(twist, Lb_e, label="Sim.(g=0.24, SP=0.80m)")
 ax2.legend(loc="upper left")
 ax2.set_xlabel("# of twist (turns)")
 ax2.set_ylabel("beat length (m)")
 ax2.set(xlim=(0, 17), ylim=(0, 0.37))
+
+
 
 plt.show()

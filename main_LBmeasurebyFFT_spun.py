@@ -226,7 +226,7 @@ LB1 = 0.32
 SP0 = 0.08       # spin  r atio [/m]      (estimation)
 STR0 = 2*pi/SP0
 STR = 2*pi*twist/Lf
-g = 0.15
+g = 0.073
 #Lb_a = 2*pi/sqrt((2*pi/LB0)**2 + (2*STR)**2)
 Lb_a = 2*pi/sqrt((2*pi/LB0)**2 + 4*(STR0 - (1-g)*STR)**2)
 Lb_b = 2*pi/sqrt((2*pi/LB1)**2 + 4*(STR0 - (1-g)*STR)**2)
@@ -236,12 +236,12 @@ ax2.plot(twist, Lb_b)
 fig2, ax2 = plt.subplots(figsize=(6, 5))
 
 Lf = 0.58        # fiber length
-LB0 = 0.27
-LB1 = 0.30          # intrinsic beatlength (estimation)
-SP0 = 0.074       # spin  r atio [/m]      (estimation)
+LB0 = 0.5
+LB1 = 1          # intrinsic beatlength (estimation)
+SP0 = 0.08       # spin  r atio [/m]      (estimation)
 STR0 = 2*pi/SP0
 STR = 2*pi*twist/Lf
-g = 0.18
+g = 0.073
 #Lb_a = 2*pi/sqrt((2*pi/LB0)**2 + (2*STR)**2)
 Lb_c = 2*pi/sqrt((2*pi/LB0)**2 + 4*(STR0 - (1-g)*STR)**2)
 Lb_d = 2*pi/sqrt((2*pi/LB1)**2 + 4*(STR0 - (1-g)*STR)**2)

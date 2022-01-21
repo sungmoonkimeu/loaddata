@@ -61,8 +61,7 @@ def switch_osfolder():
 
 switch_osfolder()
 
-#foldername = 'Const_acc_Polarimeter'
-foldername = '010921_HIBI_Const_Disp_Polarimeter/RHC'
+foldername = 'Const_disp_Polarimeter2'
 
 path_dir = os.getcwd() + '//Data_Vib_1_(Oscillo_Polarimeter)//' + foldername + '_edited'
 file_list = os.listdir(path_dir)
@@ -72,11 +71,12 @@ Ev = Jones_vector('Output_J')
 Sv = create_Stokes('Output_S')
 Out = create_Stokes('Output_S2')
 
-fig2, ax2 = Sv.draw_poincare(figsize=(7, 7), angle_view=[0.2, 1.2], kind='line')
 frequency = arange(10, 31, 1)
 
 diff_azi_V = np.ones(len(file_list))
 diff_ellip_V = np.ones(len(file_list))
+
+fig4, ax4 = plt.subplots(2, figsize=(5, 4))
 
 for nn in range(len(file_list)):
     fn2 = path_dir + "//" + file_list[nn]
@@ -96,41 +96,38 @@ for nn in range(len(file_list)):
     SS = np.vstack((Sn, S1, S2, S3))
 
     Out = Sv.from_matrix(SS.T)
-    draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 4])
 
     azi_V = Out.parameters.azimuth()
     ellip_V = Out.parameters.ellipticity_angle()
     diff_azi_V[nn] = azi_V.max() - azi_V.min()
     diff_ellip_V[nn] = ellip_V.max() - ellip_V.min()
 
-    ax[0].plot(time, S0, label="applied voltage")
+    '''
+    ax[0].plot(time, S0)
     ax[0].set(xlim=(0, 0.5))
     # ax[0].set(xlim=(0, 0.5), ylim=(-1, 1))
-    ax[1].plot(time, S1, label="applied voltage")
+    ax[1].plot(time, S1)
     ax[1].set(xlim=(0, 0.5))
     # ax[1].set(xlim=(0, 0.5), ylim=(-1, 1))
-    ax[2].plot(time, S2, label="applied voltage")
+    ax[2].plot(time, S2)
     ax[2].set(xlim=(0, 0.5))
     # ax[2].set(xlim=(0, 0.5), ylim=(-1, 1))
-    ax[3].plot(time, S3, label="applied voltage")
+    ax[3].plot(time, S3,label=str(nn+10)+'Hz')
     ax[3].set(xlim=(0, 0.5))
     # ax[3].set(xlim=(0, 0.5), ylim=(-1, 1))
-
     '''
-    for nn in a:
+    ax4[0].plot(time, azi_V)
+    ax4[1].plot(time, ellip_V, label=str(nn+10)+'Hz')
 
-        fn2 = path_dir + "//" + "9turns_" + str(nn) + "deg_Upper_edited.txt"
-        data = pd.read_table(fn2)
-        time = data['Time (ns)']
-        signal = data['Amplitude (dB)']
-        ax[count].plot(time, signal, lw='1', label="9turns_"+str(nn)+"deg")
-        ax[count].legend(loc="upper right")
-        ax[count].set(xlim=(124, 134), ylim=(-135, -120))
-        count = count+1
-    '''
-
+'''
 ax[3].set_xlabel("Time (s)")
 ax[0].set_title("Stokes parameter")
+plt.legend(loc="center left", bbox_to_anchor=(1.04, 2.2))
+
+'''
+ax4[1].set_xlabel("Time (s)")
+ax4[0].set_ylabel("Ellipticity angle (deg)")
+ax4[1].set_ylabel("Azimuth angle (deg)")
 plt.legend(loc="center left", bbox_to_anchor=(1.04, 1.2))
 
 #ax[3].set(xlim=(0, 2000), ylim=(0,1))
@@ -149,8 +146,11 @@ ax3.plot(frequency, sqrt(diff_azi_V ** 2 + diff_ellip_V ** 2) * 180 / pi, label=
 ax3.legend(loc="upper right")
 ax3.set_xlabel("Vibration frequency (Hz)")
 ax3.set_ylabel("Angle change (deg)")
-ax3.set(xlim=(10, 30), ylim=(0, 5))
+ax3.set(xlim=(10, 30), ylim=(0, 1.7))
 plt.subplots_adjust(left=0.125, bottom=0.14, right=0.9, top=0.9, wspace=0.2, hspace=0.2)
+
+
+
 
 
 plt.show()
