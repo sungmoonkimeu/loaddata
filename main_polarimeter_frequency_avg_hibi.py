@@ -63,10 +63,13 @@ switch_osfolder()
 
 #foldername = 'Const_appl_vol_Polarimeter'
 #foldername = '0_RHC_losen'
-foldername = '1_RHC_Fasten'
+#foldername = '2_RHC'
+#foldername = 'Const_disp_Polarimeter2'
+foldername = '2_LP0_loosen'
+path_dir = os.getcwd() + '//Data_Vib_3_(Hibi_loosen_fasten)//' + foldername + '_edited'
 
-
-path_dir = os.getcwd() + '//Data_Vib_2_(Hibi_losen_fasten)//' + foldername + '_edited'
+#path_dir = os.getcwd() + '//Data_Vib_2_(Hibi_losen_fasten)//' + foldername + '_edited'
+#path_dir = os.getcwd() + '//Data_Vib_3_(Hibi_loosen_fasten)//' + foldername + '_edited'
 file_list = os.listdir(path_dir)
 
 fig, ax = plt.subplots(4, figsize=(6, 5))
@@ -78,6 +81,7 @@ Out = create_Stokes('Output_S2')
 
 fig2, ax2 = Sv.draw_poincare(figsize=(7, 7), angle_view=[0.2, 1.2], kind='line')
 frequency = arange(10, 31, 1)
+#frequency = np.array([30,31])
 
 diff_azi_V = np.ones(len(file_list))
 diff_ellip_V = np.ones(len(file_list))
