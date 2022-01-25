@@ -1,0 +1,11 @@
+Start Date: 1/25/2022
+Start Time: 15:6:38
+Test system information: GeneralPhotonics,PSY-201,V1.3-20141120, 155000000131
+SOP sampling rate: 10000.0000sps
+Integration time: 1.0000us
+Scrambler DOP Average Number: 1 
+Wavelength: 1550nm 
+Time Interval(ms): 
+Calibration matrix: DEFAULT MATRIX
+Total sampling numbers: 10000
+
