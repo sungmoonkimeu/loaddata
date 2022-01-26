@@ -77,8 +77,10 @@ frequency = arange(10, 12, 1)
 
 diff_azi_V = np.ones(len(file_list))
 diff_ellip_V = np.ones(len(file_list))
-new_diff_azi_V = np.ones(len(file_list))
-new_diff_ellip_V = np.ones(len(file_list))
+
+max_diff_S1 = 0
+max_diff_S2 = 0
+max_diff_S3 = 0
 
 for nn in range(len(file_list)):
     fn2 = path_dir + "//" + file_list[nn]
@@ -112,54 +114,20 @@ for nn in range(len(file_list)):
             print(i_n)
             ellip_V[i_n] = 0
 
-    #print(azi_V.max(), azi_V.min())
-    #print(ellip_V.max(), ellip_V.min())
     diff_azi_V[nn] = azi_V.max() - azi_V.min()
     diff_ellip_V[nn] = ellip_V.max() - ellip_V.min()
-
-    nwindow = 1
-    rS1 = S1.rolling(window=nwindow)
-    rS2 = S2.rolling(window=nwindow)
-    rS3 = S3.rolling(window=nwindow)
-
-    new_S1 = rS1.mean()
-    new_S2 = rS2.mean()
-    new_S3 = rS3.mean()
-    new_S1[0:nwindow] = new_S1[nwindow]
-    new_S2[0:nwindow] = new_S2[nwindow]
-    new_S3[0:nwindow] = new_S3[nwindow]
-
-    new_SS = np.vstack((Sn, new_S1, new_S2, new_S3))
-    new_Out = Sv.from_matrix(new_SS.T)
-
-    new_azi_V = new_Out.parameters.azimuth()
-    new_ellip_V = new_Out.parameters.ellipticity_angle()
-
-    for i_n, i_v in enumerate(new_azi_V):
-        if i_v > pi/2:
-            new_azi_V[i_n] = i_v - pi
-    for i_n, i_v in enumerate(new_ellip_V):
-        if i_v > pi / 2:
-            new_ellip_V[i_n] = i_v - pi
-
-    new_diff_azi_V[nn] = new_azi_V.max() - new_azi_V.min()
-    new_diff_ellip_V[nn] = new_ellip_V.max() - new_ellip_V.min()
-
-    #print(diff_azi_V, diff_ellip_V)
-    print(new_diff_azi_V, new_diff_ellip_V)
 
     if nn == 0 or nn == len(file_list)-1:
         ax[0].plot(time, S0)
         # ax[0].set(xlim=(0, 0.5), ylim=(-1, 1))
-        ax[1].plot(time, new_S1)
+        ax[1].plot(time, S1)
         # ax[1].set(xlim=(0, 0.5), ylim=(-1, 1))
-        ax[2].plot(time, new_S2)
+        ax[2].plot(time, S2)
         # ax[2].set(xlim=(0, 0.5), ylim=(-1, 1))
-        ax[3].plot(time, new_S3)
+        ax[3].plot(time, S3)
         # ax[3].set(xlim=(0, 0.5), ylim=(-1, 1))
     '''
     for nn in a:
-
         fn2 = path_dir + "//" + "9turns_" + str(nn) + "deg_Upper_edited.txt"
         data = pd.read_table(fn2)
         time = data['Time (ns)']
@@ -169,7 +137,6 @@ for nn in range(len(file_list)):
         ax[count].set(xlim=(124, 134), ylim=(-135, -120))
         count = count+1
     '''
-print(new_diff_azi_V, new_diff_ellip_V)
 
 for nn in range(len(ax)):
     ax[nn].set_ylabel("S"+str(nn))
@@ -183,10 +150,10 @@ fig3, ax3 = plt.subplots(figsize=(5, 4))
 #plt.rc('text', usetex=True)
 #r'$\phi$'
 
-ax3.plot(frequency, new_diff_azi_V * 180 / pi, label="azimuth (deg)", marker="o")
-ax3.plot(frequency, new_diff_ellip_V * 180 / pi, label="ellipticity (deg)", marker="v")
+ax3.plot(frequency, diff_azi_V * 180 / pi, label="azimuth (deg)", marker="o")
+ax3.plot(frequency, diff_ellip_V * 180 / pi, label="ellipticity (deg)", marker="v")
 # label=r'$\theta$'
-ax3.plot(frequency, sqrt(new_diff_azi_V ** 2 + new_diff_ellip_V ** 2) * 180 / pi, label="sqrt(azimuth^2 + ellipticity^2)",
+ax3.plot(frequency, sqrt(diff_azi_V ** 2 + diff_ellip_V ** 2) * 180 / pi, label="sqrt(azimuth^2 + ellipticity^2)",
          marker="^")
 ax3.xaxis.set_major_locator(MaxNLocator(5))
 
