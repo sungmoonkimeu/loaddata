@@ -64,7 +64,6 @@ path_dir = os.getcwd() + foldername + '_edited'
 
 file_list = os.listdir(path_dir)
 
-fig, ax = plt.subplots(4, figsize=(6, 5))
 plt.subplots_adjust(left=0.14, bottom=0.112, right=0.93, top=0.93, wspace=0.2, hspace=0)
 
 Ev = Jones_vector('Output_J')
@@ -78,11 +77,15 @@ frequency = arange(10, 12, 1)
 diff_azi_V = np.ones(len(file_list))
 diff_ellip_V = np.ones(len(file_list))
 
-max_diff_S1 = 0
-max_diff_S2 = 0
-max_diff_S3 = 0
+max_diff_S = np.zeros([2,4])
+mean_S = np.zeros([2,4])
 
+
+fig_1, ax1 = plt.subplots(4, figsize=(6, 5))
+fig_2, ax2 = plt.subplots(4, figsize=(6, 5))
+tmpax = 0
 for nn in range(len(file_list)):
+
     fn2 = path_dir + "//" + file_list[nn]
     count = 0
     cstm_color = ['c', 'm', 'y', 'k', 'r']
@@ -117,32 +120,48 @@ for nn in range(len(file_list)):
     diff_azi_V[nn] = azi_V.max() - azi_V.min()
     diff_ellip_V[nn] = ellip_V.max() - ellip_V.min()
 
-    if nn == 0 or nn == len(file_list)-1:
-        ax[0].plot(time, S0)
-        # ax[0].set(xlim=(0, 0.5), ylim=(-1, 1))
-        ax[1].plot(time, S1)
-        # ax[1].set(xlim=(0, 0.5), ylim=(-1, 1))
-        ax[2].plot(time, S2)
-        # ax[2].set(xlim=(0, 0.5), ylim=(-1, 1))
-        ax[3].plot(time, S3)
-        # ax[3].set(xlim=(0, 0.5), ylim=(-1, 1))
-    '''
-    for nn in a:
-        fn2 = path_dir + "//" + "9turns_" + str(nn) + "deg_Upper_edited.txt"
-        data = pd.read_table(fn2)
-        time = data['Time (ns)']
-        signal = data['Amplitude (dB)']
-        ax[count].plot(time, signal, lw='1', label="9turns_"+str(nn)+"deg")
-        ax[count].legend(loc="upper right")
-        ax[count].set(xlim=(124, 134), ylim=(-135, -120))
-        count = count+1
-    '''
+    if nn == 0:
+        tmpax = ax1
+        tmpfig = fig_1
+    else:
+        tmpax = ax2
+        tmpfig = fig_2
 
-for nn in range(len(ax)):
-    ax[nn].set_ylabel("S"+str(nn))
-ax[3].set_xlabel("Time (h)")
-fig.align_ylabels()
+    tmpax[0].plot(time, S0)
+    tmpax[0].set_ylabel("S" + str(0))
+    # ax[0].set(xlim=(0, 0.5), ylim=(-1, 1))
+    tmpax[1].plot(time, S1)
+    tmpax[1].set_ylabel("S" + str(1))
+    # ax[1].set(xlim=(0, 0.5), ylim=(-1, 1))
+    tmpax[2].plot(time, S2)
+    tmpax[2].set_ylabel("S" + str(2))
+    # ax[2].set(xlim=(0, 0.5), ylim=(-1, 1))
+    tmpax[3].plot(time, S3)
+    tmpax[3].set_ylabel("S" + str(3))
+    # ax[3].set(xlim=(0, 0.5), ylim=(-1, 1))
 
+    tmpax[3].set_xlabel("Time (h)")
+    tmpfig.align_ylabels()
+
+    max_diff_S[nn][0] = S1.max() - S1.min()
+    mean_S[nn][0] = S1.mean()
+    max_diff_S[nn][1] = S2.max() - S2.min()
+    mean_S[nn][1] = S2.mean()
+    max_diff_S[nn][2] = S3.max() - S3.min()
+    mean_S[nn][2] = S3.mean()
+
+if max_diff_S[0][0] > max_diff_S[1][0]:
+    delta = max_diff_S[0][0]
+    ax1[1].set(ylim=(mean_S[0][0] - delta / 2, mean_S[0][0] + delta/2))
+    ax2[1].set(ylim=(mean_S[1][0] - delta / 2, mean_S[1][0] + delta/2))
+if max_diff_S[0][1] > max_diff_S[1][1]:
+    delta = max_diff_S[0][1]
+    ax1[2].set(ylim=(mean_S[0][1] - delta / 2, mean_S[0][1] + delta/2))
+    ax2[2].set(ylim=(mean_S[1][1] - delta / 2, mean_S[1][1] + delta/2))
+if max_diff_S[0][2] > max_diff_S[1][2]:
+    delta = max_diff_S[0][2]
+    ax1[3].set(ylim=(mean_S[0][2] - delta / 2, mean_S[0][2] + delta/2))
+    ax2[3].set(ylim=(mean_S[1][2] - delta / 2, mean_S[1][2] + delta/2))
 
 #ax[3].set(xlim=(0, 2000), ylim=(0,1))
 

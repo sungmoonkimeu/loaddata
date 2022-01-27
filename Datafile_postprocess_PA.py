@@ -8,10 +8,12 @@ import os
 #foldername = 'Const_Freq_Polarimeter'
 #foldername = '/010921_HIBI_Const_Disp_Polarimeter/RHC'
 #foldername = '/Data_Vib_2_(Hibi_losen_fasten)/1_RHC_Fasten'
-foldername = '/Data_Vib_3_(Hibi_loosen_fasten)/8_RHC_loosen'
+#foldername = '/Data_Vib_3_(Hibi_loosen_fasten)/8_RHC_loosen'
 
-
+foldername = '/Data_Vib_1_(Oscillo_Polarimeter)/Const_volt_RHC_Polarimeter'
 #path_dir = os.getcwd() + '/Data_Vib_1_(Oscillo_Polarimeter)/' + foldername
+
+
 path_dir = os.getcwd() + foldername
 file_list = os.listdir(path_dir)
 
