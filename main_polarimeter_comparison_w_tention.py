@@ -65,11 +65,11 @@ switch_osfolder()
 #foldername = '0_RHC_losen'
 #foldername = '2_RHC'
 #foldername = 'Const_disp_Polarimeter2'
-V_foldername = ['2_LP0_loosen', '2_LP45', '8_RHC_loosen']
+V_foldername = ['2_LP0_loosen', '1_LP0']
 #V_foldername = ['1_LP0', '1_LP45', '1_RHC_fasten']
 #V_foldername = ['Const_volt_LP90_Polarimeter', 'Const_volt_LP45_Polarimeter', 'Const_volt_RHC_Polarimeter']
-V_label = ['LP0', 'LP45', 'RHC']
-V_marker = ['^', 'o', 'x']
+V_label = ['Loosen', 'Tighten']
+#V_marker = ['^', 'o', 'x']
 fig3, ax3 = plt.subplots(figsize=(5, 4))
 for n_iter, foldername in enumerate(V_foldername):
     #path_dir = os.getcwd() + '//Data_Vib_1_(Oscillo_Polarimeter)//' + foldername + '_edited'
@@ -79,7 +79,6 @@ for n_iter, foldername in enumerate(V_foldername):
     #path_dir = os.getcwd() + '//Data_Vib_3_(Hibi_loosen_fasten)//' + foldername + '_edited'
     file_list = os.listdir(path_dir)
 
-    fig, ax = plt.subplots(4, figsize=(6, 5))
     plt.subplots_adjust(left=0.14, bottom=0.112, right=0.93, top=0.93, wspace=0.2, hspace=0)
 
     Ev = Jones_vector('Output_J')
@@ -92,7 +91,7 @@ for n_iter, foldername in enumerate(V_foldername):
 
     diff_azi_V = np.ones(len(file_list))
     diff_ellip_V = np.ones(len(file_list))
-
+    fig, ax = plt.subplots(4, figsize=(6, 5))
     for nn in range(len(file_list)):
         fn2 = path_dir + "//" + file_list[nn]
         count = 0
@@ -117,7 +116,7 @@ for n_iter, foldername in enumerate(V_foldername):
         diff_azi_V[nn] = azi_V.max() - azi_V.min()
         diff_ellip_V[nn] = ellip_V.max() - ellip_V.min()
 
-        if nn == 0 or nn == len(file_list)-2:
+        if nn == len(file_list)-2:
             ax[0].plot(time, S0)
             ax[1].plot(time, S1)
             ax[2].plot(time, S2)
@@ -131,17 +130,6 @@ for n_iter, foldername in enumerate(V_foldername):
     #plt.rc('text', usetex=True)
     #r'$\phi$'
 
-    ax3.plot(frequency, sqrt(diff_azi_V ** 2 + diff_ellip_V ** 2) * 180 / pi, label=V_label[n_iter],
-             marker=V_marker[n_iter])
-    ax3.xaxis.set_major_locator(MaxNLocator(5))
-    ax3.set(xlim=(9, 31), ylim=(0, 2))
-
-    #label=r'sqrt(\phi + \theta)')
-    ax3.legend(loc="upper left")
-    ax3.set_xlabel("Vibration frequency (Hz)")
-    ax3.set_ylabel("SOP change (deg)")
-    #ax3.set(xlim=(10, 30), ylim=(0, 1.7))
-    plt.subplots_adjust(left=0.152, bottom=0.133, right=0.917, top=0.89, wspace=0.2, hspace=0.2)
 
 plt.show()
 

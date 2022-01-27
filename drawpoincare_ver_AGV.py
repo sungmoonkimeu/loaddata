@@ -94,7 +94,7 @@ def PS3(shot):
     pz = [0, 0, 0, 0, 1, -1]
 
     ax.plot(px, py, pz,
-            color='black', marker='o', markersize=4, alpha=1.0, linewidth=0, zorder=3)
+            color='black', marker='o', markersize=4, alpha=1, linewidth=0)
     #
 
     max_size = 1.05 * sprad
@@ -172,8 +172,7 @@ def main():
         #ax.scatter3D(S1, S2, S3, zdir='z', marker='o', s=4, c=cm, zorder=555,
         #             alpha=1, label='F1', cmap="cool")
 
-        ax.plot(S1, S2, S3,
-                marker='o', markersize=4, alpha=1.0, linewidth=0, zorder=3)
+        ax.plot(S1, S2, S3, marker='o', markersize=4, alpha=1.0, linewidth=0, zorder=3)
 
         #ax.scatter3D(D1, D2, D3, zdir='z', marker='+', s=6, c=cm,
         #             alpha=0.6, label='F2', cmap="cool")

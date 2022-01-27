@@ -59,7 +59,7 @@ def switch_osfolder():
 
 switch_osfolder()
 
-foldername = '//Laser stability test'
+foldername = '//Laser stability test_longterm'
 path_dir = os.getcwd() + foldername + '_edited'
 
 file_list = os.listdir(path_dir)
@@ -71,14 +71,14 @@ Sv = create_Stokes('Output_S')
 Out = create_Stokes('Output_S2')
 
 fig2, ax2 = Sv.draw_poincare(figsize=(7, 7), angle_view=[0.2, 1.2], kind='line')
-frequency = arange(10, 12, 1)
+frequency = arange(10, 11, 1)
 #frequency = np.array([30,31])
 
 diff_azi_V = np.ones(len(file_list))
 diff_ellip_V = np.ones(len(file_list))
 
-max_diff_S = np.zeros([2,4])
-mean_S = np.zeros([2,4])
+max_diff_S = np.zeros([2, 4])
+mean_S = np.zeros([2, 4])
 
 
 fig_1, ax1 = plt.subplots(4, figsize=(6, 5))
@@ -93,11 +93,13 @@ for nn in range(len(file_list)):
     #    fn2 = path_dir + "//10Hz_edited.txt"
     data = pd.read_table(fn2, delimiter=r"\s+")
     #time = pd.to_numeric(data['Time(ms)']) / 10000
-    time = np.arange(0, 3600, 1)/3600
+    #time = np.arange(0, 3600, 1)/3600
+
     S0 = pd.to_numeric(data['S0(mW)'])
     S1 = pd.to_numeric(data['S1'])
     S2 = pd.to_numeric(data['S2'])
     S3 = pd.to_numeric(data['S3'])
+    time = np.arange(0, len(S0), 1) / 720
 
     Sn = np.ones((len(S0)))
     SS = np.vstack((Sn, S1, S2, S3))

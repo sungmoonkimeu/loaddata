@@ -64,10 +64,10 @@ switch_osfolder()
 #foldername = 'Const_appl_vol_Polarimeter'
 #foldername = '0_RHC_losen'
 #foldername = '2_RHC'
-#foldername = 'Const_disp_Polarimeter2'
-foldername = '2_LP0_loosen'
-path_dir = os.getcwd() + '//Data_Vib_3_(Hibi_loosen_fasten)//' + foldername + '_edited'
-
+foldername = 'Const_disp_Polarimeter2'
+#foldername = 'Const_acc_Polarimeter'
+#foldername = '2_LP0_loosen'
+path_dir = os.getcwd() + '//Data_Vib_1_(Oscillo_Polarimeter)//' + foldername + '_edited'
 #path_dir = os.getcwd() + '//Data_Vib_2_(Hibi_losen_fasten)//' + foldername + '_edited'
 #path_dir = os.getcwd() + '//Data_Vib_3_(Hibi_loosen_fasten)//' + foldername + '_edited'
 file_list = os.listdir(path_dir)
@@ -134,15 +134,25 @@ for nn in range(len(file_list)):
     new_diff_azi_V[nn] = new_azi_V.max() - new_azi_V.min()
     new_diff_ellip_V[nn] = new_ellip_V.max() - new_ellip_V.min()
 
+
     if nn == 0 or nn == len(file_list)-1:
         ax[0].plot(time, S0)
-        # ax[0].set(xlim=(0, 0.5), ylim=(-1, 1))
+        #ax[0].set(xlim=(0, 0.5), ylim=(-1, 1))
+        ax[0].set(xlim=(0, 0.5))
         ax[1].plot(time, new_S1)
-        # ax[1].set(xlim=(0, 0.5), ylim=(-1, 1))
+        #ax[1].set(xlim=(0, 0.5), ylim=(-1, 1))
+        ax[1].set(xlim=(0, 0.5), ylim=(0.335, 0.385))
+        #ax[1].set(xlim=(0, 0.5), ylim=(0.435, 0.485))
         ax[2].plot(time, new_S2)
-        # ax[2].set(xlim=(0, 0.5), ylim=(-1, 1))
+        #ax[2].set(xlim=(0, 0.5), ylim=(-1, 1))
+        #ax[2].set(xlim=(0, 0.5), ylim=(-0.735, -0.685))
+        ax[2].set(xlim=(0, 0.5), ylim=(-0.755, -0.705))
         ax[3].plot(time, new_S3)
-        # ax[3].set(xlim=(0, 0.5), ylim=(-1, 1))
+        #ax[3].set(xlim=(0, 0.5), ylim=(-1, 1))
+        ax[3].set(xlim=(0, 0.5), ylim=(-0.600, -0.55))
+        #ax[3].set(xlim=(0, 0.5), ylim=(-0.565, -0.515))
+
+
 
 
     #ax[0].plot(time, S0)
@@ -167,6 +177,10 @@ for nn in range(len(file_list)):
 
 for nn in range(len(ax)):
     ax[nn].set_ylabel("S"+str(nn))
+
+ax[0].set(xticklabels=[])
+ax[1].set(xticklabels=[])
+ax[2].set(xticklabels=[])
 ax[3].set_xlabel("Time (s)")
 fig.align_ylabels()
 
