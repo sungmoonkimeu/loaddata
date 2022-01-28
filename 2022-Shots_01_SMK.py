@@ -121,6 +121,97 @@ def PS3(shot):
 
     return ax, fig
 
+
+def PS4(shot='', az1=0, az2=1, el1=0.47, el2=0.51):
+    '''
+    plot Poincare Sphere, ver. 20/03/2020
+    return:     ax, fig
+    '''
+    no_panes = True
+    fig = plt.figure(figsize=(6, 6))
+    ax = Axes3D(fig)
+    #
+    az1 = az1 * np.pi
+    az2 = az2 * np.pi
+    el1 = el1 * np.pi
+    el2 = el2 * np.pi
+
+    fsz = 16
+    sprad = 1  # PS radius
+    #
+    # no panes
+    if no_panes:
+        ax.set_axis_off()
+        distance = 1.3 * sprad
+    #        ax.text(distance, 0, 0, '$S_1$', fontsize=fsz)
+    #        ax.text(0, distance, 0, '$S_2$', fontsize=fsz)
+    #        ax.text(0, 0, distance, '$S_3$', fontsize=fsz)
+
+    else:
+        # no ticks
+        ax.set_xticklabels([])
+        ax.set_yticklabels([])
+        ax.set_zticklabels([])
+
+        # white panes
+        ax.w_xaxis.set_pane_color((1.0, 1.0, 1.0, 1.0))
+        ax.w_yaxis.set_pane_color((1.0, 1.0, 1.0, 1.0))
+        ax.w_zaxis.set_pane_color((1.0, 1.0, 1.0, 1.0))
+
+        # ax Labels
+        ax.set_xlabel('$S_1$', fontsize=fsz)
+        ax.set_ylabel('$S_2$', fontsize=fsz)
+        ax.set_zlabel('$S_3$', fontsize=fsz)
+        ax.grid(True)
+
+    # plot surface greed
+    u = np.linspace(az1, az2, 61)  # azimuth
+    v = np.linspace(el1, el2, 31)  # elevation
+
+    x = sprad * np.outer(np.cos(u), np.sin(v))
+    y = sprad * np.outer(np.sin(u), np.sin(v))
+    z = sprad * np.outer(np.ones(np.size(u)), np.cos(v))
+
+    ax.plot_surface(x, y, z,
+                    color='w',  # (0.5, 0.5, 0.5, 0.0),
+                    edgecolor='k',
+                    linestyle=(0, (5, 5)),
+                    rstride=3, cstride=3,
+                    linewidth=.5, alpha=0.8, shade=0)
+
+    # main circles
+    #    ax.plot(np.sin(u), np.cos(u), np.zeros_like(u), 'g-.', linewidth=0.75)   #equator
+    #    ax.plot(np.sin(u), np.zeros_like(u), np.cos(u), 'b-', linewidth=0.5)
+    #    ax.plot(np.zeros_like(u), np.sin(u), np.cos(u), 'b-', linewidth=0.5)
+
+    # axes and captions
+    amp = 1.3 * sprad
+    #    ax.plot([-amp, amp], [0, 0], [0, 0], 'k-.', lw=2, alpha=0.5)
+    #    ax.plot([0, 0], [-amp, amp], [0, 0], 'k-.', lw=2, alpha=0.5)
+    #    ax.plot([0, 0], [0, 0], [-amp, amp], 'k-.', lw=2, alpha=0.5)
+
+    # points
+    #    px = [1,-1, 0, 0, 0, 0]
+    #    py = [0, 0, 1,-1, 0, 0]
+    #    pz = [0, 0, 0, 0, 1,-1]
+
+    #    ax.plot(px, py, pz,
+    #       color='black', marker='o', markersize=4, alpha=1.0, linewidth=0)
+    #
+    max_size = 1.05 * sprad
+    mf = 1.05
+    #    print("xxx", x, y, z)
+    #    ax.set_xlim(x[0], x[-1])
+    #    ax.set_ylim(y[0], y[-1])
+    #    ax.set_zlim(z[0], z[-1])
+
+    ax.view_init(elev=90 / np.pi, azim=90 / np.pi)
+    ax.set_title(label=shot, loc='left', pad=-10, fontsize=8)
+    #    ax.legend()
+
+    return ax, fig
+
+
 def main():
 #
 
@@ -205,7 +296,7 @@ def main():
     cm[-1] = 1.3
 #
     if (F1_in_use or F2_in_use ) :    # PS
-      ax, fig01 = PS3(shot)
+      ax, fig01 = PS4(shot)
 #
       if F1_in_use :                                    # F1 on PS 
         #ax.scatter3D(S1, S2, S3, zdir='z', marker = 'o', s=4, c=cm,
