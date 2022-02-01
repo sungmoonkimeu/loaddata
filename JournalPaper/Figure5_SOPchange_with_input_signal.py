@@ -61,126 +61,73 @@ def switch_osfolder():
 switch_osfolder()
 
 
-def cal_maxSOPchange(foldername, fig=None):
+def read_SOP(filepath):
     # reading every file in a folder
     # calculating maximum SOP change for each file
     # output: SOP change for given frequency range
 
-    foldername = 'Const_disp_Polarimeter2'
-    path_dir = os.getcwd() + '//Data_Vib_1_(Oscillo_Polarimeter)//' + foldername + '_edited'
-    file_list = os.listdir(path_dir)
+    data = pd.read_table(filepath, delimiter=r"\s+")
+    time = pd.to_numeric(data['Index']) / 10000
+    S0 = pd.to_numeric(data['S0(mW)'])
+    S1 = pd.to_numeric(data['S1'])
+    S2 = pd.to_numeric(data['S2'])
+    S3 = pd.to_numeric(data['S3'])
 
-    Ev = Jones_vector('Output_J')
     Sv = create_Stokes('Output_S')
-    Out = create_Stokes('Output_S2')
+    SS = np.vstack((S0, S1, S2, S3))
 
-    diff_azi_V = np.ones(len(file_list))
-    diff_ellip_V = np.ones(len(file_list))
+    return Sv.from_matrix(SS.T)
 
-    for nn in range(len(file_list)):
-        fn2 = path_dir + "//" + file_list[nn]
+def read_shakersignal(filepath, frequency):
 
-        data = pd.read_table(fn2, delimiter=r"\s+")
-        time = pd.to_numeric(data['Index']) / 10000
-        S0 = pd.to_numeric(data['S0(mW)'])
-        S1 = pd.to_numeric(data['S1'])
-        S2 = pd.to_numeric(data['S2'])
-        S3 = pd.to_numeric(data['S3'])
+    data = pd.read_table(filepath, sep=",")
+    time = data['second']
+    signal0 = data['Volt']
+    signal1 = data['Volt.1']
 
-        Sn = np.ones((len(S0)))
-        SS = np.vstack((Sn, S1, S2, S3))
-        Out = Sv.from_matrix(SS.T)
+    y0 = (max(signal1) - min(signal1))*10   # Acceleration
+    y1 = (max(signal0) - min(signal0))      # peak-peak voltage
+    y2 = y0 / (frequency ** 2) * 1000       # displacement
 
-        azi_V = Out.parameters.azimuth()
-        ellip_V = Out.parameters.ellipticity_angle()
-        diff_azi_V[nn] = azi_V.max() - azi_V.min()
-        diff_ellip_V[nn] = ellip_V.max() - ellip_V.min()
-
-
-    fig3, ax3 = plt.subplots(figsize=(5, 4))
-    #plt.rc('text', usetex=True)
-    #r'$\phi$'
-    alpha = sqrt(diff_azi_V ** 2 + diff_ellip_V ** 2) * 180 / pi
-    ax3.plot(frequency, sqrt(diff_azi_V ** 2 + diff_ellip_V ** 2) * 180 / pi, label="alpha", marker="o")
-    ax3.xaxis.set_major_locator(MaxNLocator(5))
-
-    #label=r'sqrt(\phi + \theta)')
-    ax3.legend(loc="upper right")
-    ax3.set_xlabel("Vibration frequency (Hz)")
-    ax3.set_ylabel("maximum SOP change (deg)")
-    #ax3.set(xlim=(10, 30), ylim=(0, 1.7))
-    plt.subplots_adjust(left=0.125, bottom=0.14, right=0.9, top=0.9, wspace=0.2, hspace=0.2)
-    return alpha
-
-def read_shakerinputsignal(foldername, fig=None):
-    path_dir = os.getcwd() + '//Data_Vib_1_(Oscillo_Polarimeter)//' + foldername + '_edited'
-    file_list = os.listdir(path_dir)
-
-    count = 0
-    x0 = zeros(len(file_list))
-    y0 = zeros(len(file_list))
-    y1 = zeros(len(file_list))
-    for nn in range(len(file_list)):
-
-        fn2 = path_dir + "//" + "scope_" + str(nn) + "_edited.txt"
-        data = pd.read_table(fn2, sep=",")
-        time = data['second']
-        signal0 = data['Volt']
-        signal1 = data['Volt.1']
-
-        x0[nn] = 10 + nn
-        y0[nn] = (max(signal1) - min(signal1))*10
-        y1[nn] = (max(signal0) - min(signal0))
-        print(y1[nn])
-
-    fig, ax = plt.subplots(2, figsize=(4, 6))
-
-    fig.set_dpi(91.79)  # DPI of My office monitor
-    plt.subplots_adjust(left=0.19, bottom=0.13, right=0.833, top=0.93, wspace=0.2, hspace=0.52)
-    plt.subplots_adjust(bottom=0.155)
-
-    ms = 4
-    ax[0].plot(x0, y1, lw='1', label="ff", marker='o', color='k', markersize=ms)
-    ax[0].set_xlabel('Frequency (Hz)')
-    ax[0].set_ylabel('Peak-peak voltage (V)')
-    ax[0].set_title('Input signal')
-    ax[0].set(xlim=(10, 30), ylim=(0, 12))
-
-    ax[1].plot(x0, y0, lw='1', label="Acceleration", marker='o', color='k', markersize=ms)
-    ax[1].set_xlabel('Frequency (Hz)')
-    ax[1].set_ylabel('Acceleration (g)')
-    ax[1].set_title('Measured signal')
-    ax[1].set(xlim=(10, 30), ylim=(0, 30))
-    lns1 = ax[1].lines
-    ax2 = ax[1].twinx()
-    lns2 = ax2.plot(x0, y0 / (x0 ** 2) * 1000, lw='1', label="Displacment", marker='o', color='r', markersize=ms)
-    ax2.set_ylabel('Displacement (mm)')
-    ax2.set(ylim=(0, 100))
-
-    # added these three lines
-    lns = lns1 + lns2
-    labs = [l.get_label() for l in lns]
-    ax[1].legend(lns, labs, loc=0)
-
-    fig.align_ylabels()
-    #fig.savefig('Constant_Acceleration.png')
-    #fig.savefig('Constant_Displacement.png')
-    return fig
+    return np.array([y0, y1, y2])
 
 
 if __name__ == '__main__':
 
-    foldername = 'Const_disp_OSC2'
+    path = os.getcwd() + '//Data_Vib_1_(Oscillo_Polarimeter)//'
+    folder1 = 'Const_disp_OSC2_edited//'
+    folder2 = 'Const_acc_OSC2_edited//'
 
-    fig = read_shakerinputsignal(foldername)
-    fig.savefig(foldername)
+    folder3 = 'Const_acc_Polarimeter_edited//'
+    folder4 = 'Const_disp_Polarimeter2_edited//'
+    freq = np.arange(10, 31, 1)
 
-    foldername = 'Const_acc_OSC2'
+    y_array = np.array([0, 0, 0])
 
-    fig = read_shakerinputsignal(foldername)
-    fig.savefig(foldername)
+    for nn in freq:
+        filename1 = path + folder1 + 'scope_' + str(nn-10) + '_edited.txt'
+        #print(filename)
+        y_array = read_shakersignal(filename1, nn)
+        print(y_array)
 
-    frequency = arange(10, 31, 1)
+        filename2 = path + folder3 + str(nn) + 'Hz_1_edited.txt'
+        S = read_SOP(filename2)
+        azi = S.parameters.azimuth().max() - S.parameters.azimuth().min()
+        ellip = S.parameters.ellipticity_angle().max() - S.parameters.ellipticity_angle().min()
+        alpha = sqrt(azi**2 + ellip**2) * 180/pi
+        print(alpha)
+
+        filename3 = path + folder2 + 'scope_' + str(nn-10) + '_edited.txt'
+        #print(filename)
+        y_array = read_shakersignal(filename1, nn)
+        print(y_array)
+
+        filename4 = path + folder4 + str(nn) + 'Hz_edited.txt'
+        S = read_SOP(filename2)
+        azi = S.parameters.azimuth().max() - S.parameters.azimuth().min()
+        ellip = S.parameters.ellipticity_angle().max() - S.parameters.ellipticity_angle().min()
+        alpha = sqrt(azi**2 + ellip**2) * 180/pi
+        print(alpha)
 
 
 plt.show()
