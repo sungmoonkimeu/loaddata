@@ -8,7 +8,7 @@ import os
 #foldername = 'Const_Freq_Polarimeter'
 #foldername = '/010921_HIBI_Const_Disp_Polarimeter/RHC'
 #foldername = '/Data_Vib_2_(Hibi_losen_fasten)/1_RHC_Fasten'
-foldername = '/Laser stability test_longterm'
+foldername = '/Laser stability test_2nd'
 
 
 #path_dir = os.getcwd() + '/Data_Vib_1_(Oscillo_Polarimeter)/' + foldername
@@ -34,7 +34,7 @@ for nn in range(len(file_list)):
 
     databeginning = 11   # 4 is normal, sometimes it should be changed to 5
     fn2 = path_dir + '_edited//' + tmp[0] + '_edited.txt'
-    eol = 36000              # end of line
+    eol = 14400              # end of line
     with open(fn) as fp:
         for i, line in enumerate(fp):
             if databeginning < i < eol+databeginning+2:

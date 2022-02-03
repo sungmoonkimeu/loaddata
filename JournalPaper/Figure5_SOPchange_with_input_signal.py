@@ -85,8 +85,8 @@ def read_shakersignal(filepath, frequency):
     signal0 = data['Volt']
     signal1 = data['Volt.1']
 
-    y0 = (max(signal1) - min(signal1))*10   # Acceleration
-    y1 = (max(signal0) - min(signal0))      # peak-peak voltage
+    y0 = (max(signal0) - min(signal0))      # peak-peak voltage
+    y1 = (max(signal1) - min(signal1)) * 10  # Acceleration
     y2 = y0 / (frequency ** 2) * 1000       # displacement
 
     return np.array([y0, y1, y2])
@@ -95,40 +95,87 @@ def read_shakersignal(filepath, frequency):
 if __name__ == '__main__':
 
     path = os.getcwd() + '//Data_Vib_1_(Oscillo_Polarimeter)//'
-    folder1 = 'Const_disp_OSC2_edited//'
-    folder2 = 'Const_acc_OSC2_edited//'
+    folder1 = 'Const_acc_OSC2_edited//'
+    folder2 = 'Const_acc_Polarimeter_edited//'
 
-    folder3 = 'Const_acc_Polarimeter_edited//'
+    folder3 = 'Const_disp_OSC2_edited//'
     folder4 = 'Const_disp_Polarimeter2_edited//'
+
+
+
     freq = np.arange(10, 31, 1)
 
-    y_array = np.array([0, 0, 0])
+    displacement = np.zeros(len(freq))
+    acceleration = np.zeros(len(freq))
+    alpha1 = np.zeros(len(freq))
+    alpha2 = np.zeros(len(freq))
 
     for nn in freq:
+        # Const displacement
         filename1 = path + folder1 + 'scope_' + str(nn-10) + '_edited.txt'
-        #print(filename)
-        y_array = read_shakersignal(filename1, nn)
-        print(y_array)
 
-        filename2 = path + folder3 + str(nn) + 'Hz_1_edited.txt'
+        y_array = read_shakersignal(filename1, nn)
+        displacement[nn-10] = y_array[2]
+
+        filename2 = path + folder2 + str(nn) + 'Hz_1_edited.txt'
         S = read_SOP(filename2)
-        azi = S.parameters.azimuth().max() - S.parameters.azimuth().min()
-        ellip = S.parameters.ellipticity_angle().max() - S.parameters.ellipticity_angle().min()
-        alpha = sqrt(azi**2 + ellip**2) * 180/pi
-        print(alpha)
+        delta_azi = S.parameters.azimuth().max() - S.parameters.azimuth().min()
+        delta_ellip = S.parameters.ellipticity_angle().max() - S.parameters.ellipticity_angle().min()
+        alpha1[nn-10] = sqrt(delta_azi**2 + delta_ellip**2) * 180/pi
 
-        filename3 = path + folder2 + 'scope_' + str(nn-10) + '_edited.txt'
+        # Const acceleration
+        filename3 = path + folder3 + 'scope_' + str(nn-10) + '_edited.txt'
         #print(filename)
-        y_array = read_shakersignal(filename1, nn)
-        print(y_array)
+        y_array = read_shakersignal(filename3, nn)
+        acceleration[nn - 10] = y_array[1]
 
         filename4 = path + folder4 + str(nn) + 'Hz_edited.txt'
-        S = read_SOP(filename2)
-        azi = S.parameters.azimuth().max() - S.parameters.azimuth().min()
-        ellip = S.parameters.ellipticity_angle().max() - S.parameters.ellipticity_angle().min()
-        alpha = sqrt(azi**2 + ellip**2) * 180/pi
-        print(alpha)
+        S = read_SOP(filename4)
+        delta_azi = S.parameters.azimuth().max() - S.parameters.azimuth().min()
+        delta_ellip = S.parameters.ellipticity_angle().max() - S.parameters.ellipticity_angle().min()
+        alpha2[nn-10] = sqrt(delta_azi**2 + delta_ellip**2) * 180/pi
 
+    fig, ax = plt.subplots(1, 2, figsize=(23/2.54, 8/2.54))
+    fig.set_dpi(91.79)  # DPI of My office monitor
+    plt.subplots_adjust(left=0.088, bottom=0.155, right=0.91, top=0.93, wspace=0.593, hspace=0.502)
+    plt.subplots_adjust(bottom=0.155)
+
+    ms = 4
+    ax[0].plot(freq, alpha1, lw='1', label="Max. SOP change", marker='o', color='k', markersize=ms)
+    ax[0].set_xlabel('Frequency (Hz)')
+    ax[0].set_ylabel('Max. SOP change (deg)')
+    #ax[0].set_title('Input signal')
+    ax[0].set(xlim=(10, 30), ylim=(0, 2))
+    lns01 = ax[0].lines
+    ax0 = ax[0].twinx()
+    lns02 = ax0.plot(freq, displacement, lw='1', label="Displacement", marker='x', color='r', markersize=ms)
+    ax0.set_ylabel('Displacement (mm)')
+    ax0.set(ylim=(0, 180))
+
+    # added these three lines
+    lns = lns01 + lns02
+    labs = [l.get_label() for l in lns]
+    ax[0].legend(lns, labs, loc=0)
+
+    ax[1].plot(freq, alpha2, lw='1', label="Max. SOP change", marker='o', color='k', markersize=ms)
+    ax[1].set_xlabel('Frequency (Hz)')
+    ax[1].set_ylabel('Max. SOP change (deg)')
+    #ax[1].set_title('Measured signal')
+    ax[1].set(xlim=(10, 30), ylim=(0, 2))
+    lns11 = ax[1].lines
+    ax1 = ax[1].twinx()
+    lns12 = ax1.plot(freq, acceleration, lw='1', label="Acceleration", marker='^', color='b', markersize=ms)
+    ax1.set_ylabel('Acceleration (g)')
+    ax1.set(ylim=(0, 40))
+
+    # added these three lines
+    lns = lns11 + lns12
+    labs = [l.get_label() for l in lns]
+    ax[1].legend(lns, labs, loc=0)
+
+    fig.align_ylabels()
+    #fig.savefig('Constant_Acceleration.png')
+    #fig.savefig('Constant_Displacement.png')
 
 plt.show()
 
