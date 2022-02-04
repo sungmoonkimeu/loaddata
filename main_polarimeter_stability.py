@@ -146,24 +146,19 @@ for nn in range(len(file_list)):
     tmpfig.align_ylabels()
 
     max_diff_S[nn][0] = S1.max() - S1.min()
-    mean_S[nn][0] = S1.mean()
+    mean_S[nn][0] = (S1.max() + S1.min()) /2
     max_diff_S[nn][1] = S2.max() - S2.min()
-    mean_S[nn][1] = S2.mean()
+    mean_S[nn][1] = (S2.max() + S2.min()) /2
     max_diff_S[nn][2] = S3.max() - S3.min()
-    mean_S[nn][2] = S3.mean()
+    mean_S[nn][2] = (S3.max() + S3.min()) /2
 
-if max_diff_S[0][0] > max_diff_S[1][0]:
-    delta = max_diff_S[0][0]
-    ax1[1].set(ylim=(mean_S[0][0] - delta / 2, mean_S[0][0] + delta/2))
-    ax2[1].set(ylim=(mean_S[1][0] - delta / 2, mean_S[1][0] + delta/2))
-if max_diff_S[0][1] > max_diff_S[1][1]:
-    delta = max_diff_S[0][1]
-    ax1[2].set(ylim=(mean_S[0][1] - delta / 2, mean_S[0][1] + delta/2))
-    ax2[2].set(ylim=(mean_S[1][1] - delta / 2, mean_S[1][1] + delta/2))
-if max_diff_S[0][2] > max_diff_S[1][2]:
-    delta = max_diff_S[0][2]
-    ax1[3].set(ylim=(mean_S[0][2] - delta / 2, mean_S[0][2] + delta/2))
-    ax2[3].set(ylim=(mean_S[1][2] - delta / 2, mean_S[1][2] + delta/2))
+
+for nn in range(3):
+    delta = max_diff_S[:, nn].max()
+
+    ax1[nn+1].set(ylim=(mean_S[0][nn] - delta / 1.9, mean_S[0][nn] + delta/1.9))
+    ax2[nn+1].set(ylim=(mean_S[1][nn] - delta / 1.9, mean_S[1][nn] + delta/1.9))
+
 
 #ax[3].set(xlim=(0, 2000), ylim=(0,1))
 
