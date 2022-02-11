@@ -59,7 +59,8 @@ def switch_osfolder():
 
 switch_osfolder()
 
-foldername = '//Laser stability test_2nd'
+#foldername = '//Laser stability test_2nd'
+foldername = '//Stability_ManualPC'
 path_dir = os.getcwd() + foldername + '_edited'
 
 file_list = os.listdir(path_dir)
@@ -71,7 +72,7 @@ Sv = create_Stokes('Output_S')
 Out = create_Stokes('Output_S2')
 
 fig2, ax2 = Sv.draw_poincare(figsize=(7, 7), angle_view=[0.2, 1.2], kind='line')
-frequency = arange(10, 12, 1)
+frequency = arange(10, 11, 1)
 #frequency = np.array([30,31])
 
 diff_azi_V = np.ones(len(file_list))
@@ -102,7 +103,7 @@ for nn in range(len(file_list)):
     time = np.arange(0, len(S0), 1) / 720
 
     Sn = np.ones((len(S0)))
-    SS = np.vstack((Sn, S1, S2, S3))
+    SS = np.vstack((Sn[720:], S1[720:], S2[720:], S3[720:]))
     Out = Sv.from_matrix(SS.T)
 
     draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 4])
@@ -129,16 +130,16 @@ for nn in range(len(file_list)):
         tmpax = ax2
         tmpfig = fig_2
 
-    tmpax[0].plot(time, S0)
+    tmpax[0].plot(time[720:], S0[720:])
     tmpax[0].set_ylabel("S" + str(0))
     # ax[0].set(xlim=(0, 0.5), ylim=(-1, 1))
-    tmpax[1].plot(time, S1)
+    tmpax[1].plot(time[720:], S1[720:])
     tmpax[1].set_ylabel("S" + str(1))
     # ax[1].set(xlim=(0, 0.5), ylim=(-1, 1))
-    tmpax[2].plot(time, S2)
+    tmpax[2].plot(time[720:], S2[720:])
     tmpax[2].set_ylabel("S" + str(2))
     # ax[2].set(xlim=(0, 0.5), ylim=(-1, 1))
-    tmpax[3].plot(time, S3)
+    tmpax[3].plot(time[720:], S3[720:])
     tmpax[3].set_ylabel("S" + str(3))
     # ax[3].set(xlim=(0, 0.5), ylim=(-1, 1))
 

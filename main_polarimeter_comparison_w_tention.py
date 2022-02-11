@@ -70,7 +70,8 @@ V_foldername = ['2_LP0_loosen', '1_LP0']
 #V_foldername = ['Const_volt_LP90_Polarimeter', 'Const_volt_LP45_Polarimeter', 'Const_volt_RHC_Polarimeter']
 V_label = ['Loosen', 'Tighten']
 #V_marker = ['^', 'o', 'x']
-fig3, ax3 = plt.subplots(figsize=(5, 4))
+
+issaved = False
 for n_iter, foldername in enumerate(V_foldername):
     #path_dir = os.getcwd() + '//Data_Vib_1_(Oscillo_Polarimeter)//' + foldername + '_edited'
     path_dir = os.getcwd() + '//Data_Vib_3_(Hibi_loosen_fasten)//' + foldername + '_edited'
@@ -79,19 +80,24 @@ for n_iter, foldername in enumerate(V_foldername):
     #path_dir = os.getcwd() + '//Data_Vib_3_(Hibi_loosen_fasten)//' + foldername + '_edited'
     file_list = os.listdir(path_dir)
 
-    plt.subplots_adjust(left=0.14, bottom=0.112, right=0.93, top=0.93, wspace=0.2, hspace=0)
 
     Ev = Jones_vector('Output_J')
     Sv = create_Stokes('Output_S')
     Out = create_Stokes('Output_S2')
 
-    fig2, ax2 = Sv.draw_poincare(figsize=(7, 7), angle_view=[0.2, 1.2], kind='line')
+    #fig2, ax2 = Sv.draw_poincare(figsize=(7, 7), angle_view=[0.2, 1.2], kind='line')
     frequency = arange(10, 31, 1)
     #frequency = np.array([30,31])
 
     diff_azi_V = np.ones(len(file_list))
     diff_ellip_V = np.ones(len(file_list))
-    fig, ax = plt.subplots(4, figsize=(6, 5))
+    fig, ax = plt.subplots(4, figsize=(12/2.54, 9/2.54))
+    fig.set_dpi(91.79)  # DPI of My office monitor
+
+    plt.subplots_adjust(left=0.25, bottom=0.17, right=0.93, top=0.93, wspace=0.2, hspace=0.233)
+
+    max_diff_S = np.zeros([2,3])
+    mean_S = np.zeros([2,3])
     for nn in range(len(file_list)):
         fn2 = path_dir + "//" + file_list[nn]
         count = 0
@@ -109,7 +115,7 @@ for n_iter, foldername in enumerate(V_foldername):
         SS = np.vstack((Sn, S1, S2, S3))
         Out = Sv.from_matrix(SS.T)
 
-        draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 4])
+        #draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 4])
 
         azi_V = Out.parameters.azimuth()
         ellip_V = Out.parameters.ellipticity_angle()
@@ -117,13 +123,31 @@ for n_iter, foldername in enumerate(V_foldername):
         diff_ellip_V[nn] = ellip_V.max() - ellip_V.min()
 
         if nn == len(file_list)-2:
-            ax[0].plot(time, S0)
-            ax[1].plot(time, S1)
-            ax[2].plot(time, S2)
-            ax[3].plot(time, S3)
+            ax[0].plot(time[::2], S0[::2], 'k')
+            ax[1].plot(time[::2], S1[::2], 'k')
+            ax[2].plot(time[::2], S2[::2], 'k')
+            ax[3].plot(time[::2], S3[::2], 'k')
+            print(S1.max(), S1.min())
+            print(S2.max(), S2.min())
+            print(S3.max(), S3.min())
+            ax[0].set(xlim=(0, 0.3), ylim=(1.52, 1.55))
+            ax[0].set(xticklabels=[])
+            ax[1].set(xticklabels=[])
+            ax[2].set(xticklabels=[])
+            if issaved is False:
+                ax[1].set(xlim=(0, 0.3), ylim=(-0.96446, -0.95445))
+                ax[2].set(xlim=(0, 0.3), ylim=(-0.088255, -0.070255))
+                ax[3].set(xlim=(0, 0.3), ylim=(0.25029, 0.29029))
+            else:
+                ax[1].set(xlim=(0, 0.3), ylim=(-0.84853, -0.83853))
+                ax[2].set(xlim=(0, 0.3), ylim=(0.044285, 0.062285))
+                ax[3].set(xlim=(0, 0.3), ylim=(0.514515, 0.554515))
+            issaved = True
 
     for nn in range(len(ax)):
         ax[nn].set_ylabel("S"+str(nn))
+        #if nn > 0:
+
     ax[3].set_xlabel("Time (s)")
     fig.align_ylabels()
 
