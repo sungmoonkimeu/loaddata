@@ -69,20 +69,20 @@ for nn in range(3):
     c = b/(b[0]**2 + b[1]**2 + b[2]**2)**0.5
     print(c)
 
-
+# 평균 벡터
 mean_a = np.array([a[0,:].sum(), a[1,:].sum(), a[2,:].sum()])
 mean_a = mean_a/(np.linalg.norm(mean_a))
-
 # 평균 벡터와 모든 점 사이의 거리
-
 dist_a_mean_a = np.linalg.norm(a.T-mean_a, axis=1)
+# 평균벡터와 가장 가까운 벡터
 std_a = a[:,np.argmin(dist_a_mean_a)]
 
-b0 = a[:, 0] - a[:, nn+1]
-
+diff_a = a.T - std_a
+cross_a = np.cross(diff_a[0], diff_a)
+cross_a = cross_a/(np.linalg.norm(cross_a,axis=1))
 for nn, V in enumerate(a[:, :-2]):
 
-    b1 = a[:, 0] - a[:, nn+2]
+    b1 = std_a - a[:, nn+2]
     b = np.cross(b0,b1)
     c = b/(b[0]**2 + b[1]**2 + b[2]**2)**0.5
     print(c)
