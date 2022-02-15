@@ -48,17 +48,18 @@ class OOMFormatter(matplotlib.ticker.ScalarFormatter):
 
 
 def basistonormal(S):
-    S = create_Stokes('Output')
+    #S = create_Stokes('Output')
     S2 = create_Stokes('cal')
     J1 = Jones_matrix('Random element')
     J2 = Jones_matrix('Random element')
     M = Mueller('cal')
 
     a = S.parameters.matrix()[1:]  # convert 4x1 Stokes vectors to 3x1 cartesian vectors
-
+    #print(a)
     # 평균 벡터
     mean_a = np.array([a[0, :].sum(), a[1, :].sum(), a[2, :].sum()])
     mean_a = mean_a / (np.linalg.norm(mean_a))
+    print(mean_a)
     # 평균 벡터와 모든 점 사이의 거리
     dist_a_mean_a = np.linalg.norm(a.T - mean_a, axis=1)
     # 평균벡터와 가장 가까운 벡터 --> 대표 벡터 ?
@@ -107,6 +108,7 @@ def basistonormal(S):
 
     Sp = np.vstack((zT, TT))
     S.from_matrix(Sp)
+    return S
 
 
 # Switching OS folder
@@ -135,6 +137,7 @@ V_label = ['LP0', 'LP45', 'RHC']
 V_marker = ['^', 'o', 'x']
 fig3, ax3 = plt.subplots(figsize=(5, 4))
 for n_iter, foldername in enumerate(V_foldername):
+
     #path_dir = os.getcwd() + '//Data_Vib_1_(Oscillo_Polarimeter)//' + foldername + '_edited'
     path_dir = os.getcwd() + '//Data_Vib_3_(Hibi_loosen_fasten)//' + foldername + '_edited'
 
@@ -174,6 +177,10 @@ for n_iter, foldername in enumerate(V_foldername):
         Out = Sv.from_matrix(SS.T)
 
         draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 4])
+
+        #Out = basistonormal(Out)
+
+        #draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 4])
 
         azi_V = Out.parameters.azimuth()
         ellip_V = Out.parameters.ellipticity_angle()
