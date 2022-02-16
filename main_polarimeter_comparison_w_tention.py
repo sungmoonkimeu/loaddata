@@ -122,7 +122,7 @@ for n_iter, foldername in enumerate(V_foldername):
         diff_azi_V[nn] = azi_V.max() - azi_V.min()
         diff_ellip_V[nn] = ellip_V.max() - ellip_V.min()
 
-        if nn == len(file_list)-2:
+        if nn == len(file_list)-1:
             ax[0].plot(time[::2], S0[::2], 'k')
             ax[1].plot(time[::2], S1[::2], 'k')
             ax[2].plot(time[::2], S2[::2], 'k')

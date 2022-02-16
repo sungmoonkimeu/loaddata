@@ -11,6 +11,7 @@ import scipy.optimize
 from scipy import stats
 from cycler import cycler
 import numpy as np
+from numpy import pi, arccos, cos, sin
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from mpl_toolkits.mplot3d import Axes3D
@@ -24,13 +25,79 @@ import pandas as pd
 from py_pol.jones_vector import Jones_vector, degrees
 from py_pol.stokes import Stokes, create_Stokes
 from py_pol.drawings import draw_stokes_points, draw_poincare, draw_ellipse
-
+from py_pol.mueller import Mueller
+from py_pol.jones_matrix import Jones_matrix
 
 plt.style.use('seaborn-whitegrid')
 plt.rcParams.update({'figure.max_open_warning': 0})
 warnings.filterwarnings("ignore", message="This figure includes Axes")
 warnings.filterwarnings("ignore", message="This figure was using")
 warnings.filterwarnings("ignore", message="Calling figure.constrained_layout")
+
+
+def basistonormal(S):
+
+    #a = S.parameters.matrix()[1:]  # convert 4x1 Stokes vectors to 3x1 cartesian vectors
+    a = S  # convert 4x1 Stokes vectors to 3x1 cartesian vectors
+
+    ''' 
+    # 평균 벡터
+    mean_a = np.array([a[0, :].sum(), a[1, :].sum(), a[2, :].sum()])
+    mean_a = mean_a / (np.linalg.norm(mean_a))
+    print(mean_a)
+    # 평균 벡터와 모든 점 사이의 거리
+    dist_a_mean_a = np.linalg.norm(a.T - mean_a, axis=1)
+    # 평균벡터와 가장 가까운 벡터 --> 대표 벡터 ?
+    std_a = a[:, np.argmin(dist_a_mean_a)]
+
+    # 대표 벡터 와 나머지 벡터 연결
+    diff_a = a.T - std_a
+
+    # 대표 벡터와 나머지 벡터가 이루는 벡터 끼리 외적
+    cross_a = np.cross(diff_a[0], diff_a)
+
+    # filtering too small vectors
+    cross_a2 = cross_a[np.linalg.norm(cross_a, axis=1) > np.linalg.norm(cross_a, axis=1).mean() / 10]
+    # 반대 방향 vector 같은 방향으로
+    cross_an = cross_a2.T / np.linalg.norm(cross_a2, axis=1)
+    # Normalize
+    cross_an_abs = cross_an * abs(cross_an.sum(axis=0)) / cross_an.sum(axis=0)
+    # average after summation whole vectors
+    c = cross_an_abs.sum(axis=1) / np.linalg.norm(cross_an_abs.sum(axis=1))
+    '''
+
+    # 그냥 첫번쨰 벡터
+    c = a[...,0]
+    print(c)
+
+    #print("new c", c)
+    #fig[0].plot([0, c[0]], [0, c[1]], [0, c[2]], 'r-', lw=1, )
+
+    z = [0, 0, 1]
+    y = [0, 1, 0]
+    x = [1, 0, 0]
+
+    th_x = np.arccos(np.dot(x, [c[0], c[1], 0] / np.linalg.norm([c[0], c[1], 0])))
+    th_y = np.arccos(np.dot(y, [c[0], c[1], 0] / np.linalg.norm([c[0], c[1], 0])))
+    th_z = np.arccos(np.dot(z, c))
+
+    #print("x=", th_x * 180 / pi, "y=", th_y * 180 / pi, "z=", th_z * 180 / pi)
+
+    th = -th_y
+    if th_x > pi / 2:
+        th = th_y
+    Rr = np.array([[cos(th), -sin(th), 0], [sin(th), cos(th), 0], [0, 0, 1]])  # S3, R 기준 rotation
+
+    th = 0
+    R45 = np.array([[cos(th), 0, sin(th)], [0, 1, 0], [-sin(th), 0, cos(th)]])  # S2, + 기준 rotation
+
+    th = pi/2-th_z+pi
+    Rh = np.array([[1, 0, 0], [0, cos(th), -sin(th)], [0, sin(th), cos(th)]])  # S1, H 기준 rotation
+
+    TT = R45.T @ Rh.T @ Rr.T @ a
+
+    return TT
+
 
 def PS3(shot):
     '''
@@ -104,7 +171,7 @@ def PS3(shot):
 
     #    plt.tight_layout()            #not compatible
     #ax.view_init(elev=-21, azim=-54)
-    ax.view_init(elev=-158, azim=126)
+    ax.view_init(elev=-169, azim=105)
     #    ax.view_init(elev=0/np.pi, azim=0/np.pi)
 
     #    ax.set_title(label = shot, loc='left', pad=10)
@@ -169,10 +236,20 @@ def main():
         cm = np.linspace(0, 1, len(S1))  # color map
         cm[-1] = 1.3
 
+        ax.plot(S1, S2, S3, color='c', marker='o', markersize=4, alpha=1.0, linewidth=0, zorder=3)
+
+        S = np.vstack((np.array(S1),np.array(S2),np.array(S3)))
+        print("S =", S[:,1:5])
+        S = basistonormal(S)
+
+        S1 = S[0,:]
+        S2 = S[1, :]
+        S3 = S[2,:]
+
         #ax.scatter3D(S1, S2, S3, zdir='z', marker='o', s=4, c=cm, zorder=555,
         #             alpha=1, label='F1', cmap="cool")
 
-        ax.plot(S1, S2, S3, marker='o', markersize=4, alpha=1.0, linewidth=0, zorder=3)
+        ax.plot(S1, S2, S3, color='b', marker='o', markersize=4, alpha=1.0, linewidth=0, zorder=3)
 
         #ax.scatter3D(D1, D2, D3, zdir='z', marker='+', s=6, c=cm,
         #             alpha=0.6, label='F2', cmap="cool")

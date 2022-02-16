@@ -48,7 +48,7 @@ class OOMFormatter(matplotlib.ticker.ScalarFormatter):
 
 
 def basistonormal(S):
-    S = create_Stokes('Output')
+    #S = create_Stokes('Output')
     S2 = create_Stokes('cal')
     J1 = Jones_matrix('Random element')
     J2 = Jones_matrix('Random element')
@@ -56,9 +56,11 @@ def basistonormal(S):
 
     a = S.parameters.matrix()[1:]  # convert 4x1 Stokes vectors to 3x1 cartesian vectors
 
+    ''' 
     # 평균 벡터
     mean_a = np.array([a[0, :].sum(), a[1, :].sum(), a[2, :].sum()])
     mean_a = mean_a / (np.linalg.norm(mean_a))
+    print(mean_a)
     # 평균 벡터와 모든 점 사이의 거리
     dist_a_mean_a = np.linalg.norm(a.T - mean_a, axis=1)
     # 평균벡터와 가장 가까운 벡터 --> 대표 벡터 ?
@@ -78,6 +80,11 @@ def basistonormal(S):
     cross_an_abs = cross_an * abs(cross_an.sum(axis=0)) / cross_an.sum(axis=0)
     # average after summation whole vectors
     c = cross_an_abs.sum(axis=1) / np.linalg.norm(cross_an_abs.sum(axis=1))
+    '''
+
+    # 그냥 첫번쨰 벡터
+    c = a[...,0]
+    print(c)
 
     #print("new c", c)
     #fig[0].plot([0, c[0]], [0, c[1]], [0, c[2]], 'r-', lw=1, )
@@ -86,27 +93,30 @@ def basistonormal(S):
     y = [0, 1, 0]
     x = [1, 0, 0]
 
-    th_x = np.arccos(np.dot(x, c))
-    th_y = np.arccos(np.dot(y, c))
+    th_x = np.arccos(np.dot(x, [c[0], c[1], 0] / np.linalg.norm([c[0], c[1], 0])))
+    th_y = np.arccos(np.dot(y, [c[0], c[1], 0] / np.linalg.norm([c[0], c[1], 0])))
     th_z = np.arccos(np.dot(z, c))
-    print("x=", th_x * 180 / pi, "y=", th_y * 180 / pi, "z=", th_z * 180 / pi)
 
-    th = th_x
-    if th_y > pi / 2:
-        th = -th_x
+    #print("x=", th_x * 180 / pi, "y=", th_y * 180 / pi, "z=", th_z * 180 / pi)
+
+    th = -th_y
+    if th_x > pi / 2:
+        th = th_y
     Rr = np.array([[cos(th), -sin(th), 0], [sin(th), cos(th), 0], [0, 0, 1]])  # S3, R 기준 rotation
 
-    th = th_z
+    th = 0
     R45 = np.array([[cos(th), 0, sin(th)], [0, 1, 0], [-sin(th), 0, cos(th)]])  # S2, + 기준 rotation
 
-    th = 0
+    th = pi/2-th_z
     Rh = np.array([[1, 0, 0], [0, cos(th), -sin(th)], [0, sin(th), cos(th)]])  # S1, H 기준 rotation
+
 
     TT = R45.T @ Rh.T @ Rr.T @ a
     zT = ones(np.shape(TT)[1])
 
     Sp = np.vstack((zT, TT))
     S.from_matrix(Sp)
+    return S
 
 
 # Switching OS folder
@@ -135,6 +145,7 @@ V_label = ['LP0', 'LP45', 'RHC']
 V_marker = ['^', 'o', 'x']
 fig3, ax3 = plt.subplots(figsize=(5, 4))
 for n_iter, foldername in enumerate(V_foldername):
+
     #path_dir = os.getcwd() + '//Data_Vib_1_(Oscillo_Polarimeter)//' + foldername + '_edited'
     path_dir = os.getcwd() + '//Data_Vib_3_(Hibi_loosen_fasten)//' + foldername + '_edited'
 
@@ -155,11 +166,11 @@ for n_iter, foldername in enumerate(V_foldername):
 
     diff_azi_V = np.ones(len(file_list))
     diff_ellip_V = np.ones(len(file_list))
+    cstm_color = ['k', 'r', 'b', 'c', 'y', 'm']
 
     for nn in range(len(file_list)):
         fn2 = path_dir + "//" + file_list[nn]
         count = 0
-        cstm_color = ['c', 'm', 'y', 'k', 'r']
 
         #    fn2 = path_dir + "//10Hz_edited.txt"
         data = pd.read_table(fn2, delimiter=r"\s+")
@@ -172,6 +183,10 @@ for n_iter, foldername in enumerate(V_foldername):
         Sn = np.ones((len(S0)))
         SS = np.vstack((Sn, S1, S2, S3))
         Out = Sv.from_matrix(SS.T)
+
+        draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 4])
+
+        Out = basistonormal(Out)
 
         draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 4])
 
@@ -195,7 +210,7 @@ for n_iter, foldername in enumerate(V_foldername):
     #r'$\phi$'
 
     ax3.plot(frequency, sqrt(diff_azi_V ** 2 + diff_ellip_V ** 2) * 180 / pi, label=V_label[n_iter],
-             marker=V_marker[n_iter])
+             marker=V_marker[n_iter], color=cstm_color[n_iter % 4])
     ax3.xaxis.set_major_locator(MaxNLocator(5))
     ax3.set(xlim=(9, 31), ylim=(0, 2))
 
