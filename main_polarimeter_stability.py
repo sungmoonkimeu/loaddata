@@ -59,8 +59,9 @@ def switch_osfolder():
 
 switch_osfolder()
 
-#foldername = '//Laser stability test_2nd'
-foldername = '//Stability_ManualPC'
+foldername = '//Laser stability test_2nd'
+#foldername = '//Stability_ManualPC'
+#foldername = '//Laser_stability_test_pol_manualPC'
 path_dir = os.getcwd() + foldername + '_edited'
 
 file_list = os.listdir(path_dir)
@@ -72,8 +73,8 @@ Sv = create_Stokes('Output_S')
 Out = create_Stokes('Output_S2')
 
 fig2, ax2 = Sv.draw_poincare(figsize=(7, 7), angle_view=[0.2, 1.2], kind='line')
-frequency = arange(10, 11, 1)
-#frequency = np.array([30,31])
+frequency = arange(10, 12,1)
+#frequency = np.array([30, 31])
 
 diff_azi_V = np.ones(len(file_list))
 diff_ellip_V = np.ones(len(file_list))
@@ -109,6 +110,7 @@ for nn in range(len(file_list)):
     draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 4])
 
     azi_V = Out.parameters.azimuth()
+    print(azi_V)
     ellip_V = Out.parameters.ellipticity_angle()
     for i_n, i_v in enumerate(azi_V):
         if i_v > pi/2:
@@ -122,6 +124,7 @@ for nn in range(len(file_list)):
 
     diff_azi_V[nn] = azi_V.max() - azi_V.min()
     diff_ellip_V[nn] = ellip_V.max() - ellip_V.min()
+    print(azi_V)
 
     if nn == 0:
         tmpax = ax1

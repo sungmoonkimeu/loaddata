@@ -208,8 +208,11 @@ for nn, fn in enumerate(list_fn):
 ax[-1].set_xlabel('Frequency (1/m)')
 ax[int(len(ax)/2)].set_ylabel('FFT')
 
+# Find peak frequency manually...
+# if too noisy peaks were droped
 yy = np.array([16,15,13,11,9, 7, 6, 4, 4, 4, 3,      5, 5,   5, 6, 8, 9, 11])
 yy2 = np.array([18, 14, 11, 8,8, 7,     5, 5,  5, 5,  5, 6, 6, 8, 8, 9,  9, 11, 15, 18])
+
 # for 1st measurement
 maxdatax1 = np.array([1, 2, 3, 4, 5, 6, 7, 8,8.25, 8.5,8.75, 11.25,11.5,11.75,12,13,14,15])
 #maxdatay1 = 1 / np.array([16,15,13,11,9, 7, 6, 4, 4,  3,   4,   4, 5,   6, 8, 9, 11])
