@@ -52,9 +52,9 @@ diff_a = a.T - std_a
 # 대표 벡터와 나머지 벡터가 이루는 벡터 끼리 외적
 cross_a = np.cross(diff_a[0], diff_a)
 
-# filtering too small vectors
+# filtering out small vectors
 cross_a2 = cross_a[np.linalg.norm(cross_a, axis=1) > np.linalg.norm(cross_a, axis=1).mean()/10]
-# 반대 방향 vector 같은 방향으로
+# 반대 방향 vector 같은 방향으로 변환
 cross_an = cross_a2.T/np.linalg.norm(cross_a2, axis=1)
 # Normalize
 cross_an_abs = cross_an * abs(cross_an.sum(axis=0))/cross_an.sum(axis=0)
@@ -92,7 +92,7 @@ Rh = np.array([[1, 0, 0], [0, cos(th), -sin(th)], [0, sin(th), cos(th)]])   # S1
 TT = R45.T@Rh.T@Rr.T@a
 zT = ones(np.shape(TT)[1])
 
-Sp = np.vstack((zT,TT))
+Sp = np.vstack((zT, TT))
 S.from_matrix(Sp)
 
 draw_stokes_points(fig[0], S, kind='line', color_line='b')
