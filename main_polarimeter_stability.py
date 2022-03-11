@@ -59,9 +59,10 @@ def switch_osfolder():
 
 switch_osfolder()
 
-foldername = '//Laser stability test_2nd'
+#foldername = '//Laser stability test_2nd'
 #foldername = '//Stability_ManualPC'
-#foldername = '//Laser_stability_test_pol_manualPC'
+foldername = '//Laser_stability_test_cascadedpol'
+
 path_dir = os.getcwd() + foldername + '_edited'
 
 file_list = os.listdir(path_dir)
@@ -73,7 +74,7 @@ Sv = create_Stokes('Output_S')
 Out = create_Stokes('Output_S2')
 
 fig2, ax2 = Sv.draw_poincare(figsize=(7, 7), angle_view=[0.2, 1.2], kind='line')
-frequency = arange(10, 12,1)
+frequency = arange(10, 11,1)
 #frequency = np.array([30, 31])
 
 diff_azi_V = np.ones(len(file_list))

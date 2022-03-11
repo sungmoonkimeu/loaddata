@@ -1,26 +1,13 @@
-"""Analysing datafiles from polarimeter POD-101
-
-"""
-
-import string
+from tkinter import Tk, filedialog
 import os
 
-#foldername = 'Const_Freq_Polarimeter'
-#foldername = '/010921_HIBI_Const_Disp_Polarimeter/RHC'
-#foldername = '/Data_Vib_2_(Hibi_losen_fasten)/1_RHC_Fasten'
-#foldername = '/Laser stability test_2nd'
-#foldername = '/Stability_ManualPC'
-foldername = '/Laser_stability_test_pol_manualPC'
+cwd = os.getcwd()
+root = Tk()         # pointing root to Tk() to use it as Tk() in program.
+root.withdraw()     # Hides small tkinter window.
+root.attributes('-topmost', True)   # Opened windows will be active. above all windows despite of selection.
 
-
-
-#path_dir = os.getcwd() + '/Data_Vib_1_(Oscillo_Polarimeter)/' + foldername
-
-
-path_dir = os.getcwd() + foldername
+path_dir = filedialog.askdirectory(initialdir=cwd)     # Returns opened path as str
 file_list = os.listdir(path_dir)
-
-
 
 def createfolder(directory):
     try:
