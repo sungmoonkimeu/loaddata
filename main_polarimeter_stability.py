@@ -23,10 +23,13 @@ import pandas as pd
 # plt.rcParams['font.family']='sans-serif'
 # plt.rcParams['font.sans-serif']='Comic Sans MS'
 
+from matplotlib.lines import Line2D
 
 from py_pol.jones_vector import Jones_vector, degrees
 from py_pol.stokes import Stokes, create_Stokes
 from py_pol.drawings import draw_stokes_points, draw_poincare, draw_ellipse
+
+import basis_calibration
 
 
 # noinspection PyPep8Naming
@@ -59,9 +62,16 @@ def switch_osfolder():
 
 switch_osfolder()
 
+#foldername = '//Laser stability test_short_term'
 #foldername = '//Laser stability test_2nd'
+#foldername = '//Laser stability test_longterm'
+#foldername = '//Laser_stability_test_pol_manualPC'
+
 #foldername = '//Stability_ManualPC'
-foldername = '//Laser_stability_test_cascadedpol'
+#foldername = '//Laser_stability_test_cascadedpol'
+
+#foldername = '//Stability_total_SOPcontroller'
+foldername = '//Stability_total_manualPC'
 
 path_dir = os.getcwd() + foldername + '_edited'
 
@@ -74,7 +84,7 @@ Sv = create_Stokes('Output_S')
 Out = create_Stokes('Output_S2')
 
 fig2, ax2 = Sv.draw_poincare(figsize=(7, 7), angle_view=[0.2, 1.2], kind='line')
-frequency = arange(10, 11,1)
+frequency = arange(10, 15,1)
 #frequency = np.array([30, 31])
 
 diff_azi_V = np.ones(len(file_list))
@@ -90,8 +100,9 @@ tmpax = 0
 for nn in range(len(file_list)):
 
     fn2 = path_dir + "//" + file_list[nn]
+    print("filename = ", file_list[nn])
     count = 0
-    cstm_color = ['c', 'm', 'y', 'k', 'r']
+    cstm_color = ['y', 'b', 'r', 'k', 'g']
 
     #    fn2 = path_dir + "//10Hz_edited.txt"
     data = pd.read_table(fn2, delimiter=r"\s+")
@@ -105,10 +116,12 @@ for nn in range(len(file_list)):
     time = np.arange(0, len(S0), 1) / 720
 
     Sn = np.ones((len(S0)))
-    SS = np.vstack((Sn[720:], S1[720:], S2[720:], S3[720:]))
+    SS = np.vstack((Sn[720::2], S1[720::2], S2[720::2], S3[720::2]))
     Out = Sv.from_matrix(SS.T)
 
-    draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 4])
+    #draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 4])
+    Out = basis_calibration.calib_basis2(Out)
+    draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 5])
 
     azi_V = Out.parameters.azimuth()
     print(azi_V)
@@ -149,27 +162,31 @@ for nn in range(len(file_list)):
 
     tmpax[3].set_xlabel("Time (h)")
     tmpfig.align_ylabels()
-
+    '''
     max_diff_S[nn][0] = S1.max() - S1.min()
     mean_S[nn][0] = (S1.max() + S1.min()) /2
     max_diff_S[nn][1] = S2.max() - S2.min()
     mean_S[nn][1] = (S2.max() + S2.min()) /2
     max_diff_S[nn][2] = S3.max() - S3.min()
     mean_S[nn][2] = (S3.max() + S3.min()) /2
+    '''
 
 
+custom_lines = [Line2D([0], [0], color=cstm_color[0], lw=4),
+                Line2D([0], [0], color=cstm_color[1], lw=4),
+                Line2D([0], [0], color=cstm_color[2], lw=4)]
+
+#fig2[0].legend(custom_lines, ['Pol.1', 'Pol.1+SOP Controller(w/o FB)', 'Pol.1+SOP Controller(w FB)'], loc='right')
+fig2[0].legend(custom_lines, ['Pol.1', 'Pol.1+Manual Controller', 'Pol.1+Pol.2+ Manual Controller'], loc='right')
+
+'''
 for nn in range(3):
     delta = max_diff_S[:, nn].max()
 
     ax1[nn+1].set(ylim=(mean_S[0][nn] - delta / 1.9, mean_S[0][nn] + delta/1.9))
     ax2[nn+1].set(ylim=(mean_S[1][nn] - delta / 1.9, mean_S[1][nn] + delta/1.9))
 
-
-#ax[3].set(xlim=(0, 2000), ylim=(0,1))
-
 fig3, ax3 = plt.subplots(figsize=(5, 4))
-#plt.rc('text', usetex=True)
-#r'$\phi$'
 
 ax3.plot(frequency, diff_azi_V * 180 / pi, label="azimuth (deg)", marker="o")
 ax3.plot(frequency, diff_ellip_V * 180 / pi, label="ellipticity (deg)", marker="v")
@@ -178,18 +195,12 @@ ax3.plot(frequency, sqrt(diff_azi_V ** 2 + diff_ellip_V ** 2) * 180 / pi, label=
          marker="^")
 ax3.xaxis.set_major_locator(MaxNLocator(5))
 
-#ax3.plot(frequency, new_diff_azi_V * 180 / pi, label="azimuth (deg)2", marker="x")
-#ax3.plot(frequency, new_diff_ellip_V * 180 / pi, label="ellipticity (deg)2", marker="x")
-# label=r'$\theta$'
-#ax3.plot(frequency, sqrt(new_diff_azi_V ** 2 + new_diff_ellip_V ** 2) * 180 / pi, label="sqrt(azimuth^2 + ellipticity^2)2",
-#         marker="x")
-
-#label=r'sqrt(\phi + \theta)')
 ax3.legend(loc="upper right")
 ax3.set_xlabel("Vibration frequency (Hz)")
 ax3.set_ylabel("Angle change (deg)")
-#ax3.set(xlim=(10, 30), ylim=(0, 1.7))
 plt.subplots_adjust(left=0.125, bottom=0.14, right=0.9, top=0.9, wspace=0.2, hspace=0.2)
+'''
+
 
 plt.show()
 
