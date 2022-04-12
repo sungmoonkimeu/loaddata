@@ -28,7 +28,7 @@ for nn in range(len(file_list)):
 
     databeginning = 11   # 4 is normal, sometimes it should be changed to 5
     fn2 = path_dir + '_edited//' + tmp[0] + '_edited.txt'
-    eol = 5000           # end of line
+    eol = 13300           # end of line
     with open(fn) as fp:
         for i, line in enumerate(fp):
             if databeginning < i < eol+databeginning+2:

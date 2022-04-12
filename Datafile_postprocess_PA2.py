@@ -10,17 +10,14 @@ import os
 #foldername = '/Data_Vib_2_(Hibi_losen_fasten)/1_RHC_Fasten'
 #foldername = '/Laser stability test_2nd'
 #foldername = '/Stability_ManualPC'
-foldername = '/Laser_stability_test_pol_manualPC'
-
-
+#foldername = '/Laser_stability_test_pol_manualPC'
+foldername = '/EDFA_stability'
 
 #path_dir = os.getcwd() + '/Data_Vib_1_(Oscillo_Polarimeter)/' + foldername
 
 
 path_dir = os.getcwd() + foldername
 file_list = os.listdir(path_dir)
-
-
 
 def createfolder(directory):
     try:

@@ -94,7 +94,7 @@ def read_shakerinputsignal(foldername, fig=None):
     ax[1].plot(x0, y0, lw='1', label="Acceleration", marker='o', color='k', markersize=ms)
     ax[1].set_xlabel('Frequency (Hz)')
     ax[1].set_ylabel('Acceleration (g)')
-    ax[1].set_title('Measured signal')
+    ax[1].set_title('Vibration signal')
     ax[1].set(xlim=(10, 30), ylim=(0, 30))
     lns1 = ax[1].lines
     ax2 = ax[1].twinx()

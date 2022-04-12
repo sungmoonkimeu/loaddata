@@ -164,6 +164,15 @@ def read_shakersignal(filepath, frequency):
 
     return np.array([y0, y1, y2])
 
+def freq2acc(x):
+    d = 20e-3
+    a = d*(2*pi*x)**2
+    return a/9.8
+
+def acc2freq(x):
+    a = x * 9.8
+    d = 20e-3
+    return 1/(2*pi)*np.sqrt(a/d)
 
 if __name__ == '__main__':
 
@@ -173,7 +182,6 @@ if __name__ == '__main__':
 
     folder3 = 'Const_disp_OSC2_edited//'
     folder4 = 'Const_disp_Polarimeter2_edited//'
-
 
 
     freq = np.arange(10, 31, 1)
@@ -250,6 +258,27 @@ if __name__ == '__main__':
     fig.align_ylabels()
     #fig.savefig('Constant_Acceleration.png')
     #fig.savefig('Constant_Displacement.png')
+
+    fig, ax = plt.subplots(1, 2, figsize=(23/2.54, 10/2.54))
+    fig.set_dpi(91.79)  # DPI of My office monitor
+    plt.subplots_adjust(left=0.088, bottom=0.155, right=0.96, top=0.845, wspace=0.4, hspace=0.502)
+    plt.subplots_adjust(bottom=0.155)
+
+    ms = 4
+    ax[0].plot(displacement, alpha1, lw='1', label="Max. SOP change", marker='o', color='k', markersize=ms)
+    ax[0].set_xlabel('Displacement (mm)')
+    ax[0].set_ylabel('Max. SOP change (deg)')
+
+    ax[0].set(xlim=(0, 90), ylim=(0, 2))
+
+    ax[1].plot(acceleration, alpha2, lw='1', label="Max. SOP change", marker='o', color='k', markersize=ms)
+    ax[1].set_xlabel('Acceleration (g)')
+    ax[1].set_ylabel('Max. SOP change (deg)')
+    ax[1].set(xlim=(0, 20), ylim=(0, 2))
+    secax = ax[1].secondary_xaxis('top', functions=(acc2freq, freq2acc))
+    secax.set_xlabel('Frequency [Hz]')
+
+    fig.align_ylabels()
 
 plt.show()
 

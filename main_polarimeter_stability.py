@@ -66,12 +66,12 @@ switch_osfolder()
 #foldername = '//Laser stability test_2nd'
 #foldername = '//Laser stability test_longterm'
 #foldername = '//Laser_stability_test_pol_manualPC'
-
+#foldername = '//Laser_stability_test_pol2_manualPC'
 #foldername = '//Stability_ManualPC'
 #foldername = '//Laser_stability_test_cascadedpol'
 
-#foldername = '//Stability_total_SOPcontroller'
-foldername = '//Stability_total_manualPC'
+foldername = '//Stability_total_SOPcontroller'
+#foldername = '//Stability_total_manualPC'
 
 path_dir = os.getcwd() + foldername + '_edited'
 
@@ -115,30 +115,28 @@ for nn in range(len(file_list)):
     S3 = pd.to_numeric(data['S3'])
     time = np.arange(0, len(S0), 1) / 720
 
+    ndata = 720  # for one hour
+    #ndata = len(S0) - 720 # for all data
+
     Sn = np.ones((len(S0)))
-    SS = np.vstack((Sn[720::2], S1[720::2], S2[720::2], S3[720::2]))
+    #SS = np.vstack((Sn[720::2], S1[720::2], S2[720::2], S3[720::2]))
+    SS = np.vstack((Sn[720:720+ndata:2], S1[720:720+ndata:2], S2[720:720+ndata:2], S3[720:720+ndata:2]))
     Out = Sv.from_matrix(SS.T)
 
     #draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 4])
     Out = basis_calibration.calib_basis2(Out)
+    S0 = Out.parameters.matrix()[0]
+    S1 = Out.parameters.matrix()[1]
+    S2 = Out.parameters.matrix()[2]
+    S3 = Out.parameters.matrix()[3]
     draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 5])
 
     azi_V = Out.parameters.azimuth()
-    print(azi_V)
     ellip_V = Out.parameters.ellipticity_angle()
-    for i_n, i_v in enumerate(azi_V):
-        if i_v > pi/2:
-            azi_V[i_n] = i_v - pi
-    for i_n, i_v in enumerate(ellip_V):
-        if i_v > pi / 2:
-            ellip_V[i_n] = i_v - pi
-        if i_v > 0.8:
-            print(i_n)
-            ellip_V[i_n] = 0
 
     diff_azi_V[nn] = azi_V.max() - azi_V.min()
     diff_ellip_V[nn] = ellip_V.max() - ellip_V.min()
-    print(azi_V)
+    print('maximum SOP change=', sqrt(diff_azi_V[nn]**2 + diff_ellip_V[nn]**2)*180/pi, "deg")
 
     if nn == 0:
         tmpax = ax1
@@ -147,19 +145,32 @@ for nn in range(len(file_list)):
         tmpax = ax2
         tmpfig = fig_2
 
-    tmpax[0].plot(time[720:], S0[720:])
+    tmpax[0].plot(time[720:720 + ndata:2], S0)
     tmpax[0].set_ylabel("S" + str(0))
     # ax[0].set(xlim=(0, 0.5), ylim=(-1, 1))
-    tmpax[1].plot(time[720:], S1[720:])
+    tmpax[1].plot(time[720:720 + ndata:2], S1)
     tmpax[1].set_ylabel("S" + str(1))
     # ax[1].set(xlim=(0, 0.5), ylim=(-1, 1))
-    tmpax[2].plot(time[720:], S2[720:])
+    tmpax[2].plot(time[720:720 + ndata:2], S2)
     tmpax[2].set_ylabel("S" + str(2))
     # ax[2].set(xlim=(0, 0.5), ylim=(-1, 1))
-    tmpax[3].plot(time[720:], S3[720:])
+    tmpax[3].plot(time[720:720 + ndata:2], S3)
     tmpax[3].set_ylabel("S" + str(3))
     # ax[3].set(xlim=(0, 0.5), ylim=(-1, 1))
-
+    '''
+    tmpax[0].plot(time[720:720+ndata], S0[720:720+ndata])
+    tmpax[0].set_ylabel("S" + str(0))
+    # ax[0].set(xlim=(0, 0.5), ylim=(-1, 1))
+    tmpax[1].plot(time[720:720+ndata], S1[720:720+ndata])
+    tmpax[1].set_ylabel("S" + str(1))
+    # ax[1].set(xlim=(0, 0.5), ylim=(-1, 1))
+    tmpax[2].plot(time[720:720+ndata], S2[720:720+ndata])
+    tmpax[2].set_ylabel("S" + str(2))
+    # ax[2].set(xlim=(0, 0.5), ylim=(-1, 1))
+    tmpax[3].plot(time[720:720+ndata], S3[720:720+ndata])
+    tmpax[3].set_ylabel("S" + str(3))
+    # ax[3].set(xlim=(0, 0.5), ylim=(-1, 1))
+    '''
     tmpax[3].set_xlabel("Time (h)")
     tmpfig.align_ylabels()
     '''
@@ -174,10 +185,11 @@ for nn in range(len(file_list)):
 
 custom_lines = [Line2D([0], [0], color=cstm_color[0], lw=4),
                 Line2D([0], [0], color=cstm_color[1], lw=4),
-                Line2D([0], [0], color=cstm_color[2], lw=4)]
+                Line2D([0], [0], color=cstm_color[2], lw=4),
+                Line2D([0], [0], color=cstm_color[3], lw=4)]
 
 #fig2[0].legend(custom_lines, ['Pol.1', 'Pol.1+SOP Controller(w/o FB)', 'Pol.1+SOP Controller(w FB)'], loc='right')
-fig2[0].legend(custom_lines, ['Pol.1', 'Pol.1+Manual Controller', 'Pol.1+Pol.2+ Manual Controller'], loc='right')
+fig2[0].legend(custom_lines, ['Pol.1', 'Pol.1+Manual Controller', 'Pol.2+Manual Controller', 'Pol.1+Pol.2+ Manual Controller'], loc='right')
 
 '''
 for nn in range(3):
