@@ -233,7 +233,7 @@ def main():
 #
 
   m01_shots = [90000, 99700]
-  focs_dir = 'Shots\\'                      
+  focs_dir = '../Shots\\'
   focs_out = 'Shots-PS\\'                      
 
   dnod = {} 

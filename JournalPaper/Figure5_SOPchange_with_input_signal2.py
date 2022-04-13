@@ -160,19 +160,31 @@ def read_shakersignal(filepath, frequency):
 
     y0 = (max(signal0) - min(signal0))      # peak-peak voltage
     y1 = (max(signal1) - min(signal1)) * 10  # Acceleration
-    y2 = y0 / (frequency ** 2) * 1000       # displacement
+    y2 = y1 / (frequency ** 2) * 1000       # displacement
 
     return np.array([y0, y1, y2])
 
+
+def disp2freq(x):
+    a = 8   # 8g
+    return 1/(np.sqrt((x/1000)/a))
+
+
+def freq2disp(x):
+    a = 8
+    return 1/((a*x**2)/1000)
+
+
 def freq2acc(x):
     d = 20e-3
-    a = d*(2*pi*x)**2
-    return a/9.8
+    a = d*(x**2)
+    return a
+
 
 def acc2freq(x):
-    a = x * 9.8
     d = 20e-3
-    return 1/(2*pi)*np.sqrt(a/d)
+    return np.sqrt(x/d)
+
 
 if __name__ == '__main__':
 
@@ -268,15 +280,22 @@ if __name__ == '__main__':
     ax[0].plot(displacement, alpha1, lw='1', label="Max. SOP change", marker='o', color='k', markersize=ms)
     ax[0].set_xlabel('Displacement (mm)')
     ax[0].set_ylabel('Max. SOP change (deg)')
+    ax[0].set(xlim=(1, 90), ylim=(0, 2))
+    secax1 = ax[0].secondary_xaxis('top', functions=(disp2freq, freq2disp))
+    secax1.set_xlabel('Frequency [Hz]')
+    #secax1.xaxis.set_major_locator(MaxNLocator(6))
+    secax1.set_xticks([30, 20, 16, 12, 10])
+    secax1.set_xticklabels([30, 20, 16, 12, 10])
 
-    ax[0].set(xlim=(0, 90), ylim=(0, 2))
+
+    #secax1.set(xlim=(30, 10))
 
     ax[1].plot(acceleration, alpha2, lw='1', label="Max. SOP change", marker='o', color='k', markersize=ms)
     ax[1].set_xlabel('Acceleration (g)')
     ax[1].set_ylabel('Max. SOP change (deg)')
     ax[1].set(xlim=(0, 20), ylim=(0, 2))
-    secax = ax[1].secondary_xaxis('top', functions=(acc2freq, freq2acc))
-    secax.set_xlabel('Frequency [Hz]')
+    secax2 = ax[1].secondary_xaxis('top', functions=(acc2freq, freq2acc))
+    secax2.set_xlabel('Frequency [Hz]')
 
     fig.align_ylabels()
 
