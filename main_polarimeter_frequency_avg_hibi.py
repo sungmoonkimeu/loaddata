@@ -115,6 +115,7 @@ for nn in range(len(file_list)):
     diff_ellip_V[nn] = ellip_V.max() - ellip_V.min()
 
     nwindow = 1
+
     rS1 = S1.rolling(window=nwindow)
     rS2 = S2.rolling(window=nwindow)
     rS3 = S3.rolling(window=nwindow)
