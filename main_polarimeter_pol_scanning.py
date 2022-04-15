@@ -25,6 +25,8 @@ import pandas as pd
 
 
 from py_pol.jones_vector import Jones_vector, degrees
+from py_pol.jones_matrix import Jones_matrix
+from py_pol.mueller import Mueller
 from py_pol.stokes import Stokes, create_Stokes
 from py_pol.drawings import draw_stokes_points, draw_poincare, draw_ellipse
 
@@ -44,6 +46,78 @@ class OOMFormatter(matplotlib.ticker.ScalarFormatter):
         if self._useMathText:
             self.format = r'$\mathdefault{%s}$' % self.format
 
+def basistonormal(S):
+    #S = create_Stokes('Output')
+    S2 = create_Stokes('cal')
+    J1 = Jones_matrix('Random element')
+    J2 = Jones_matrix('Random element')
+    M = Mueller('cal')
+
+    a = S.parameters.matrix()[1:]  # convert 4x1 Stokes vectors to 3x1 cartesian vectors
+
+    ''' 
+    # 평균 벡터
+    mean_a = np.array([a[0, :].sum(), a[1, :].sum(), a[2, :].sum()])
+    mean_a = mean_a / (np.linalg.norm(mean_a))
+    print(mean_a)
+    # 평균 벡터와 모든 점 사이의 거리
+    dist_a_mean_a = np.linalg.norm(a.T - mean_a, axis=1)
+    # 평균벡터와 가장 가까운 벡터 --> 대표 벡터 ?
+    std_a = a[:, np.argmin(dist_a_mean_a)]
+
+    # 대표 벡터 와 나머지 벡터 연결
+    diff_a = a.T - std_a
+
+    # 대표 벡터와 나머지 벡터가 이루는 벡터 끼리 외적
+    cross_a = np.cross(diff_a[0], diff_a)
+
+    # filtering too small vectors
+    cross_a2 = cross_a[np.linalg.norm(cross_a, axis=1) > np.linalg.norm(cross_a, axis=1).mean() / 10]
+    # 반대 방향 vector 같은 방향으로
+    cross_an = cross_a2.T / np.linalg.norm(cross_a2, axis=1)
+    # Normalize
+    cross_an_abs = cross_an * abs(cross_an.sum(axis=0)) / cross_an.sum(axis=0)
+    # average after summation whole vectors
+    c = cross_an_abs.sum(axis=1) / np.linalg.norm(cross_an_abs.sum(axis=1))
+    '''
+
+    # 그냥 첫번쨰 벡터
+    c = a[...,0]
+    print(c)
+
+    #print("new c", c)
+    #fig[0].plot([0, c[0]], [0, c[1]], [0, c[2]], 'r-', lw=1, )
+
+    z = [0, 0, 1]
+    y = [0, 1, 0]
+    x = [1, 0, 0]
+
+    th_x = np.arccos(np.dot(x, [c[0], c[1], 0] / np.linalg.norm([c[0], c[1], 0])))
+    th_y = np.arccos(np.dot(y, [c[0], c[1], 0] / np.linalg.norm([c[0], c[1], 0])))
+    th_z = np.arccos(np.dot(z, c))
+
+    #print("x=", th_x * 180 / pi, "y=", th_y * 180 / pi, "z=", th_z * 180 / pi)
+
+    th = -th_y
+    if th_x > pi / 2:
+        th = th_y
+    Rr = np.array([[cos(th), -sin(th), 0], [sin(th), cos(th), 0], [0, 0, 1]])  # S3, R 기준 rotation
+
+    th = 0
+    R45 = np.array([[cos(th), 0, sin(th)], [0, 1, 0], [-sin(th), 0, cos(th)]])  # S2, + 기준 rotation
+
+    th = pi/2-th_z
+    Rh = np.array([[1, 0, 0], [0, cos(th), -sin(th)], [0, sin(th), cos(th)]])  # S1, H 기준 rotation
+
+
+    TT = R45.T @ Rh.T @ Rr.T @ a
+    zT = ones(np.shape(TT)[1])
+
+    Sp = np.vstack((zT, TT))
+    S.from_matrix(Sp)
+    return S
+
+
 # Switching OS folder
 path2 = 'C:/Users/Iter/PycharmProjects/loaddata'
 path1 = 'C:/Users/SMK/PycharmProjects/loaddata'
@@ -58,9 +132,11 @@ def switch_osfolder():
         print('Error: Changing OS directory')
 
 switch_osfolder()
-foldername = 'Data_pol6'
+#path_dir = os.getcwd() + '//Data_Vib_4(Hibi_loosen)//Polscan_1504_edited'
+#path_dir = os.getcwd() + '//Data_Vib_4(Hibi_fasten)//Pol_Scan_Tighten_1504_edited'
+path_dir = os.getcwd() + '//Data_Vib_4(Lobi)/Pol_Scan_Lobi_1_1504_edited'
 
-path_dir = os.getcwd() + '//Data_Vib_4(Hibi_loosen)_edited'
+
 file_list = os.listdir(path_dir)
 
 #fig, ax = plt.subplots(figsize=(6, 5))
@@ -73,6 +149,8 @@ ang_SOP = arange(0, 361, 5)
 
 diff_azi_V = np.ones(len(file_list))
 diff_ellip_V = np.ones(len(file_list))
+max_azi_V = np.ones(len(file_list))
+min_azi_V = np.ones(len(file_list))
 alpha= np.ones(len(file_list))
 
 file_list = sorted(file_list, key=lambda x: int(os.path.splitext(x)[0].split('_')[0][2:]))
@@ -98,6 +176,8 @@ for nn in range(len(file_list)):
     Out = Sv.from_matrix(SS.T)
     draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 8])
 
+    Out = basistonormal(Out)
+
     azi_V = Out.parameters.azimuth()
 
     #print(azi_V[0])
@@ -109,7 +189,11 @@ for nn in range(len(file_list)):
         diff_azi_V[nn] = azi_V.max() - azi_V.min()
 
     diff_ellip_V[nn] = ellip_V.max() - ellip_V.min()
-    alpha[nn] = sqrt((diff_azi_V[nn]/cos(ellip_V[0]))**2 + diff_ellip_V[nn]**2)
+    max_azi_V[nn] = azi_V.max()/cos(ellip_V[0])
+    min_azi_V[nn] = azi_V.min()/cos(ellip_V[0])
+
+    alpha[nn] = sqrt(diff_azi_V[nn]**2 + diff_ellip_V[nn]**2)
+
 
     if alpha[nn] > 0.1:
         print(fn2)
@@ -117,7 +201,7 @@ for nn in range(len(file_list)):
         print(diff_ellip_V[nn])
         print(cos(ellip_V[0]))
 
-    if nn == 10 or nn == 22:
+    if nn == 26 or nn == 35:
         fig, ax = plt.subplots(4, figsize=(6, 5))
         ax[0].plot(time, S0)
         # ax[0].set(xlim=(0, 0.5), ylim=(-1, 1))
@@ -145,6 +229,9 @@ for nn in range(len(file_list)):
     '''
 fig, ax = plt.subplots(figsize=(6, 5))
 ax.plot(ang_SOP,alpha*180/pi)
+ax.plot(ang_SOP,diff_azi_V*180/pi)
+ax.plot(ang_SOP,diff_ellip_V*180/pi)
+
 
 '''
 fig3, ax3 = plt.subplots(figsize=(6, 5))
