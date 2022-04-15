@@ -30,6 +30,8 @@ from py_pol.mueller import Mueller
 from py_pol.stokes import Stokes, create_Stokes
 from py_pol.drawings import draw_stokes_points, draw_poincare, draw_ellipse
 
+from tkinter import Tk, filedialog
+import os
 
 # noinspection PyPep8Naming
 class OOMFormatter(matplotlib.ticker.ScalarFormatter):
@@ -117,27 +119,12 @@ def basistonormal(S):
     S.from_matrix(Sp)
     return S
 
-
-# Switching OS folder
-path2 = 'C:/Users/Iter/PycharmProjects/loaddata'
-path1 = 'C:/Users/SMK/PycharmProjects/loaddata'
-import os
-def switch_osfolder():
-    try:
-        if os.path.exists(path1):
-            os.chdir(path1)
-        else:
-            os.chdir(path2)
-    except OSError:
-        print('Error: Changing OS directory')
-
-switch_osfolder()
-#path_dir = os.getcwd() + '//Data_Vib_4(Hibi_loosen)//Polscan_1504_edited'
-#path_dir = os.getcwd() + '//Data_Vib_4(Hibi_fasten)//Pol_Scan_Tighten_1504_edited'
-#path_dir = os.getcwd() + '//Data_Vib_4(Lobi)/Pol_Scan_Lobi_1_1504_edited'
-path_dir = os.getcwd() + '//Data_Vib_4(Lobi)/Pol_Scan_3basis_1504_edited'
-
-
+# Folder select
+cwd = os.getcwd()
+root = Tk()  # pointing root to Tk() to use it as Tk() in program.
+root.withdraw()  # Hides small tkinter window.
+root.attributes('-topmost', True)  # Opened windows will be active. above all windows despite of selection.
+path_dir = filedialog.askdirectory(initialdir=cwd)  # Returns opened path as str
 file_list = os.listdir(path_dir)
 
 #fig, ax = plt.subplots(figsize=(6, 5))
@@ -147,7 +134,7 @@ Out = create_Stokes('Output_S2')
 
 fig2, ax2 = Sv.draw_poincare(figsize=(7, 7), angle_view=[0.2, 1.2], kind='line')
 #ang_SOP = arange(0, 361, 5)
-ang_SOP = arange(0, 361, 180)
+ang_SOP = arange(0, 361, 5)
 
 diff_azi_V = np.ones(len(file_list))
 diff_ellip_V = np.ones(len(file_list))

@@ -12,6 +12,7 @@ import os
 #foldername = '/Data_Vib_4(Hibi_loosen)/Polscan_1504'
 #foldername = '/Data_Vib_4(Hibi_fasten)/Pol_Scan_Tighten_1504'
 foldername = '/Data_Vib_4(Lobi)/Pol_Scan_Lobi_1_1504'
+#foldername = '/Data_Vib_4(Lobi)/Pol_Scan_3basis_1504'
 
 #foldername = '/Data_Vib_1_(Oscillo_Polarimeter)/Const_volt_RHC_Polarimeter'
 #path_dir = os.getcwd() + '/Data_Vib_1_(Oscillo_Polarimeter)/' + foldername
