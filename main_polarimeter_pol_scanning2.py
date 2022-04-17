@@ -133,8 +133,8 @@ Sv = create_Stokes('Output_S')
 Out = create_Stokes('Output_S2')
 
 fig2, ax2 = Sv.draw_poincare(figsize=(7, 7), angle_view=[0.2, 1.2], kind='line')
-#ang_SOP = arange(0, 361, 5)
 ang_SOP = arange(0, 361, 5)
+#ang_SOP = arange(0, 361, 365)
 
 diff_azi_V = np.ones(len(file_list))
 diff_ellip_V = np.ones(len(file_list))
@@ -182,7 +182,7 @@ for nn in range(len(file_list)):
     min_azi_V[nn] = azi_V.min()/cos(ellip_V[0])
 
     alpha[nn] = sqrt(diff_azi_V[nn]**2 + diff_ellip_V[nn]**2)
-
+    #print(alpha[nn])
 
     if alpha[nn] > 0.1:
         print(fn2)
@@ -190,7 +190,7 @@ for nn in range(len(file_list)):
         print(diff_ellip_V[nn])
         print(cos(ellip_V[0]))
 
-    if nn == 0 or nn == 1 or nn==2 :
+    if nn == 6 or nn == 25 :
         fig, ax = plt.subplots(4, figsize=(6, 5))
         ax[0].plot(time, S0)
         # ax[0].set(xlim=(0, 0.5), ylim=(-1, 1))
