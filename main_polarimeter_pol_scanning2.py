@@ -126,6 +126,10 @@ root.withdraw()  # Hides small tkinter window.
 root.attributes('-topmost', True)  # Opened windows will be active. above all windows despite of selection.
 path_dir = filedialog.askdirectory(initialdir=cwd)  # Returns opened path as str
 file_list = os.listdir(path_dir)
+try:
+    file_list = sorted(file_list, key=lambda x: int(os.path.splitext(x)[0].split('_')[0][2:]))
+except:
+    file_list = sorted(file_list, key=lambda x: int(os.path.splitext(x)[0].split('_')[0][0:2]))
 
 #fig, ax = plt.subplots(figsize=(6, 5))
 Ev = Jones_vector('Output_J')
@@ -134,6 +138,7 @@ Out = create_Stokes('Output_S2')
 
 fig2, ax2 = Sv.draw_poincare(figsize=(7, 7), angle_view=[0.2, 1.2], kind='line')
 ang_SOP = arange(0, 361, 5)
+freq = arange(10,31,1)
 #ang_SOP = arange(0, 361, 365)
 
 diff_azi_V = np.ones(len(file_list))
@@ -160,9 +165,27 @@ for nn in range(len(file_list)):
     S3 = pd.to_numeric(data['S3'])
 
     Sn = np.ones((len(S0)))
-    SS = np.vstack((Sn, S1, S2, S3))
 
+    '''   
+    SS = np.vstack((Sn, S1, S2, S3))
     Out = Sv.from_matrix(SS.T)
+    '''
+    nwindow = 10
+
+    rS1 = S1.rolling(window=nwindow)
+    rS2 = S2.rolling(window=nwindow)
+    rS3 = S3.rolling(window=nwindow)
+
+    new_S1 = rS1.mean()
+    new_S2 = rS2.mean()
+    new_S3 = rS3.mean()
+    new_S1[0:nwindow] = new_S1[nwindow]
+    new_S2[0:nwindow] = new_S2[nwindow]
+    new_S3[0:nwindow] = new_S3[nwindow]
+
+    SS = np.vstack((Sn, new_S1, new_S2, new_S3))
+    Out = Sv.from_matrix(SS.T)
+
     draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 8])
 
     Out = basistonormal(Out)
@@ -190,7 +213,7 @@ for nn in range(len(file_list)):
         print(diff_ellip_V[nn])
         print(cos(ellip_V[0]))
 
-    if nn == 6 or nn == 25 :
+    if nn == 0 or nn == 18 :
         fig, ax = plt.subplots(4, figsize=(6, 5))
         ax[0].plot(time, S0)
         # ax[0].set(xlim=(0, 0.5), ylim=(-1, 1))
@@ -217,11 +240,21 @@ for nn in range(len(file_list)):
         count = count+1
     '''
 fig, ax = plt.subplots(figsize=(6, 5))
-ax.plot(ang_SOP,alpha*180/pi)
-ax.plot(ang_SOP,diff_azi_V*180/pi)
-ax.plot(ang_SOP,diff_ellip_V*180/pi)
 
-
+if os.path.splitext(file_list[0])[0].split('_')[0][2:] == 'Hz':
+    ax.plot(freq,alpha*180/pi)
+    ax.plot(freq,diff_azi_V*180/pi)
+    ax.plot(freq,diff_ellip_V*180/pi)
+    ax.set_xlabel('Frequench (Hz)')
+    ax.set_ylabel('SOP change (deg)')
+    ax.set(xlim=(9.5, 30.5), ylim=(0, 2))
+else:
+    ax.plot(ang_SOP,alpha*180/pi)
+    ax.plot(ang_SOP,diff_azi_V*180/pi)
+    ax.plot(ang_SOP,diff_ellip_V*180/pi)
+    ax.set_xlabel('Frequench (Hz)')
+    ax.set_ylabel('SOP change (deg)')
+    ax.set(xlim=(0,360),ylim=(0,2))
 '''
 fig3, ax3 = plt.subplots(figsize=(6, 5))
 ax3.scatter(frequency, diff_azi_V*180/pi, label="azimuth (deg)")
