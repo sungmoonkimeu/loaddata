@@ -165,9 +165,27 @@ for nn in range(len(file_list)):
     S3 = pd.to_numeric(data['S3'])
 
     Sn = np.ones((len(S0)))
-    SS = np.vstack((Sn, S1, S2, S3))
 
+    '''   
+    SS = np.vstack((Sn, S1, S2, S3))
     Out = Sv.from_matrix(SS.T)
+    '''
+    nwindow = 10
+
+    rS1 = S1.rolling(window=nwindow)
+    rS2 = S2.rolling(window=nwindow)
+    rS3 = S3.rolling(window=nwindow)
+
+    new_S1 = rS1.mean()
+    new_S2 = rS2.mean()
+    new_S3 = rS3.mean()
+    new_S1[0:nwindow] = new_S1[nwindow]
+    new_S2[0:nwindow] = new_S2[nwindow]
+    new_S3[0:nwindow] = new_S3[nwindow]
+
+    SS = np.vstack((Sn, new_S1, new_S2, new_S3))
+    Out = Sv.from_matrix(SS.T)
+
     draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 8])
 
     Out = basistonormal(Out)
@@ -195,7 +213,7 @@ for nn in range(len(file_list)):
         print(diff_ellip_V[nn])
         print(cos(ellip_V[0]))
 
-    if nn == 6 or nn == 25 :
+    if nn == 0 or nn == 18 :
         fig, ax = plt.subplots(4, figsize=(6, 5))
         ax[0].plot(time, S0)
         # ax[0].set(xlim=(0, 0.5), ylim=(-1, 1))
