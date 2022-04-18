@@ -126,19 +126,24 @@ root.withdraw()  # Hides small tkinter window.
 root.attributes('-topmost', True)  # Opened windows will be active. above all windows despite of selection.
 path_dir = filedialog.askdirectory(initialdir=cwd)  # Returns opened path as str
 file_list = os.listdir(path_dir)
+
 try:
     file_list = sorted(file_list, key=lambda x: int(os.path.splitext(x)[0].split('_')[0][2:]))
-except:
-    file_list = sorted(file_list, key=lambda x: int(os.path.splitext(x)[0].split('_')[0][0:2]))
+    #ang_SOP = arange(0, 361, 5)
+    ang_SOP = np.array([int(os.path.splitext(x)[0].split('_')[0][2:]) for x in file_list])
 
+
+except:
+    #freq = []
+    file_list = sorted(file_list, key=lambda x: int(os.path.splitext(x)[0][0:2]))
+    freq = np.array([int(os.path.splitext(x)[0][0:2]) for x in file_list])
 #fig, ax = plt.subplots(figsize=(6, 5))
 Ev = Jones_vector('Output_J')
 Sv = create_Stokes('Output_S')
 Out = create_Stokes('Output_S2')
 
 fig2, ax2 = Sv.draw_poincare(figsize=(7, 7), angle_view=[0.2, 1.2], kind='line')
-ang_SOP = arange(0, 361, 5)
-freq = arange(10,31,1)
+
 #ang_SOP = arange(0, 361, 365)
 
 diff_azi_V = np.ones(len(file_list))
