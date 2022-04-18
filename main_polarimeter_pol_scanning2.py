@@ -175,7 +175,7 @@ for nn in range(len(file_list)):
     SS = np.vstack((Sn, S1, S2, S3))
     Out = Sv.from_matrix(SS.T)
     '''
-    nwindow = 10
+    nwindow = 5
 
     rS1 = S1.rolling(window=nwindow)
     rS2 = S2.rolling(window=nwindow)
