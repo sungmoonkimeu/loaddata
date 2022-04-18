@@ -218,7 +218,7 @@ for nn in range(len(file_list)):
         print(diff_ellip_V[nn])
         print(cos(ellip_V[0]))
 
-    if nn == 0 or nn == 18 :
+    if nn == 4 or nn == 13 :
         fig, ax = plt.subplots(4, figsize=(6, 5))
         ax[0].plot(time, S0)
         # ax[0].set(xlim=(0, 0.5), ylim=(-1, 1))
