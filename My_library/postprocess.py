@@ -1,6 +1,6 @@
 from tkinter import Tk, filedialog
 import os
-import numpy as np
+#import numpy as np
 
 
 def createfolder(directory):

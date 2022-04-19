@@ -132,11 +132,11 @@ try:
     #ang_SOP = arange(0, 361, 5)
     ang_SOP = np.array([int(os.path.splitext(x)[0].split('_')[0][2:]) for x in file_list])
 
-
 except:
     #freq = []
     file_list = sorted(file_list, key=lambda x: int(os.path.splitext(x)[0][0:2]))
     freq = np.array([int(os.path.splitext(x)[0][0:2]) for x in file_list])
+
 #fig, ax = plt.subplots(figsize=(6, 5))
 Ev = Jones_vector('Output_J')
 Sv = create_Stokes('Output_S')
@@ -171,12 +171,12 @@ for nn in range(len(file_list)):
 
     Sn = np.ones((len(S0)))
 
-    '''   
-    SS = np.vstack((Sn, S1, S2, S3))
-    Out = Sv.from_matrix(SS.T)
-    '''
-    nwindow = 5
 
+    #SS = np.vstack((Sn, S1, S2, S3))
+    #Out = Sv.from_matrix(SS.T)
+
+
+    nwindow = 15
     rS1 = S1.rolling(window=nwindow)
     rS2 = S2.rolling(window=nwindow)
     rS3 = S3.rolling(window=nwindow)
@@ -187,17 +187,18 @@ for nn in range(len(file_list)):
     new_S1[0:nwindow] = new_S1[nwindow]
     new_S2[0:nwindow] = new_S2[nwindow]
     new_S3[0:nwindow] = new_S3[nwindow]
-
+    
     SS = np.vstack((Sn, new_S1, new_S2, new_S3))
+
+    #SS = np.vstack((Sn[1000:], new_S1[1000:], new_S2[1000:], new_S3[1000:]))
     Out = Sv.from_matrix(SS.T)
 
-    draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 8])
+    #draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 8])
 
     Out = basistonormal(Out)
+    draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 8])
 
     azi_V = Out.parameters.azimuth()
-
-    #print(azi_V[0])
     ellip_V = Out.parameters.ellipticity_angle()
     diff_azi_V[nn] = azi_V.max() - azi_V.min()
     if diff_azi_V[nn] > pi/2:
@@ -218,7 +219,7 @@ for nn in range(len(file_list)):
         print(diff_ellip_V[nn])
         print(cos(ellip_V[0]))
 
-    if nn == 4 or nn == 13 :
+    if nn == 0 or nn == 5 or nn== 9 or nn==14 :
         fig, ax = plt.subplots(4, figsize=(6, 5))
         ax[0].plot(time, S0)
         # ax[0].set(xlim=(0, 0.5), ylim=(-1, 1))
