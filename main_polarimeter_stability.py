@@ -70,7 +70,7 @@ switch_osfolder()
 #foldername = '//Stability_ManualPC'
 #foldername = '//Laser_stability_test_cascadedpol'
 
-foldername = '//Stability_total_SOPcontroller'
+foldername = '//Data_Stability/EDFA_TEST_2004'
 #foldername = '//Stability_total_manualPC'
 
 path_dir = os.getcwd() + foldername + '_edited'

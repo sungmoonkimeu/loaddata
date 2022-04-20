@@ -11,7 +11,7 @@ import os
 #foldername = '/Laser stability test_2nd'
 #foldername = '/Stability_ManualPC'
 #foldername = '/Laser_stability_test_pol_manualPC'
-foldername = '/EDFA_stability'
+foldername = '/Data_Stability/EDFA_TEST_2004'
 
 #path_dir = os.getcwd() + '/Data_Vib_1_(Oscillo_Polarimeter)/' + foldername
 
