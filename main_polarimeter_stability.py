@@ -109,18 +109,19 @@ for nn in range(len(file_list)):
     #time = pd.to_numeric(data['Time(ms)']) / 10000
     #time = np.arange(0, 3600, 1)/3600
 
-    S0 = pd.to_numeric(data['S0(mW)'])
+    S00 = pd.to_numeric(data['S0(mW)'])
     S1 = pd.to_numeric(data['S1'])
     S2 = pd.to_numeric(data['S2'])
     S3 = pd.to_numeric(data['S3'])
-    time = np.arange(0, len(S0), 1) / 720
+    time = np.arange(0, len(S00), 1) / 1800
 
     ndata = 720  # for one hour
     #ndata = len(S0) - 720 # for all data
 
-    Sn = np.ones((len(S0)))
+    Sn = np.ones((len(S00)))
+    SS = np.vstack((Sn[1800::2], S1[1800::2], S2[1800::2], S3[1800::2]))
     #SS = np.vstack((Sn[720::2], S1[720::2], S2[720::2], S3[720::2]))
-    SS = np.vstack((Sn[720:720+ndata:2], S1[720:720+ndata:2], S2[720:720+ndata:2], S3[720:720+ndata:2]))
+    #SS = np.vstack((Sn[720:720+ndata:2], S1[720:720+ndata:2], S2[720:720+ndata:2], S3[720:720+ndata:2]))
     Out = Sv.from_matrix(SS.T)
 
     #draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 4])
@@ -138,23 +139,30 @@ for nn in range(len(file_list)):
     diff_ellip_V[nn] = ellip_V.max() - ellip_V.min()
     print('maximum SOP change=', sqrt(diff_azi_V[nn]**2 + diff_ellip_V[nn]**2)*180/pi, "deg")
 
-    if nn == 0:
-        tmpax = ax1
-        tmpfig = fig_1
-    else:
-        tmpax = ax2
-        tmpfig = fig_2
 
-    tmpax[0].plot(time[720:720 + ndata:2], S0)
+    tmpax = ax1
+    tmpfig = fig_1
+    if nn == 0:
+        #     tmpax = ax1
+        #     tmpfig = fig_1
+        strlabel = '2nd'
+    else:
+    #     tmpax = ax2
+    #     tmpfig = fig_2
+        strlabel= '1st'
+
+
+    tmpax[0].plot(time[1800::2], S00[1800::2], label=strlabel)
     tmpax[0].set_ylabel("S" + str(0))
+    tmpax[0].legend(loc='upper right')
     # ax[0].set(xlim=(0, 0.5), ylim=(-1, 1))
-    tmpax[1].plot(time[720:720 + ndata:2], S1)
+    tmpax[1].plot(time[1800::2], S1)
     tmpax[1].set_ylabel("S" + str(1))
     # ax[1].set(xlim=(0, 0.5), ylim=(-1, 1))
-    tmpax[2].plot(time[720:720 + ndata:2], S2)
+    tmpax[2].plot(time[1800::2], S2)
     tmpax[2].set_ylabel("S" + str(2))
     # ax[2].set(xlim=(0, 0.5), ylim=(-1, 1))
-    tmpax[3].plot(time[720:720 + ndata:2], S3)
+    tmpax[3].plot(time[1800::2], S3)
     tmpax[3].set_ylabel("S" + str(3))
     # ax[3].set(xlim=(0, 0.5), ylim=(-1, 1))
     '''
@@ -189,7 +197,8 @@ custom_lines = [Line2D([0], [0], color=cstm_color[0], lw=4),
                 Line2D([0], [0], color=cstm_color[3], lw=4)]
 
 #fig2[0].legend(custom_lines, ['Pol.1', 'Pol.1+SOP Controller(w/o FB)', 'Pol.1+SOP Controller(w FB)'], loc='right')
-fig2[0].legend(custom_lines, ['Pol.1', 'Pol.1+Manual Controller', 'Pol.2+Manual Controller', 'Pol.1+Pol.2+ Manual Controller'], loc='right')
+#fig2[0].legend(custom_lines, ['Pol.1', 'Pol.1+Manual Controller', 'Pol.2+Manual Controller', 'Pol.1+Pol.2+ Manual Controller'], loc='right')
+fig2[0].legend(custom_lines, ['Measurement2', 'Measurement1'], loc='right')
 
 '''
 for nn in range(3):
