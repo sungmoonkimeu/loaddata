@@ -153,7 +153,8 @@ for n_iter, foldername in enumerate(V_foldername):
     #path_dir = os.getcwd() + '//Data_Vib_3_(Hibi_loosen_fasten)//' + foldername + '_edited'
     file_list = os.listdir(path_dir)
 
-    fig, ax = plt.subplots(4, figsize=(6, 5))
+    #fig, ax = plt.subplots(4, figsize=(6, 5))
+    fig, ax = plt.subplots(3, figsize=(6, 5))
     plt.subplots_adjust(left=0.14, bottom=0.112, right=0.93, top=0.93, wspace=0.2, hspace=0)
 
     Ev = Jones_vector('Output_J')
@@ -195,15 +196,21 @@ for n_iter, foldername in enumerate(V_foldername):
         diff_azi_V[nn] = azi_V.max() - azi_V.min()
         diff_ellip_V[nn] = ellip_V.max() - ellip_V.min()
 
-        if nn == 0 or nn == len(file_list)-2:
-            ax[0].plot(time, S0)
-            ax[1].plot(time, S1)
-            ax[2].plot(time, S2)
-            ax[3].plot(time, S3)
+        if nn == 0 or nn == len(file_list)-1:
+            # ax[0].plot(time, S0, zorder=10-nn)
+            # ax[1].plot(time, S1, zorder=10-nn)
+            # ax[2].plot(time, S2, zorder=10-nn)
+            # ax[3].plot(time, S3, zorder=10-nn)
+            ax[0].plot(time, S1, zorder=10-nn, label=str(10+nn)+'Hz')
+            ax[1].plot(time, S2, zorder=10-nn)
+            ax[2].plot(time, S3, zorder=10-nn)
 
     for nn in range(len(ax)):
         ax[nn].set_ylabel("S"+str(nn))
-    ax[3].set_xlabel("Time (s)")
+    ax[2].set_xlabel("Time (s)")
+    #ax[0].legend(['10Hz', '30Hz'])
+    #ax[0].legend(bbox_to_anchor=(0.5, 1.15), loc='upper center', fancybox=True)
+    ax[0].legend(loc='lower right', fancybox=True)
     fig.align_ylabels()
 
     #plt.rc('text', usetex=True)
