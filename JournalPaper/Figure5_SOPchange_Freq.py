@@ -133,41 +133,43 @@ def switch_osfolder():
 
 switch_osfolder()
 
-#foldername = 'Const_appl_vol_Polarimeter'
-#foldername = '0_RHC_losen'
-#foldername = '2_RHC'
-#foldername = 'Const_disp_Polarimeter2'
-V_foldername = ['2_LP0_loosen', '2_LP45', '8_RHC_loosen']
-#V_foldername = ['1_LP0', '1_LP45', '1_RHC_fasten']
-#V_foldername = ['Const_volt_LP90_Polarimeter', 'Const_volt_LP45_Polarimeter', 'Const_volt_RHC_Polarimeter']
-V_foldername = ['Const_disp_Polarimeter2']
-V_label = ['LP0', 'LP45', 'RHC']
-V_marker = ['^', 'o', 'x']
-fig3, ax3 = plt.subplots(figsize=(5, 4))
+plt.close("all")
+plt_fmt, plt_res = '.png', 330  # 330 is max in Word'16
+plt.rcParams["axes.titlepad"] = 20  # offset for the fig title
+#  plt.rcParams['figure.constrained_layout.use'] = True  # fit legends in fig window
+fsize = 11
+plt.rcParams['font.size'] = 11
+plt.rcParams['font.sans-serif'] = "calibri"
+plt.rcParams['font.family'] = "sans-serif"
+
+plt.rc('font', size=fsize)  # controls default text sizes
+plt.rc('axes', labelsize=fsize)  # f-size of the x and y labels
+plt.rc('xtick', labelsize=fsize)  # f-size of the tick labels
+plt.rc('ytick', labelsize=fsize)  # f-size of the tick labels
+plt.rc('legend', fontsize=fsize)  # f-size legend
+plt.rc('axes', titlesize=6)  # f-size of the axes title (??)
+plt.rc('figure', titlesize=6)  # f-size of the figure title
+
+#V_foldername = ['Const_disp_Polarimeter2']
+V_foldername = ['Const_acc_Polarimeter']
+
+fig3, ax3 = plt.subplots(2, figsize=(8 / 2.54, 7 / 2.54))
+fig3.set_dpi(91.79)  # DPI of My office monitor
+plt.subplots_adjust(left=0.27, bottom=0.22, right=0.96, top=0.81, wspace=0.4, hspace=0.0)
+fig, ax = plt.subplots(3, figsize=(8 / 2.54, 7 / 2.54))
+fig.set_dpi(91.79)  # DPI of My office monitor
+plt.subplots_adjust(left=0.27, bottom=0.22, right=0.96, top=0.81, wspace=0.4, hspace=0.0)
+
 for n_iter, foldername in enumerate(V_foldername):
 
     path_dir = os.getcwd() + '//Data_Vib_1_(Oscillo_Polarimeter)//' + foldername + '_edited'
-    #path_dir = os.getcwd() + '//Data_Vib_3_(Hibi_loosen_fasten)//' + foldername + '_edited'
-
-    #path_dir = os.getcwd() + '//Data_Vib_2_(Hibi_losen_fasten)//' + foldername + '_edited'
-    #path_dir = os.getcwd() + '//Data_Vib_3_(Hibi_loosen_fasten)//' + foldername + '_edited'
     file_list = os.listdir(path_dir)
-
-    #fig, ax = plt.subplots(4, figsize=(6, 5))
-    fig, ax = plt.subplots(3, figsize=(6, 5))
-    plt.subplots_adjust(left=0.14, bottom=0.112, right=0.93, top=0.93, wspace=0.2, hspace=0)
 
     Ev = Jones_vector('Output_J')
     Sv = create_Stokes('Output_S')
     Out = create_Stokes('Output_S2')
 
-    fig2, ax2 = Sv.draw_poincare(figsize=(7, 7), angle_view=[0.2, 1.2], kind='line')
     frequency = arange(10, 31, 1)
-    #frequency = np.array([30,31])
-
-    diff_azi_V = np.ones(len(file_list))
-    diff_ellip_V = np.ones(len(file_list))
-    cstm_color = ['k', 'r', 'b', 'c', 'y', 'm']
 
     for nn in range(len(file_list)):
         fn2 = path_dir + "//" + file_list[nn]
@@ -184,49 +186,61 @@ for n_iter, foldername in enumerate(V_foldername):
         Sn = np.ones((len(S0)))
         SS = np.vstack((Sn, S1, S2, S3))
         Out = Sv.from_matrix(SS.T)
-
-        draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 4])
-
-        Out = basistonormal(Out)
-
-        draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 4])
+        #Out = basistonormal(Out)
 
         azi_V = Out.parameters.azimuth()
         ellip_V = Out.parameters.ellipticity_angle()
-        diff_azi_V[nn] = azi_V.max() - azi_V.min()
-        diff_ellip_V[nn] = ellip_V.max() - ellip_V.min()
 
         if nn == 0 or nn == len(file_list)-1:
-            # ax[0].plot(time, S0, zorder=10-nn)
-            # ax[1].plot(time, S1, zorder=10-nn)
-            # ax[2].plot(time, S2, zorder=10-nn)
-            # ax[3].plot(time, S3, zorder=10-nn)
-            ax[0].plot(time, S1, zorder=10-nn, label=str(10+nn)+'Hz')
-            ax[1].plot(time, S2, zorder=10-nn)
-            ax[2].plot(time, S3, zorder=10-nn)
+            if nn == 0:
+                col = 'k'
+                [bot0, bot1, bot2] = [S1.min()*0.9, S2.min()*0.9, S3.min()*0.9]
+                [top0, top1, top2] = [S1.max()*1.1, S2.max()*1.1, S3.max()*1.1]
+                #legend0 = '2g (10 Hz)'
+                legend0 = '80 mm (10 Hz)'
+
+            else:
+                col = 'r'
+                #legend0 = '18g (30 Hz)'
+                legend0 = '10 mm (30 Hz)'
+
+            ax[0].plot(time, S1, col, zorder=10-nn, label=str(10+nn)+'Hz')
+            ax[0].set_ylim(bot0, top0)
+            ax[1].plot(time, S2, col, zorder=10-nn)
+            ax[1].set_ylim(bot1, top1)
+            ax[2].plot(time, S3, col, zorder=10-nn)
+            ax[2].set_ylim(bot2, top2)
+
+            ax3[0].plot(time, azi_V*180/pi, col, zorder=10-nn, label=legend0)
+            ax3[0].set_xlabel("Time (s)")
+            ax3[0].set_ylabel(r'$\psi$'+' (deg)')
+            ax3[0].set_ylim((azi_V.min()*180/pi*0.999, azi_V.max()*180/pi*1.001))
+            ax3[0].legend(bbox_to_anchor=(0.2, 1.7), loc='upper left', fancybox=False, ncol=1)
+
+            ax3[1].plot(time, ellip_V*180/pi, col, zorder=10-nn)
+            ax3[1].set_xlabel("Time (s)")
+            ax3[1].set_ylabel(r'$\chi$'+' (deg)')
+            ax3[1].set_ylim(( ellip_V.min()*180/pi * 0.90, ellip_V.max()*180/pi* 1.1))
+
 
     for nn in range(len(ax)):
-        ax[nn].set_ylabel("S"+str(nn))
+        ax[nn].set_ylabel("S"+str(nn+1))
     ax[2].set_xlabel("Time (s)")
+
     #ax[0].legend(['10Hz', '30Hz'])
     #ax[0].legend(bbox_to_anchor=(0.5, 1.15), loc='upper center', fancybox=True)
     ax[0].legend(loc='lower right', fancybox=True)
+
     fig.align_ylabels()
+    fig_name = 'Figure 5(cd)' + plt_fmt
+    fig.savefig(fig_name, dpi=plt_res)
+
+    fig3.align_ylabels()
+    fig_name = 'Figure 5(ef)' + plt_fmt
+    fig3.savefig(fig_name, dpi=plt_res)
 
     #plt.rc('text', usetex=True)
     #r'$\phi$'
-
-    ax3.plot(frequency, sqrt(diff_azi_V ** 2 + diff_ellip_V ** 2) * 180 / pi, label=V_label[n_iter],
-             marker=V_marker[n_iter], color=cstm_color[n_iter % 4])
-    ax3.xaxis.set_major_locator(MaxNLocator(5))
-    ax3.set(xlim=(9, 31), ylim=(0, 2))
-
-    #label=r'sqrt(\phi + \theta)')
-    ax3.legend(loc="upper left")
-    ax3.set_xlabel("Vibration frequency (Hz)")
-    ax3.set_ylabel("SOP change (deg)")
-    #ax3.set(xlim=(10, 30), ylim=(0, 1.7))
-    plt.subplots_adjust(left=0.152, bottom=0.133, right=0.917, top=0.89, wspace=0.2, hspace=0.2)
 
 plt.show()
 
