@@ -196,7 +196,6 @@ def PS3(shot):
 
     return ax, fig
 
-
 def main():
     #
     # plot parameters
