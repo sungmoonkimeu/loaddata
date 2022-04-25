@@ -188,6 +188,25 @@ def acc2freq(x):
 
 if __name__ == '__main__':
 
+    plt.close("all")
+    plt_fmt, plt_res = '.png', 330  # 330 is max in Word'16
+    plt.rcParams["axes.titlepad"] = 20  # offset for the fig title
+    #  plt.rcParams['figure.constrained_layout.use'] = True  # fit legends in fig window
+    fsize = 11
+    plt.rcParams['font.size'] = 11
+    plt.rcParams['font.sans-serif'] = "calibri"
+    plt.rcParams['font.family'] = "sans-serif"
+
+    plt.rc('font', size=fsize)  # controls default text sizes
+    plt.rc('axes', labelsize=fsize)  # f-size of the x and y labels
+    plt.rc('xtick', labelsize=fsize)  # f-size of the tick labels
+    plt.rc('ytick', labelsize=fsize)  # f-size of the tick labels
+    plt.rc('legend', fontsize=fsize)  # f-size legend
+    plt.rc('axes', titlesize=6)  # f-size of the axes title (??)
+    plt.rc('figure', titlesize=6)  # f-size of the figure title
+
+
+
     path = os.getcwd() + '//Data_Vib_1_(Oscillo_Polarimeter)//'
     folder1 = 'Const_acc_OSC2_edited//'
     folder2 = 'Const_acc_Polarimeter_edited//'
@@ -229,7 +248,7 @@ if __name__ == '__main__':
         delta_ellip = S.parameters.ellipticity_angle().max() - S.parameters.ellipticity_angle().min()
         alpha2[nn-10] = sqrt(delta_azi**2 + delta_ellip**2) * 180/pi
 
-    fig, ax = plt.subplots(1, 2, figsize=(23/2.54, 8/2.54))
+    fig, ax = plt.subplots(1, 2, figsize=(13/2.54, 5/2.54))
     fig.set_dpi(91.79)  # DPI of My office monitor
     plt.subplots_adjust(left=0.088, bottom=0.155, right=0.91, top=0.93, wspace=0.593, hspace=0.502)
     plt.subplots_adjust(bottom=0.155)
@@ -271,10 +290,9 @@ if __name__ == '__main__':
     #fig.savefig('Constant_Acceleration.png')
     #fig.savefig('Constant_Displacement.png')
 
-    fig, ax = plt.subplots(1, 2, figsize=(23/2.54, 10/2.54))
+    fig, ax = plt.subplots(1, 2, figsize=(15/2.54, 6/2.54))
     fig.set_dpi(91.79)  # DPI of My office monitor
-    plt.subplots_adjust(left=0.088, bottom=0.155, right=0.96, top=0.845, wspace=0.4, hspace=0.502)
-    plt.subplots_adjust(bottom=0.155)
+    plt.subplots_adjust(left=0.11, bottom=0.22, right=0.96, top=0.81, wspace=0.4, hspace=0.502)
 
     ms = 4
     ax[0].plot(displacement, alpha1, lw='1', label="Max. SOP change", marker='o', color='k', markersize=ms)
@@ -298,6 +316,7 @@ if __name__ == '__main__':
     secax2.set_xlabel('Frequency [Hz]')
 
     fig.align_ylabels()
-
+    fig_name = 'Figure 5(ab)' + plt_fmt
+    plt.savefig(fig_name, dpi=plt_res)
 plt.show()
 

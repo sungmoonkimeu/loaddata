@@ -276,7 +276,7 @@ def main():
         plt.rc('axes', titlesize=fsize)  # f-size of the axes title (??)
         plt.rc('figure', titlesize=fsize)  # f-size of the figure title
 
-        fig, ax = plt.subplots(4, figsize=(7/2.54, 5.5/2.54))
+        fig, ax = plt.subplots(4, figsize=(9/2.54, 7/2.54))
         plt.subplots_adjust(left=0.3, bottom=0.27, right=0.93, top=0.93, wspace=0.2, hspace=0.12)
         ax[0].plot(time, S0, 'k')
         ax[1].plot(time, S1, 'k')
@@ -289,8 +289,11 @@ def main():
         ax[3].set_xlabel('time (s)')
 
         ax[0].set(xlim=(0, .5), ylim=(6.412, 6.44))
+        ax[0].set_xticks([])
         ax[1].set(xlim=(0, .5), ylim=(0.444, 0.474))
+        ax[1].set_xticks([])
         ax[2].set(xlim=(0, .5), ylim=(-0.724,-0.686))
+        ax[2].set_xticks([])
         ax[3].set(xlim=(0, .5), ylim=(-0.571, -0.504))
 
         fig.align_ylabels()
