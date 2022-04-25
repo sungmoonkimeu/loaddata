@@ -39,8 +39,6 @@ def switch_osfolder():
             os.chdir(path2)
     except OSError:
         print('Error: Changing OS directory')
-
-
 switch_osfolder()
 
 plt.style.use('seaborn-paper')
