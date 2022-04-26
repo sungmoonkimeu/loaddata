@@ -14,6 +14,10 @@ from matplotlib.ticker import (MaxNLocator,
                                FormatStrFormatter, ScalarFormatter)
 from scipy.interpolate import interp1d
 import matplotlib.transforms
+import matplotlib.pylab as pl
+from matplotlib.colors import rgb2hex
+
+
 import pandas as pd
 # matplotlib.rcParams['mathtext.fontset'] = 'custom'
 # matplotlib.rcParams['font.family'] = 'serif'
@@ -24,6 +28,7 @@ import pandas as pd
 # plt.rcParams['font.sans-serif']='Comic Sans MS'
 
 
+
 from py_pol.jones_vector import Jones_vector, degrees
 from py_pol.jones_matrix import Jones_matrix
 from py_pol.mueller import Mueller
@@ -32,7 +37,13 @@ from py_pol.drawings import draw_stokes_points, draw_poincare, draw_ellipse
 
 from tkinter import Tk, filedialog
 import os
+import sys
+print(os.getcwd())
+print(os.path.dirname(os.path.dirname(__file__))+'\My_library')
+sys.path.append(os.path.dirname(os.path.dirname(__file__))+'\My_library')
 
+import plotly.graph_objects as go
+import draw_poincare_plotly as PS
 
 # noinspection PyPep8Naming
 class OOMFormatter(matplotlib.ticker.ScalarFormatter):
@@ -48,6 +59,17 @@ class OOMFormatter(matplotlib.ticker.ScalarFormatter):
         self.format = self.fformat
         if self._useMathText:
             self.format = r'$\mathdefault{%s}$' % self.format
+
+
+def matplotlib_to_plotly(cmap, pl_entries):
+    h = 1.0/(pl_entries-1)
+    pl_colorscale = []
+
+    for k in range(pl_entries):
+        C = list(map(np.uint8, np.array(cmap(k*h)[:3])*255))
+        pl_colorscale.append([k*h, 'rgb'+str((C[0], C[1], C[2]))])
+
+    return pl_colorscale
 
 
 def basistonormal(S):
@@ -249,6 +271,7 @@ if __name__ =='__main__':
 
     # fig, ax = plt.subplots(figsize=(6, 5))
     ax3, fig3 = PS3('0')
+    fig4 = PS.PS5()
 
     Ev = Jones_vector('Output_J')
     Sv = create_Stokes('Output_S')
@@ -266,6 +289,10 @@ if __name__ =='__main__':
     alpha = np.ones(len(file_list))
 
     # file_list = sorted(file_list, key=lambda x: int(os.path.splitext(x)[0].split('_')[0][2:]))
+    colors = pl.cm.brg(np.linspace(0, 1, len(file_list)))
+    brg = matplotlib_to_plotly(pl.cm.brg, len(file_list))
+    hsv = matplotlib_to_plotly(pl.cm.hsv, len(file_list))
+    print(brg)
     for nn in range(len(file_list)):
 
         fn2 = path_dir + "//" + file_list[nn]
@@ -310,7 +337,8 @@ if __name__ =='__main__':
         #draw_stokes_points(fig3[0], Out, kind='line', color_line=cstm_color[nn % 8])
         ax3.plot(S1, S2, S3, color='c', marker='o', markersize=4, alpha=1.0, linewidth=0, zorder=3)
 
-
+        fig4.add_scatter3d(x=S1[::10], y=S2[::10], z=S3[::10], mode="markers",
+                          marker=dict(size=3, opacity=1, color=rgb2hex(colors[nn])), name='F1')
         azi_V = Out.parameters.azimuth()
         ellip_V = Out.parameters.ellipticity_angle()
         diff_azi_V[nn] = azi_V.max() - azi_V.min()
@@ -359,8 +387,36 @@ if __name__ =='__main__':
             count = count+1
         '''
 
+    colorbar_trace = go.Scatter(x=[None],
+                                y=[None],
+                                mode='markers',
+                                marker=dict(
+                                    colorscale=hsv,
+                                    showscale=True,
+                                    cmin=0,
+                                    cmax=len(file_list),
+                                    colorbar=dict(lenmode='fraction', len=0.75,
+                                                  thickness=10,
+                                                  tickfont=dict(size=20),
+                                                  tickvals=np.linspace(0,len(file_list),5),
+                                                  ticktext=['LHP', 'L45P', 'LVP', 'L135P', 'LHP'],
+                                                  #title='Azimuth angle',
+                                                  outlinewidth=1,
+                                                  x=0.2)
+
+                                ),
+                                hoverinfo='none'
+                                )
 
 
+    fig4.add_trace(colorbar_trace)
+
+    fig4['layout']['paper_bgcolor']='rgba(0,0,0,0)'
+    fig4['layout']['plot_bgcolor'] = 'rgba(0,0,0,0)'
+    fig4.update_yaxes(showticklabels=False, showgrid=False, visible=False)
+    fig4.update_xaxes(showticklabels=False, showgrid=False, visible=False)
+
+    fig4.show()
     if os.path.splitext(file_list[0])[0].split('_')[0][2:] == 'Hz':
         ax2.plot(freq, alpha * 180 / pi, 'k')
         #ax2.plot(freq, diff_azi_V * 180 / pi)

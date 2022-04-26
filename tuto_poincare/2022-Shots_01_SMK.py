@@ -1,8 +1,18 @@
 # -*- coding: utf-8 -*-
 """
 Created on Fri Jan 14 11:50:03 2022
-
 @author: agoussar
+
+Updated on Apr 26 2022 
+SMK has added another PS drawing method with plotly library
+Please install plotly before running code
+
+    plotly may be installed using pip:
+    $ pip install plotly==5.7.0
+    or conda:
+    $ conda install -c plotly plotly=5.7.0
+
+more information about plotly is here (https://plotly.com/python/getting-started/)
 """
 
 import pickle
@@ -18,6 +28,8 @@ from datetime import datetime
 import time
 from itertools import chain
 import warnings
+import plotly.graph_objects as go
+
 
 plt.style.use('seaborn-whitegrid')
 plt.rcParams.update({'figure.max_open_warning': 0})
@@ -212,6 +224,95 @@ def PS4(shot='', az1=0, az2=1, el1=0.47, el2=0.51):
     return ax, fig
 
 
+def PS5():
+    '''
+    plot Poincare Sphere, ver. 26/04/2022
+    return:
+    fig
+    '''
+
+    u = np.linspace(0, 2 * np.pi, 61)  # azimuth
+    v = np.linspace(0, np.pi, 31)  # elevation
+    sprad = 1
+    x = sprad * np.outer(np.cos(u), np.sin(v))
+    y = sprad * np.outer(np.sin(u), np.sin(v))
+    z = sprad * np.outer(np.ones(np.size(u)), np.cos(v))
+    print(x)
+    color1 = 'whitesmoke'
+    color2 = 'red'
+    fig = go.Figure()
+    colorscale = [[0, color1],[0.5,color1],[1, color1]]
+    fig.add_surface(x=x, y=y, z=z, opacity=0.7, showscale=False, colorscale=colorscale,
+                    showlegend=False, lighting=dict(ambient=1))
+    #fig.add_surface(x=x, y=y, z=z, opacity=0.2, showscale=False)
+    #fig.update(layout_coloraxis_showscale=False)
+
+    sprad = 1
+    x = (sprad * np.outer(np.cos(u), np.sin(v)))[::3]
+    y = (sprad * np.outer(np.sin(u), np.sin(v)))[::3]
+    z = (sprad * np.outer(np.ones(np.size(u)), np.cos(v)))[::3]
+
+    line_marker = dict(color='#000000', width=4, dash='dot')
+    for xx, yy, zz in zip(x,y,z):
+        fig.add_scatter3d(x=xx, y=yy, z=zz, mode='lines', line=line_marker, name='',showlegend=False)
+
+    u = np.linspace(0, np.pi, 41)  # azimuth
+    v = np.linspace(0, 2 * np.pi, 81)  # elevation
+    sprad = 1
+    x = (sprad * np.outer(np.sin(u), np.cos(v)))[::4]
+    y = (sprad * np.outer(np.sin(u), np.sin(v)))[::4]
+    z = (sprad * np.outer(np.cos(u), np.ones(np.size(v))))[::4]
+
+    for xx, yy, zz in zip(x, y, z):
+        fig.add_scatter3d(x=xx, y=yy, z=zz, mode='lines', line=line_marker, name='', showlegend=False)
+
+    # axes and captions
+    amp = 1.2 * sprad
+
+    line_marker2 = dict(color='#000000', width=3, dash = 'dashdot')
+    fig.add_scatter3d(x=[-amp, amp], y=[0, 0], z=[0, 0], mode='lines', line=line_marker2,
+                      name='', showlegend=False)
+    fig.add_scatter3d(x=[0, 0], y=[-amp, amp], z=[0, 0], mode='lines', line=line_marker2,
+                      name='', showlegend=False)
+    fig.add_scatter3d(x=[0, 0], y=[0, 0], z=[-amp, amp], mode='lines', line=line_marker2,
+                      name='', showlegend=False)
+
+    distance = 1.2 * sprad
+    fig.add_scatter3d(x=[distance],y=[0],z=[0], text='S<sub>1</sub>',
+                      mode="text",
+                      textposition="top right",
+                      textfont=dict(size=18),showlegend=False)
+    fig.add_scatter3d(x=[0], y=[distance], z=[0], text='S<sub>2</sub>',
+                      mode="text",
+                      textposition="top right",
+                      textfont=dict(size=18),showlegend=False)
+    fig.add_scatter3d(x=[0], y=[0], z=[distance], text='S<sub>3</sub>',
+                      mode="text",
+                      textposition="middle right",
+                      textfont=dict(size=18),showlegend=False)
+
+    fig.add_scatter3d(x=[-sprad, sprad], y=[0, 0], z=[0, 0], mode="markers",
+                      marker=dict(color='#000000', size=2),showlegend=False)
+    fig.add_scatter3d(x=[0, 0], y=[sprad, -sprad], z=[0, 0], mode="markers",
+                      marker=dict(color='#000000', size=2),showlegend=False)
+    fig.add_scatter3d(x=[0, 0], y=[0, 0], z=[sprad, -sprad], mode="markers",
+                      marker=dict(color='#000000', size=2),showlegend=False)
+
+    fig.update_layout(
+        scene={
+            "xaxis": {"showbackground": False, "showticklabels":False, "visible":False},
+            "yaxis": {"showbackground": False, "showticklabels":False, "visible":False},
+            "zaxis": {"showbackground": False, "showticklabels":False, "visible":False},
+            'camera_eye': {"x": 0, "y": -1, "z": 1},
+            "aspectratio": {"x": 1, "y": 1, "z": 1}
+        },
+        showlegend=False,
+    )
+    fig.update(layout_coloraxis_showscale=False)
+    #fig.show()
+    return fig
+
+
 def main():
 #
 
@@ -239,9 +340,7 @@ def main():
   dnod = {} 
 
   for cc in m01_shots :                          
-    
-    
-    plt_name = '{}{}M'.format(focs_out, str(cc)) 
+    plt_name = '{}{}M'.format(focs_out, str(cc))
     fin_name = '{}{:d}.pkl'.format(focs_dir, cc)     
 #
     dnod.clear()
@@ -296,25 +395,41 @@ def main():
     cm[-1] = 1.3
 #
     if (F1_in_use or F2_in_use ) :    # PS
-      ax, fig01 = PS4(shot)
-#
+      ax, fig01 = PS3(shot)
+
+      fig02 = PS5()                     # draw PS using plotly
+
       if F1_in_use :                                    # F1 on PS 
-        #ax.scatter3D(S1, S2, S3, zdir='z', marker = 'o', s=4, c=cm,
-        #       alpha = 1.0, label ='F1', cmap="brg")
-        ax.plot(S1, S2, S3, marker='o', markersize=4, alpha=1.0, linewidth=0, zorder=222, label = 'F1')
+        ax.scatter3D(S1, S2, S3, zdir='z', marker = 'o', s=4, c=cm,
+                     alpha = 1.0, label ='F1', cmap="brg")
+
+        fig02.add_scatter3d(x=S1, y=S2, z=S3, mode="markers",
+                            marker=dict(size=3, color=cm, colorscale='amp'), name='F1')
 
       if F2_in_use :                                    # F2 on PS 
-        #ax.scatter3D(D1, D2, D3, zdir='z', marker = '+', s=6, c=cm,
-        #       alpha = 0.6, label ='F2', cmap="cool", zorder=500)
-        ax.plot(D1, D2, D3, marker='+', markersize=4, alpha=1.0, linewidth=0, zorder=222, label = 'F2')
+        ax.scatter3D(D1, D2, D3, zdir='z', marker = '+', s=6, c=cm,
+                     alpha = 0.6, label ='F2', cmap="cool")
+
+        fig02.add_scatter3d(x=D1, y=D2, z=D3, mode="markers",
+                            marker=dict(size=3, color=cm, colorscale='ice'), name='F2')
+
 
       ax.legend()
       fig_name = plt_name + '_PS0' + plt_fmt  
-      plt.savefig(fig_name, dpi = plt_res)                                   
-
+      plt.savefig(fig_name, dpi = plt_res)
+      fig02.update_layout(showlegend=True,
+                          legend=dict(
+                              x=0.2,
+                              y=0.8,
+                              #traceorder="reversed",
+                              font=dict(
+                                  family="Calibri",
+                                  size=18,
+                                  color="black"),
+                              itemsizing='constant'))
+      fig02.show()
 
 
 if (__name__ == "__main__"):
     main()
     plt.show()
- 

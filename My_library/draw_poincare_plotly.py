@@ -121,8 +121,13 @@ def PS5():
     y = sprad * np.outer(np.sin(u), np.sin(v))
     z = sprad * np.outer(np.ones(np.size(u)), np.cos(v))
     print(x)
+    color1 = 'whitesmoke'
+    color2 = 'red'
     fig = go.Figure()
-    fig.add_surface(x=x, y=y, z=z, opacity=0.2, showscale=False)
+    colorscale = [[0, color1],[0.5,color1],[1, color1]]
+    fig.add_surface(x=x, y=y, z=z, opacity=0.5, showscale=False, colorscale=colorscale,
+                    showlegend=False, lighting=dict(ambient=1))
+    #fig.add_surface(x=x, y=y, z=z, opacity=0.2, showscale=False)
     #fig.update(layout_coloraxis_showscale=False)
 
     sprad = 1
@@ -130,9 +135,9 @@ def PS5():
     y = (sprad * np.outer(np.sin(u), np.sin(v)))[::3]
     z = (sprad * np.outer(np.ones(np.size(u)), np.cos(v)))[::3]
 
-    line_marker = dict(color='#000000', width=2, dash='dot')
+    line_marker = dict(color='#000000', width=4, dash='dot')
     for xx, yy, zz in zip(x,y,z):
-        fig.add_scatter3d(x=xx, y=yy, z=zz, mode='lines', line=line_marker, name='')
+        fig.add_scatter3d(x=xx, y=yy, z=zz, mode='lines', line=line_marker, name='',showlegend=False)
 
     u = np.linspace(0, np.pi, 41)  # azimuth
     v = np.linspace(0, 2 * np.pi, 81)  # elevation
@@ -142,36 +147,39 @@ def PS5():
     z = (sprad * np.outer(np.cos(u), np.ones(np.size(v))))[::4]
 
     for xx, yy, zz in zip(x, y, z):
-        fig.add_scatter3d(x=xx, y=yy, z=zz, mode='lines', line=line_marker, name='')
+        fig.add_scatter3d(x=xx, y=yy, z=zz, mode='lines', line=line_marker, name='', showlegend=False)
 
     # axes and captions
     amp = 1.2 * sprad
 
-    line_marker2 = dict(color='#000000', width=3, dash = 'dashdot')
-    fig.add_scatter3d(x=[-amp, amp], y=[0, 0], z=[0, 0], mode='lines', line=line_marker2, name='')
-    fig.add_scatter3d(x=[0, 0], y=[-amp, amp], z=[0, 0], mode='lines', line=line_marker2, name='')
-    fig.add_scatter3d(x=[0, 0], y=[0, 0], z=[-amp, amp], mode='lines', line=line_marker2, name='')
+    line_marker2 = dict(color='#000000', width=5, dash = 'dashdot')
+    fig.add_scatter3d(x=[-amp, amp], y=[0, 0], z=[0, 0], mode='lines', line=line_marker2,
+                      name='', showlegend=False)
+    fig.add_scatter3d(x=[0, 0], y=[-amp, amp], z=[0, 0], mode='lines', line=line_marker2,
+                      name='', showlegend=False)
+    fig.add_scatter3d(x=[0, 0], y=[0, 0], z=[-amp, amp], mode='lines', line=line_marker2,
+                      name='', showlegend=False)
 
     distance = 1.2 * sprad
-    fig.add_scatter3d(x=[distance],y=[0],z=[0], text='S<sub>1</sub>',
+    fig.add_scatter3d(x=[-distance],y=[0],z=[0], text='S<sub>1</sub>',
                       mode="text",
                       textposition="top right",
-                      textfont=dict(size=18))
+                      textfont=dict(size=24),showlegend=False)
     fig.add_scatter3d(x=[0], y=[distance], z=[0], text='S<sub>2</sub>',
                       mode="text",
-                      textposition="top right",
-                      textfont=dict(size=18))
+                      textposition="top left",
+                      textfont=dict(size=24),showlegend=False)
     fig.add_scatter3d(x=[0], y=[0], z=[distance], text='S<sub>3</sub>',
                       mode="text",
-                      textposition="top right",
-                      textfont=dict(size=18))
+                      textposition="middle right",
+                      textfont=dict(size=24),showlegend=False)
 
     fig.add_scatter3d(x=[-sprad, sprad], y=[0, 0], z=[0, 0], mode="markers",
-                      marker=dict(color='#000000', size=2))
+                      marker=dict(color='#000000', size=2),showlegend=False)
     fig.add_scatter3d(x=[0, 0], y=[sprad, -sprad], z=[0, 0], mode="markers",
-                      marker=dict(color='#000000', size=2))
+                      marker=dict(color='#000000', size=2),showlegend=False)
     fig.add_scatter3d(x=[0, 0], y=[0, 0], z=[sprad, -sprad], mode="markers",
-                      marker=dict(color='#000000', size=2))
+                      marker=dict(color='#000000', size=2),showlegend=False)
 
     fig.update_layout(
         scene={
@@ -184,14 +192,16 @@ def PS5():
         showlegend=False,
     )
     fig.update(layout_coloraxis_showscale=False)
-    fig.show()
+    #fig.show()
     return fig
 
 def main():
     #PS3('3')
     fig = PS5()
-
+    #fig.show()
 
 if (__name__ == "__main__"):
-    main()
+    fig = PS5()
+    fig.show()
+    #main()
     #plt.show()
