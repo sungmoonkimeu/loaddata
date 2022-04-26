@@ -142,7 +142,6 @@ def basistonormal(S):
     S.from_matrix(Sp)
     return S
 
-
 def PS3(shot):
     '''
     plot Poincare Sphere, ver. 20/03/2020
@@ -293,7 +292,7 @@ if __name__ =='__main__':
     brg = matplotlib_to_plotly(pl.cm.brg, len(file_list))
     hsv = matplotlib_to_plotly(pl.cm.hsv, len(file_list))
     print(brg)
-    for nn in range(len(file_list)):
+    for nn in range(int(len(file_list))):
 
         fn2 = path_dir + "//" + file_list[nn]
 

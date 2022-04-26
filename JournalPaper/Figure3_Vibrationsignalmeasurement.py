@@ -54,7 +54,7 @@ def switch_osfolder():
 
 switch_osfolder()
 
-plt.rcParams['font.size'] = 11
+plt.rcParams['font.size'] = 10
 plt.rcParams['font.sans-serif'] = "calibri"
 plt.rcParams['font.family'] = "sans-serif"
 
@@ -85,7 +85,7 @@ def read_shakerinputsignal(foldername, fig=None):
     plt.subplots_adjust(left=0.19, bottom=0.13, right=0.78, top=0.93, wspace=0.2, hspace=0.75)
     plt.subplots_adjust(bottom=0.155)
 
-    ms = 4
+    ms = 3
     ax[0].plot(x0, y1, lw='1', label="ff", marker='o', color='k', markersize=ms)
     ax[0].set_xlabel('Frequency (Hz)')
     ax[0].set_ylabel('Peak-peak voltage (V)')
