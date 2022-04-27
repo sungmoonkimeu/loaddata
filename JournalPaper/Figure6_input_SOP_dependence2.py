@@ -41,8 +41,10 @@ print(os.path.dirname(os.path.dirname(__file__)) + '\My_library')
 sys.path.append(os.path.dirname(os.path.dirname(__file__)) + '\My_library')
 
 import plotly.graph_objects as go
-import draw_poincare_plotly as PS
+import plotly.express as px
 
+import draw_poincare_plotly as PS
+from plotly.colors import n_colors
 
 # noinspection PyPep8Naming
 class OOMFormatter(matplotlib.ticker.ScalarFormatter):
@@ -224,6 +226,16 @@ def PS3(shot):
 
     return ax, fig
 
+def cm_to_rgba_tuple(colors,alpha=1):
+    for nn in range(len(colors)):
+        r = int(colors[nn].split(",")[0].split("(")[1])/256
+        g = int(colors[nn].split(",")[1])/256
+        b = int(colors[nn].split(",")[2].split(")")[0])/256
+        if nn == 0:
+            tmp = np.array([r, g, b, alpha])
+        else:
+            tmp = np.vstack((tmp, np.array([r, g, b, alpha])))
+    return tmp
 
 if __name__ == '__main__':
 
@@ -248,7 +260,7 @@ if __name__ == '__main__':
 
     # fig, ax = plt.subplots(figsize=(6, 5))
     ax2, fig2 = PS3('0')
-    fig3 = PS.PS5()
+    fig3 = PS.PS5(0.5)
 
     for mm in range(2):
         # Folder select
@@ -280,9 +292,18 @@ if __name__ == '__main__':
         min_azi_V = np.ones(len(file_list))
         alpha = np.ones(len(file_list))
 
-        colors = pl.cm.brg(np.linspace(0, 1, len(file_list)))
-        brg = matplotlib_to_plotly(pl.cm.brg, len(file_list))
+        # brg = matplotlib_to_plotly(pl.cm.brg, len(file_list))
+        # colors = pl.cm.brg(np.linspace(0, 1, len(file_list)))
+
         hsv = matplotlib_to_plotly(pl.cm.hsv, len(file_list))
+        colors_hsv = pl.cm.hsv(np.linspace(0, 1, len(file_list)))
+
+        colors_IceFire_tmp = px.colors.sample_colorscale("IceFire", [n / (len(file_list) - 1) for n in range(len(file_list))])
+        colors_IceFire = cm_to_rgba_tuple(colors_IceFire_tmp)
+
+        print(colors_hsv)
+        print(colors_IceFire)
+        #print(brg)
 
         for nn in range(int(len(file_list))):
             fn2 = path_dir + "//" + file_list[nn]
@@ -327,7 +348,9 @@ if __name__ == '__main__':
             ax2.plot(S1, S2, S3, color='c', marker='o', markersize=4, alpha=1.0, linewidth=0, zorder=3)
 
             fig3.add_scatter3d(x=S1[::10], y=S2[::10], z=S3[::10], mode="markers",
-                               marker=dict(size=3, opacity=1, color=rgb2hex(colors[nn])), name='F1')
+                               marker=dict(size=3, opacity=1,
+                                           color=rgb2hex(colors_hsv[nn] if mm==0 else colors_IceFire[nn])),
+                               name='F1')
             azi_V = Out.parameters.azimuth()
             ellip_V = Out.parameters.ellipticity_angle()
             diff_azi_V[nn] = azi_V.max() - azi_V.min()
@@ -379,12 +402,12 @@ if __name__ == '__main__':
                               tickvals=np.linspace(0, len(file_list), 5),
                               ticktext=['LHP', 'L45P', 'LVP', 'L135P', 'LHP'],
                               # title='Azimuth angle',
-                              outlinewidth = 1,
+                              outlinewidth=1,
                               x=0.2 if mm == 0 else 0)
         colorbar_trace = go.Scatter(x=[None], y=[None],
                                     mode='markers',
                                     marker=dict(
-                                        colorscale=hsv,
+                                        colorscale=hsv if mm == 0 else 'IceFire',
                                         showscale=True,
                                         cmin=0,
                                         cmax=len(file_list),

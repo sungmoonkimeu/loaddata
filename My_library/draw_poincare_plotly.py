@@ -107,7 +107,7 @@ def PS3(shot):
     return ax, fig
 
 
-def PS5():
+def PS5(alpha=0.5):
     '''
     plot Poincare Sphere, ver. 26/04/2022
     return:
@@ -125,7 +125,7 @@ def PS5():
     color2 = 'red'
     fig = go.Figure()
     colorscale = [[0, color1],[0.5,color1],[1, color1]]
-    fig.add_surface(x=x, y=y, z=z, opacity=0.5, showscale=False, colorscale=colorscale,
+    fig.add_surface(x=x, y=y, z=z, opacity=alpha, showscale=False, colorscale=colorscale,
                     showlegend=False, lighting=dict(ambient=1))
     #fig.add_surface(x=x, y=y, z=z, opacity=0.2, showscale=False)
     #fig.update(layout_coloraxis_showscale=False)
