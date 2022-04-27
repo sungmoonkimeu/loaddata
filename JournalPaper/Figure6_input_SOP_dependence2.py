@@ -35,12 +35,14 @@ from py_pol.drawings import draw_stokes_points, draw_poincare, draw_ellipse
 from tkinter import Tk, filedialog
 import os
 import sys
+
 print(os.getcwd())
-print(os.path.dirname(os.path.dirname(__file__))+'\My_library')
-sys.path.append(os.path.dirname(os.path.dirname(__file__))+'\My_library')
+print(os.path.dirname(os.path.dirname(__file__)) + '\My_library')
+sys.path.append(os.path.dirname(os.path.dirname(__file__)) + '\My_library')
 
 import plotly.graph_objects as go
 import draw_poincare_plotly as PS
+
 
 # noinspection PyPep8Naming
 class OOMFormatter(matplotlib.ticker.ScalarFormatter):
@@ -59,12 +61,12 @@ class OOMFormatter(matplotlib.ticker.ScalarFormatter):
 
 
 def matplotlib_to_plotly(cmap, pl_entries):
-    h = 1.0/(pl_entries-1)
+    h = 1.0 / (pl_entries - 1)
     pl_colorscale = []
 
     for k in range(pl_entries):
-        C = list(map(np.uint8, np.array(cmap(k*h)[:3])*255))
-        pl_colorscale.append([k*h, 'rgb'+str((C[0], C[1], C[2]))])
+        C = list(map(np.uint8, np.array(cmap(k * h)[:3]) * 255))
+        pl_colorscale.append([k * h, 'rgb' + str((C[0], C[1], C[2]))])
 
     return pl_colorscale
 
@@ -169,19 +171,17 @@ def PS3(shot):
     y = sprad * np.outer(np.sin(u), np.sin(v))
     z = sprad * np.outer(np.ones(np.size(u)), np.cos(v))
 
-
     ax.plot_surface(x, y, z,
                     color='w',  # (0.5, 0.5, 0.5, 0.0),
-                    #edgecolor='k',
-                    edgecolor=(3/256, 3/256, 3/256),
+                    # edgecolor='k',
+                    edgecolor=(3 / 256, 3 / 256, 3 / 256),
                     linestyle=(0, (5, 5)),
                     rstride=3, cstride=3,
                     linewidth=.5, alpha=0.8, shade=
                     0)
 
-
     # main circles
-    #ax.plot(np.sin(u), np.cos(u), np.zeros_like(u), 'g-.', linewidth=0.75)  # equator
+    # ax.plot(np.sin(u), np.cos(u), np.zeros_like(u), 'g-.', linewidth=0.75)  # equator
     #    ax.plot(np.sin(u), np.zeros_like(u), np.cos(u), 'b-', linewidth=0.5)
     #    ax.plot(np.zeros_like(u), np.sin(u), np.cos(u), 'b-', linewidth=0.5)
 
@@ -211,7 +211,7 @@ def PS3(shot):
     ax.set_zlim(-max_size, max_size)
 
     #    plt.tight_layout()            #not compatible
-    #ax.view_init(elev=-21, azim=-54)
+    # ax.view_init(elev=-21, azim=-54)
     ax.view_init(elev=-160, azim=110)
     #    ax.view_init(elev=0/np.pi, azim=0/np.pi)
 
@@ -225,25 +225,25 @@ def PS3(shot):
     return ax, fig
 
 
-if __name__ =='__main__':
+if __name__ == '__main__':
 
     # figure setting
     plt.close("all")
     plt_fmt, plt_res = '.png', 330  # 330 is max in Word'16
     plt.rcParams["axes.titlepad"] = 5  # offset for the fig title
-    #plt.rcParams["figure.autolayout"] = True  # tight_layout
+    # plt.rcParams["figure.autolayout"] = True  # tight_layout
     #  plt.rcParams['figure.constrained_layout.use'] = True  # fit legends in fig window
     fsize = 9
     plt.rc('font', size=fsize)  # controls default text sizes
     plt.rc('axes', labelsize=fsize)  # f-size of the x and y labels
     plt.rc('xtick', labelsize=fsize)  # f-size of the tick labels
     plt.rc('ytick', labelsize=fsize)  # f-size of the tick labels
-    plt.rc('legend', fontsize=fsize-1)  # f-size legend
+    plt.rc('legend', fontsize=fsize - 1)  # f-size legend
     plt.rc('axes', titlesize=11)  # f-size of the axes title (??)
     plt.rc('figure', titlesize=11)  # f-size of the figure title
 
     # SOP change
-    fig, ax = plt.subplots(figsize=(8.5/2.54, 7/2.54))
+    fig, ax = plt.subplots(figsize=(8.5 / 2.54, 7 / 2.54))
     plt.subplots_adjust(left=0.2, bottom=0.22)
 
     # fig, ax = plt.subplots(figsize=(6, 5))
@@ -270,8 +270,6 @@ if __name__ =='__main__':
             file_list = sorted(file_list, key=lambda x: int(os.path.splitext(x)[0][0:2]))
             freq = np.array([int(os.path.splitext(x)[0][0:2]) for x in file_list])
 
-
-
         Ev = Jones_vector('Output_J')
         Sv = create_Stokes('Output_S')
         Out = create_Stokes('Output_S2')
@@ -281,7 +279,6 @@ if __name__ =='__main__':
         max_azi_V = np.ones(len(file_list))
         min_azi_V = np.ones(len(file_list))
         alpha = np.ones(len(file_list))
-
 
         colors = pl.cm.brg(np.linspace(0, 1, len(file_list)))
         brg = matplotlib_to_plotly(pl.cm.brg, len(file_list))
@@ -326,11 +323,11 @@ if __name__ =='__main__':
             # draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 8])
 
             Out = basistonormal(Out)
-            #draw_stokes_points(fig3[0], Out, kind='line', color_line=cstm_color[nn % 8])
+            # draw_stokes_points(fig3[0], Out, kind='line', color_line=cstm_color[nn % 8])
             ax2.plot(S1, S2, S3, color='c', marker='o', markersize=4, alpha=1.0, linewidth=0, zorder=3)
 
             fig3.add_scatter3d(x=S1[::10], y=S2[::10], z=S3[::10], mode="markers",
-                              marker=dict(size=3, opacity=1, color=rgb2hex(colors[nn])), name='F1')
+                               marker=dict(size=3, opacity=1, color=rgb2hex(colors[nn])), name='F1')
             azi_V = Out.parameters.azimuth()
             ellip_V = Out.parameters.ellipticity_angle()
             diff_azi_V[nn] = azi_V.max() - azi_V.min()
@@ -368,7 +365,7 @@ if __name__ =='__main__':
 
             '''
             for nn in a:
-        
+
                 fn2 = path_dir + "//" + "9turns_" + str(nn) + "deg_Upper_edited.txt"
                 data = pd.read_table(fn2)
                 time = data['Time (ns)']
@@ -378,42 +375,40 @@ if __name__ =='__main__':
                 ax[count].set(xlim=(124, 134), ylim=(-135, -120))
                 count = count+1
             '''
-        colorbar_trace = go.Scatter(x=[None],y=[None],
+        colorbar_param = dict(lenmode='fraction', len=0.75, thickness=10,tickfont=dict(size=20),
+                              tickvals=np.linspace(0, len(file_list), 5),
+                              ticktext=['LHP', 'L45P', 'LVP', 'L135P', 'LHP'],
+                              # title='Azimuth angle',
+                              outlinewidth = 1,
+                              x=0.2 if mm == 0 else 0)
+        colorbar_trace = go.Scatter(x=[None], y=[None],
                                     mode='markers',
                                     marker=dict(
                                         colorscale=hsv,
                                         showscale=True,
                                         cmin=0,
                                         cmax=len(file_list),
-                                        colorbar=dict(lenmode='fraction', len=0.75,
-                                                      thickness=10,
-                                                      tickfont=dict(size=20),
-                                                      tickvals=np.linspace(0,len(file_list),5),
-                                                      ticktext=['LHP', 'L45P', 'LVP', 'L135P', 'LHP'],
-                                                      #title='Azimuth angle',
-                                                      outlinewidth=1,
-                                                      x=0.2)
+                                        colorbar=colorbar_param
                                     ),
                                     hoverinfo='none'
                                     )
         fig3.add_trace(colorbar_trace)
-        fig3['layout']['paper_bgcolor']='rgba(0,0,0,0)'
+        fig3['layout']['paper_bgcolor'] = 'rgba(0,0,0,0)'
         fig3['layout']['plot_bgcolor'] = 'rgba(0,0,0,0)'
         fig3.update_yaxes(showticklabels=False, showgrid=False, visible=False)
         fig3.update_xaxes(showticklabels=False, showgrid=False, visible=False)
 
-
         if os.path.splitext(file_list[0])[0].split('_')[0][2:] == 'Hz':
             ax.plot(freq, alpha * 180 / pi, 'k')
-            #ax2.plot(freq, diff_azi_V * 180 / pi)
-            #ax2.plot(freq, diff_ellip_V * 180 / pi)
+            # ax2.plot(freq, diff_azi_V * 180 / pi)
+            # ax2.plot(freq, diff_ellip_V * 180 / pi)
             ax.set_xlabel('Frequency (Hz)')
             ax.set_ylabel('SOP change (deg)')
             ax.set(xlim=(9.5, 30.5), ylim=(0, 2))
         else:
-            ax.plot(ang_SOP, alpha * 180 / pi,'k')
-            #ax2.plot(ang_SOP, diff_azi_V * 180 / pi)
-            #ax2.plot(ang_SOP, diff_ellip_V * 180 / pi)
+            ax.plot(ang_SOP, alpha * 180 / pi, 'k')
+            # ax2.plot(ang_SOP, diff_azi_V * 180 / pi)
+            # ax2.plot(ang_SOP, diff_ellip_V * 180 / pi)
             ax.set_xlabel('Azimuth angle of input SOP (deg)')
             ax.set_ylabel('SOP change (deg)')
             ax.set(xlim=(0, 360), ylim=(0, 2))

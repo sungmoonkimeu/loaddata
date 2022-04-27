@@ -32,3 +32,5 @@ fig.show()
 
 fig = px.colors.sequential.swatches_continuous()
 fig.show()
+fig = px.colors.cyclical.swatches_cyclical()
+fig.show()
