@@ -12,6 +12,8 @@ from numpy.linalg import norm, eig, matrix_power
 import matplotlib.ticker
 from matplotlib.ticker import (MaxNLocator,
                                FormatStrFormatter, ScalarFormatter)
+from matplotlib.ticker import (AutoMinorLocator, MultipleLocator)
+
 from scipy.interpolate import interp1d
 import matplotlib.transforms
 import matplotlib.pylab as pl
@@ -258,9 +260,20 @@ if __name__ == '__main__':
     fig, ax = plt.subplots(figsize=(8.5 / 2.54, 7 / 2.54))
     plt.subplots_adjust(left=0.2, bottom=0.22)
 
+    # SOP change in chi, psi
+
+    fig2, ax2 = plt.subplots(2, figsize=(8 / 2.54, 7 / 2.54))
+    fig2.set_dpi(91.79)  # DPI of My office monitor
+    plt.subplots_adjust(left=0.27, bottom=0.22, right=0.96, top=0.81, wspace=0.4, hspace=0.0)
+
+    fig2_2, ax2_2 = plt.subplots(2, figsize=(8 / 2.54, 7 / 2.54))
+    fig2_2.set_dpi(91.79)  # DPI of My office monitor
+    plt.subplots_adjust(left=0.27, bottom=0.22, right=0.96, top=0.81, wspace=0.4, hspace=0.0)
+
     # fig, ax = plt.subplots(figsize=(6, 5))
-    ax2, fig2 = PS3('0')
-    fig3 = PS.PS5(0.5)
+    # ax2, fig2 = PS3('0')
+    opacity = 0.9
+    fig3 = PS.PS5(0.9)
 
     for mm in range(2):
         # Folder select
@@ -274,6 +287,8 @@ if __name__ == '__main__':
 
         try:
             file_list = sorted(file_list, key=lambda x: int(os.path.splitext(x)[0].split('_')[0][2:]))
+            file_list = file_list[::2] if mm == 1 else file_list
+
             # ang_SOP = arange(0, 361, 5)
             ang_SOP = np.array([int(os.path.splitext(x)[0].split('_')[0][2:]) for x in file_list])
 
@@ -292,24 +307,29 @@ if __name__ == '__main__':
         min_azi_V = np.ones(len(file_list))
         alpha = np.ones(len(file_list))
 
+        ############################################################
+        ## define a color and a color scale for draw poincare sphere
+
+
         # brg = matplotlib_to_plotly(pl.cm.brg, len(file_list))
         # colors = pl.cm.brg(np.linspace(0, 1, len(file_list)))
 
-        hsv = matplotlib_to_plotly(pl.cm.hsv, len(file_list))
+        # plotly style color palette prepared for each input SOPs from matplotlib
         colors_hsv = pl.cm.hsv(np.linspace(0, 1, len(file_list)))
+        # ployly style color scale converted from matplotlib for plotting color scale on the poincare sphere
+        hsv = matplotlib_to_plotly(pl.cm.hsv, len(file_list))
 
+        # color palette prepared for each input SOPs with plotly library
         colors_IceFire_tmp = px.colors.sample_colorscale("IceFire", [n / (len(file_list) - 1) for n in range(len(file_list))])
         colors_IceFire = cm_to_rgba_tuple(colors_IceFire_tmp)
 
-        print(colors_hsv)
-        print(colors_IceFire)
-        #print(brg)
+        ############################################################
+        ############################################################
 
         for nn in range(int(len(file_list))):
             fn2 = path_dir + "//" + file_list[nn]
             print(fn2)
             count = 0
-            cstm_color = ['b', 'g', 'r', 'c', 'm', 'y', 'k', 'w']
 
             #    fn2 = path_dir + "//10Hz_edited.txt"
             data = pd.read_table(fn2, delimiter=r"\s+")
@@ -318,6 +338,40 @@ if __name__ == '__main__':
             S1 = pd.to_numeric(data['S1'])
             S2 = pd.to_numeric(data['S2'])
             S3 = pd.to_numeric(data['S3'])
+
+            # ######################################################################################
+            # Plotting the Stokes points on the poincare sphere using PLOTLY
+
+            fig3.add_scatter3d(x=S1[::10], y=S2[::10], z=S3[::10], mode="markers",
+                               marker=dict(size=3, opacity=1,
+                                           color=rgb2hex(colors_hsv[nn] if mm==0 else colors_IceFire[nn])),
+                               name='F1')
+
+            colorbar_param = dict(lenmode='fraction', len=0.75, thickness=10, tickfont=dict(size=20),
+                                  tickvals=np.linspace(0, len(file_list), 5),
+                                  ticktext=['LHP', 'L45P', 'LVP', 'L135P', 'LHP'],
+                                  # title='Azimuth angle',
+                                  outlinewidth=1,
+                                  x=0.2 if mm == 0 else 0.1)
+            colorbar_trace = go.Scatter(x=[None], y=[None],
+                                        mode='markers',
+                                        marker=dict(
+                                            colorscale=hsv if mm == 0 else 'IceFire',
+                                            showscale=True,
+                                            cmin=0,
+                                            cmax=len(file_list),
+                                            colorbar=colorbar_param
+                                        ),
+                                        hoverinfo='none'
+                                        )
+            fig3.add_trace(colorbar_trace)
+            fig3['layout']['paper_bgcolor'] = 'rgba(0,0,0,0)'
+            fig3['layout']['plot_bgcolor'] = 'rgba(0,0,0,0)'
+            fig3.update_yaxes(showticklabels=False, showgrid=False, visible=False)
+            fig3.update_xaxes(showticklabels=False, showgrid=False, visible=False)
+
+            # ######################################################################################
+            # ######################################################################################
 
             Sn = np.ones((len(S0)))
 
@@ -337,20 +391,8 @@ if __name__ == '__main__':
             new_S3[0:nwindow] = new_S3[nwindow]
 
             SS = np.vstack((Sn, new_S1, new_S2, new_S3))
-
-            # SS = np.vstack((Sn[1000:], new_S1[1000:], new_S2[1000:], new_S3[1000:]))
             Out = Sv.from_matrix(SS.T)
-
-            # draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 8])
-
-            Out = basistonormal(Out)
-            # draw_stokes_points(fig3[0], Out, kind='line', color_line=cstm_color[nn % 8])
-            ax2.plot(S1, S2, S3, color='c', marker='o', markersize=4, alpha=1.0, linewidth=0, zorder=3)
-
-            fig3.add_scatter3d(x=S1[::10], y=S2[::10], z=S3[::10], mode="markers",
-                               marker=dict(size=3, opacity=1,
-                                           color=rgb2hex(colors_hsv[nn] if mm==0 else colors_IceFire[nn])),
-                               name='F1')
+            #Out = basistonormal(Out)
             azi_V = Out.parameters.azimuth()
             ellip_V = Out.parameters.ellipticity_angle()
             diff_azi_V[nn] = azi_V.max() - azi_V.min()
@@ -364,15 +406,9 @@ if __name__ == '__main__':
             min_azi_V[nn] = azi_V.min() / cos(ellip_V[0])
 
             alpha[nn] = sqrt(diff_azi_V[nn] ** 2 + diff_ellip_V[nn] ** 2)
-            # print(alpha[nn])
 
-            if alpha[nn] > 0.1:
-                print(fn2)
-                print(diff_azi_V[nn])
-                print(diff_ellip_V[nn])
-                print(cos(ellip_V[0]))
-
-            if nn == 0 or nn == 5 or nn == 9 or nn == 14:
+            # pick up 30deg, 120 deg
+            if nn == 3 or nn == 12:
                 fig4, ax4 = plt.subplots(4, figsize=(6, 5))
                 ax4[0].plot(time, S0)
                 # ax[0].set(xlim=(0, 0.5), ylim=(-1, 1))
@@ -386,40 +422,34 @@ if __name__ == '__main__':
                 ax4[3].set_ylabel("Stokes parameter")
                 ax4[0].set_title(file_list[nn])
 
-            '''
-            for nn in a:
+                ax_mm = ax2 if nn == 3 else ax2_2
+                if mm == 0:
+                    ax_mm_ylim0 = (azi_V.min, azi_V.max)
+                    ax_mm_ylim1 = (ellip_V.min, ellip_V.max)
+                else:
+                    ax_mm_ylim0 = (azi_V.min if azi_V.min < ax_mm_ylim0[0] else ax_mm_ylim0[0],
+                                   azi_V.max if azi_V.max > ax_mm_ylim0[1] else ax_mm_ylim0[1])
+                    ax_mm_ylim1 = (ellip_V.min if ellip_V.min < ax_mm_ylim1[0] else ax_mm_ylim1[0],
+                                   ellip_V.max if ellip_V.max > ax_mm_ylim1[1] else ax_mm_ylim1[1])
 
-                fn2 = path_dir + "//" + "9turns_" + str(nn) + "deg_Upper_edited.txt"
-                data = pd.read_table(fn2)
-                time = data['Time (ns)']
-                signal = data['Amplitude (dB)']
-                ax[count].plot(time, signal, lw='1', label="9turns_"+str(nn)+"deg")
-                ax[count].legend(loc="upper right")
-                ax[count].set(xlim=(124, 134), ylim=(-135, -120))
-                count = count+1
-            '''
-        colorbar_param = dict(lenmode='fraction', len=0.75, thickness=10,tickfont=dict(size=20),
-                              tickvals=np.linspace(0, len(file_list), 5),
-                              ticktext=['LHP', 'L45P', 'LVP', 'L135P', 'LHP'],
-                              # title='Azimuth angle',
-                              outlinewidth=1,
-                              x=0.2 if mm == 0 else 0)
-        colorbar_trace = go.Scatter(x=[None], y=[None],
-                                    mode='markers',
-                                    marker=dict(
-                                        colorscale=hsv if mm == 0 else 'IceFire',
-                                        showscale=True,
-                                        cmin=0,
-                                        cmax=len(file_list),
-                                        colorbar=colorbar_param
-                                    ),
-                                    hoverinfo='none'
-                                    )
-        fig3.add_trace(colorbar_trace)
-        fig3['layout']['paper_bgcolor'] = 'rgba(0,0,0,0)'
-        fig3['layout']['plot_bgcolor'] = 'rgba(0,0,0,0)'
-        fig3.update_yaxes(showticklabels=False, showgrid=False, visible=False)
-        fig3.update_xaxes(showticklabels=False, showgrid=False, visible=False)
+                label = 'Before pulling' if mm == 0 else 'After pulling'
+                ax_mm[0].plot(time, azi_V * 180 / pi, 'r' if mm == 0 else 'k', zorder=10 - nn, label=label)
+                ax_mm[0].set_xlabel("Time (s)")
+                ax_mm[0].set_ylabel(r'$\psi$' + ' (deg)')
+                ax_mm[0].set_ylim((azi_V.min() * 180 / pi * 0.999, azi_V.max() * 180 / pi * 1.001))
+                ax_mm[0].legend(bbox_to_anchor=(0, 1.4), loc='upper left', fancybox=False, ncol=2)
+                ax_mm[0].xaxis.set_major_locator(MultipleLocator(0.1))
+                ax_mm[0].yaxis.set_major_locator(MultipleLocator(2))
+                ax_mm[0].set_xticklabels([])
+                ax_mm[0].set(xlim=(0,0.5), ylim=())
+
+
+                ax_mm[1].plot(time, ellip_V * 180 / pi, 'r' if mm == 0 else 'k', zorder=10 - nn)
+                ax_mm[1].set_xlabel("Time (s)")
+                ax_mm[1].set_ylabel(r'$\chi$' + ' (deg)')
+                ax_mm[1].set_ylim((ellip_V.min() * 180 / pi * 0.90, ellip_V.max() * 180 / pi * 1.1))
+                ax_mm[1].xaxis.set_major_locator(MultipleLocator(0.1))
+                ax_mm[1].yaxis.set_major_locator(MultipleLocator(2))
 
         if os.path.splitext(file_list[0])[0].split('_')[0][2:] == 'Hz':
             ax.plot(freq, alpha * 180 / pi, 'k')
@@ -435,9 +465,16 @@ if __name__ == '__main__':
             ax.set_xlabel('Azimuth angle of input SOP (deg)')
             ax.set_ylabel('SOP change (deg)')
             ax.set(xlim=(0, 360), ylim=(0, 2))
+            ax.xaxis.set_major_locator(MultipleLocator(90))
 
     fig_name = 'Figure 6(b)' + plt_fmt
     fig.savefig(fig_name, dpi=plt_res)
+
+    fig2.align_ylabels()
+    fig2_name = 'Figure 6(c)' + plt_fmt
+    fig2.savefig(fig2_name, dpi=plt_res)
+
     fig3.show()
+
     plt.show()
 
