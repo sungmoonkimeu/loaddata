@@ -161,9 +161,9 @@ def PS5(alpha=0.5):
                       name='', showlegend=False)
 
     distance = 1.2 * sprad
-    fig.add_scatter3d(x=[-distance],y=[0],z=[0], text='S<sub>1</sub>',
+    fig.add_scatter3d(x=[distance],y=[0],z=[0], text='S<sub>1</sub>',
                       mode="text",
-                      textposition="top right",
+                      textposition="top left",
                       textfont=dict(size=24),showlegend=False)
     fig.add_scatter3d(x=[0], y=[distance], z=[0], text='S<sub>2</sub>',
                       mode="text",

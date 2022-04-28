@@ -264,11 +264,11 @@ if __name__ == '__main__':
 
     fig2, ax2 = plt.subplots(2, figsize=(8 / 2.54, 7 / 2.54))
     fig2.set_dpi(91.79)  # DPI of My office monitor
-    plt.subplots_adjust(left=0.27, bottom=0.22, right=0.96, top=0.81, wspace=0.4, hspace=0.0)
+    plt.subplots_adjust(left=0.27, bottom=0.22, right=0.96, top=0.81, wspace=0.4, hspace=0.05)
 
     fig2_2, ax2_2 = plt.subplots(2, figsize=(8 / 2.54, 7 / 2.54))
     fig2_2.set_dpi(91.79)  # DPI of My office monitor
-    plt.subplots_adjust(left=0.27, bottom=0.22, right=0.96, top=0.81, wspace=0.4, hspace=0.0)
+    plt.subplots_adjust(left=0.27, bottom=0.22, right=0.96, top=0.81, wspace=0.4, hspace=0.05)
 
     # fig, ax = plt.subplots(figsize=(6, 5))
     # ax2, fig2 = PS3('0')
@@ -288,6 +288,7 @@ if __name__ == '__main__':
         try:
             file_list = sorted(file_list, key=lambda x: int(os.path.splitext(x)[0].split('_')[0][2:]))
             file_list = file_list[::2] if mm == 1 else file_list
+            #file_list = file_list[::2]
 
             # ang_SOP = arange(0, 361, 5)
             ang_SOP = np.array([int(os.path.splitext(x)[0].split('_')[0][2:]) for x in file_list])
@@ -378,7 +379,7 @@ if __name__ == '__main__':
             # SS = np.vstack((Sn, S1, S2, S3))
             # Out = Sv.from_matrix(SS.T)
 
-            nwindow = 15
+            nwindow = 5
             rS1 = S1.rolling(window=nwindow)
             rS2 = S2.rolling(window=nwindow)
             rS3 = S3.rolling(window=nwindow)
@@ -423,33 +424,35 @@ if __name__ == '__main__':
                 ax4[0].set_title(file_list[nn])
 
                 ax_mm = ax2 if nn == 3 else ax2_2
-                if mm == 0:
-                    ax_mm_ylim0 = (azi_V.min, azi_V.max)
-                    ax_mm_ylim1 = (ellip_V.min, ellip_V.max)
+
+                if mm== 0:
+                    ax_mm[0].set(ylim=(azi_V.min(), azi_V.max()))
+                    ax_mm[1].set(ylim=(ellip_V.min(), ellip_V.max()))
                 else:
-                    ax_mm_ylim0 = (azi_V.min if azi_V.min < ax_mm_ylim0[0] else ax_mm_ylim0[0],
-                                   azi_V.max if azi_V.max > ax_mm_ylim0[1] else ax_mm_ylim0[1])
-                    ax_mm_ylim1 = (ellip_V.min if ellip_V.min < ax_mm_ylim1[0] else ax_mm_ylim1[0],
-                                   ellip_V.max if ellip_V.max > ax_mm_ylim1[1] else ax_mm_ylim1[1])
+                    ax_mm[0].set(ylim=(azi_V.min() if ax_mm[0].get_ylim()[0] > azi_V.min() else ax_mm[0].get_ylim()[0],
+                                       azi_V.max() if ax_mm[0].get_ylim()[1] < azi_V.max() else ax_mm[0].get_ylim()[1]))
+                    ax_mm[1].set(ylim=(ellip_V.min() if ax_mm[1].get_ylim()[0] > ellip_V.min() else ax_mm[1].get_ylim()[0],
+                                       ellip_V.max() if ax_mm[1].get_ylim()[1] < ellip_V.max() else ax_mm[1].get_ylim()[1]))
+
 
                 label = 'Before pulling' if mm == 0 else 'After pulling'
-                ax_mm[0].plot(time, azi_V * 180 / pi, 'r' if mm == 0 else 'k', zorder=10 - nn, label=label)
+                ax_mm[0].plot(time, azi_V * 180 / pi, 'k' if mm == 0 else 'r', label=label)
                 ax_mm[0].set_xlabel("Time (s)")
                 ax_mm[0].set_ylabel(r'$\psi$' + ' (deg)')
-                ax_mm[0].set_ylim((azi_V.min() * 180 / pi * 0.999, azi_V.max() * 180 / pi * 1.001))
-                ax_mm[0].legend(bbox_to_anchor=(0, 1.4), loc='upper left', fancybox=False, ncol=2)
+                #ax_mm[0].set_ylim((azi_V.min() * 180 / pi * 0.999, azi_V.max() * 180 / pi * 1.001))
+                ax_mm[0].legend(bbox_to_anchor=(-0.02, 1.02), loc='upper left', fancybox=False, ncol=2)
                 ax_mm[0].xaxis.set_major_locator(MultipleLocator(0.1))
                 ax_mm[0].yaxis.set_major_locator(MultipleLocator(2))
                 ax_mm[0].set_xticklabels([])
-                ax_mm[0].set(xlim=(0,0.5), ylim=())
+                ax_mm[0].set(xlim=(0,0.5))
 
-
-                ax_mm[1].plot(time, ellip_V * 180 / pi, 'r' if mm == 0 else 'k', zorder=10 - nn)
+                ax_mm[1].plot(time, ellip_V * 180 / pi, 'k' if mm == 0 else 'r')
                 ax_mm[1].set_xlabel("Time (s)")
                 ax_mm[1].set_ylabel(r'$\chi$' + ' (deg)')
-                ax_mm[1].set_ylim((ellip_V.min() * 180 / pi * 0.90, ellip_V.max() * 180 / pi * 1.1))
+                #ax_mm[1].set_ylim((ellip_V.min() * 180 / pi * 0.90, ellip_V.max() * 180 / pi * 1.1))
                 ax_mm[1].xaxis.set_major_locator(MultipleLocator(0.1))
                 ax_mm[1].yaxis.set_major_locator(MultipleLocator(2))
+                ax_mm[1].set(xlim=(0, 0.5))
 
         if os.path.splitext(file_list[0])[0].split('_')[0][2:] == 'Hz':
             ax.plot(freq, alpha * 180 / pi, 'k')
@@ -459,7 +462,8 @@ if __name__ == '__main__':
             ax.set_ylabel('SOP change (deg)')
             ax.set(xlim=(9.5, 30.5), ylim=(0, 2))
         else:
-            ax.plot(ang_SOP, alpha * 180 / pi, 'k')
+            legend_SOP = 'Before pulling' if mm==0 else 'After pulling'
+            ax.plot(ang_SOP, alpha * 180 / pi, 'k' if mm == 0 else 'r', label=legend_SOP)
             # ax2.plot(ang_SOP, diff_azi_V * 180 / pi)
             # ax2.plot(ang_SOP, diff_ellip_V * 180 / pi)
             ax.set_xlabel('Azimuth angle of input SOP (deg)')
@@ -467,12 +471,23 @@ if __name__ == '__main__':
             ax.set(xlim=(0, 360), ylim=(0, 2))
             ax.xaxis.set_major_locator(MultipleLocator(90))
 
+    ax.legend(loc='upper right')
     fig_name = 'Figure 6(b)' + plt_fmt
     fig.savefig(fig_name, dpi=plt_res)
+
+    ax2[0].set(ylim=(ax2[0].get_ylim()[0] * 180 / pi -1.5, ax2[0].get_ylim()[1] * 180 / pi+2))
+    ax2[1].set(ylim=(ax2[1].get_ylim()[0] * 180 / pi -1, ax2[1].get_ylim()[1] * 180 / pi+1))
+    ax2_2[0].set(ylim=(ax2_2[0].get_ylim()[0] * 180 / pi-0.5, ax2_2[0].get_ylim()[1] * 180 / pi+2))
+    ax2_2[1].set(ylim=(ax2_2[1].get_ylim()[0] * 180 / pi-1, ax2_2[1].get_ylim()[1] * 180 / pi+1))
 
     fig2.align_ylabels()
     fig2_name = 'Figure 6(c)' + plt_fmt
     fig2.savefig(fig2_name, dpi=plt_res)
+
+    fig2_2.align_ylabels()
+    fig2_2_name = 'Figure 6(d)' + plt_fmt
+    fig2_2.savefig(fig2_2_name, dpi=plt_res)
+
 
     fig3.show()
 
