@@ -202,7 +202,7 @@ for n_iter, foldername in enumerate(V_foldername):
             else:
                 col = 'r'
                 #legend0 = '18g (30 Hz)'
-                legend0 = '10 mm (30 Hz)'
+                legend0 = '5 mm (30 Hz)'
 
             ax[0].plot(time, S1, col, zorder=10-nn, label=str(10+nn)+'Hz')
             ax[0].set_ylim(bot0, top0)

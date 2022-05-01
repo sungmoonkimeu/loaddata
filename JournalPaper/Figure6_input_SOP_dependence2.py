@@ -272,8 +272,8 @@ if __name__ == '__main__':
 
     # fig, ax = plt.subplots(figsize=(6, 5))
     # ax2, fig2 = PS3('0')
-    opacity = 0.9
-    fig3 = PS.PS5(0.9)
+    opacity = 1
+    fig3 = PS.PS5(opacity)
 
     for mm in range(2):
         # Folder select
@@ -344,7 +344,7 @@ if __name__ == '__main__':
             # Plotting the Stokes points on the poincare sphere using PLOTLY
 
             fig3.add_scatter3d(x=S1[::10], y=S2[::10], z=S3[::10], mode="markers",
-                               marker=dict(size=3, opacity=1,
+                               marker=dict(size=2.5, opacity=1,
                                            color=rgb2hex(colors_hsv[nn] if mm==0 else colors_IceFire[nn])),
                                name='F1')
 
@@ -353,7 +353,7 @@ if __name__ == '__main__':
                                   ticktext=['LHP', 'L45P', 'LVP', 'L135P', 'LHP'],
                                   # title='Azimuth angle',
                                   outlinewidth=1,
-                                  x=0.2 if mm == 0 else 0.1)
+                                  x=0.2 if mm == 0 else 0.05)
             colorbar_trace = go.Scatter(x=[None], y=[None],
                                         mode='markers',
                                         marker=dict(
@@ -435,7 +435,7 @@ if __name__ == '__main__':
                                        ellip_V.max() if ax_mm[1].get_ylim()[1] < ellip_V.max() else ax_mm[1].get_ylim()[1]))
 
 
-                label = 'Before pulling' if mm == 0 else 'After pulling'
+                label = 'unstretched' if mm == 0 else 'stretched'
                 ax_mm[0].plot(time, azi_V * 180 / pi, 'k' if mm == 0 else 'r', label=label)
                 ax_mm[0].set_xlabel("Time (s)")
                 ax_mm[0].set_ylabel(r'$\psi$' + ' (deg)')
@@ -462,7 +462,7 @@ if __name__ == '__main__':
             ax.set_ylabel('SOP change (deg)')
             ax.set(xlim=(9.5, 30.5), ylim=(0, 2))
         else:
-            legend_SOP = 'Before pulling' if mm==0 else 'After pulling'
+            legend_SOP = 'Before stretching' if mm == 0 else 'After stretching'
             ax.plot(ang_SOP, alpha * 180 / pi, 'k' if mm == 0 else 'r', label=legend_SOP)
             # ax2.plot(ang_SOP, diff_azi_V * 180 / pi)
             # ax2.plot(ang_SOP, diff_ellip_V * 180 / pi)
