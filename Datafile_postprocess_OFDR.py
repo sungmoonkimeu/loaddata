@@ -3,7 +3,8 @@
 
 import string
 import os
-path_dir = os.getcwd() + '//Data_Twsiting_(OFDR)//Data_1308//spunfiber//2nd'
+#path_dir = os.getcwd() + '//Data_Twsiting_(OFDR)//Data_1308//spunfiber//2nd'
+path_dir = os.getcwd() + '//Data_OFDR_APC//OFDR RL measurement (220506)'
 file_list = os.listdir(path_dir)
 
 def createfolder(directory):
