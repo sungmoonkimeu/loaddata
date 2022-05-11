@@ -292,7 +292,7 @@ def PS5():
     x = sprad * np.outer(np.cos(u), np.sin(v))
     y = sprad * np.outer(np.sin(u), np.sin(v))
     z = sprad * np.outer(np.ones(np.size(u)), np.cos(v))
-    print(x)
+    #print(x)
     color1 = 'whitesmoke'
     color2 = 'red'
     fig = go.Figure()
@@ -473,6 +473,9 @@ def main():
       fig_name = plt_name + '_PS0' + plt_fmt  
       plt.savefig(fig_name, dpi = plt_res)
       fig02.update_layout(showlegend=True,
+                          autosize=False,
+                          width=1980,
+                          height=1980,
                           legend=dict(
                               x=0.2,
                               y=0.8,
