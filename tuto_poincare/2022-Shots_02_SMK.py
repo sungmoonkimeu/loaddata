@@ -47,6 +47,8 @@ Updated on May 11 2022
 """
 
 import pickle
+
+import plotly.offline
 import scipy.io
 import scipy.optimize
 from scipy import stats
@@ -472,6 +474,7 @@ def main():
       ax.legend()
       fig_name = plt_name + '_PS0' + plt_fmt  
       plt.savefig(fig_name, dpi = plt_res)
+
       fig02.update_layout(showlegend=True,
                           autosize=False,
                           width=1980,
@@ -485,10 +488,10 @@ def main():
                                   size=18,
                                   color="black"),
                               itemsizing='constant'))
+
       fig02.update_scenes(camera_projection_type='orthographic')
-
       fig02.show()
-
+      plotly.offline.plot(fig02, filename='xx.html')
 
 if (__name__ == "__main__"):
     main()

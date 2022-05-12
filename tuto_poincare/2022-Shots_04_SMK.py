@@ -14,6 +14,7 @@ Please install plotly before running code
 
 more information about plotly is here (https://plotly.com/python/getting-started/)
 """
+from kaleido.scopes.plotly import PlotlyScope
 import time
 import pickle
 import scipy.io
@@ -28,9 +29,9 @@ import plotly.io as pio
 
 start = time.time()
 png_renderer = pio.renderers["png"]
-png_renderer.width = 1200
-png_renderer.height = 1200
-png_renderer.scale = 3
+png_renderer.width = 330 * 6    # 330 DPI * 6 inch
+png_renderer.height = 330 * 6   # 330 DPI * 6 inch
+png_renderer.scale = 1
 pio.renderers.default = 'png'
 
 plt.style.use('seaborn-whitegrid')
@@ -285,7 +286,7 @@ def PS5():
                       name='', showlegend=False)
 
     distance = 1.2 * sprad
-    fig.add_scatter3d(x=[distance * 1.2], y=[0], z=[0], text='S<sub>1</sub>',
+    fig.add_scatter3d(x=[distance], y=[0], z=[0], text='S<sub>1</sub>',
                       mode="text",
                       textposition="top right",
                       textfont=dict(size=36), showlegend=False)
@@ -311,7 +312,7 @@ def PS5():
             "yaxis": {"showbackground": False, "showticklabels": False, "visible": False},
             "zaxis": {"showbackground": False, "showticklabels": False, "visible": False},
             'camera_eye': {"x": 1, "y": 1, "z": 1},
-            "aspectratio": {"x": 1.2, "y": 1, "z": 1}
+            "aspectratio": {"x": 1, "y": 1, "z": 1}
         },
         showlegend=False,
     )
@@ -439,11 +440,12 @@ def main():
                                             size=18,
                                             color="black"),
                                         itemsizing='constant'))
-            fig02.update_layout(showlegend=True)
-            fig02.show(renderers='png')
-            #      fig02.write_image(fig_name)
-            pio.write_image(fig02, fig_name, width=1920, height=1920)
 
+            config = dict(plotGlPixelRatio=4)
+            fig02.update_layout(showlegend=True)
+            fig02.show(renderers='png', config=config)
+            #      fig02.write_image(fig_name)
+            pio.write_image(fig02, fig_name, width=1920, height=1920, scale=2)
 
 #      pio.write_image(fig02, fig_name )
 
