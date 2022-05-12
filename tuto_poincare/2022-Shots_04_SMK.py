@@ -14,7 +14,7 @@ Please install plotly before running code
 
 more information about plotly is here (https://plotly.com/python/getting-started/)
 """
-
+import time
 import pickle
 import scipy.io
 import numpy as np
@@ -26,11 +26,12 @@ import warnings
 import plotly.graph_objects as go
 import plotly.io as pio
 
-png_renderer = pio.renderers["svg"]
-png_renderer.width = 1980
-png_renderer.height = 1980
-png_renderer.scale = 1
-pio.renderers.default = 'svg'
+start = time.time()
+png_renderer = pio.renderers["png"]
+png_renderer.width = 1200
+png_renderer.height = 1200
+png_renderer.scale = 3
+pio.renderers.default = 'png'
 
 plt.style.use('seaborn-whitegrid')
 plt.rcParams.update({'figure.max_open_warning': 0})
@@ -247,7 +248,7 @@ def PS5():
     color2 = 'red'
     fig = go.Figure()
     colorscale = [[0, color1], [0.5, color1], [1, color1]]
-    fig.add_surface(x=x, y=y, z=z, opacity=0.0, showscale=False, colorscale=colorscale,
+    fig.add_surface(x=x, y=y, z=z, opacity=0.4, showscale=False, colorscale=colorscale,
                     showlegend=False, lighting=dict(ambient=1))
     #    fig.add_surface(x=x, y=y, z=z, opacity=0.5, showscale=False)
     # fig.update(layout_coloraxis_showscale=False)
@@ -284,7 +285,7 @@ def PS5():
                       name='', showlegend=False)
 
     distance = 1.2 * sprad
-    fig.add_scatter3d(x=[distance], y=[0], z=[0], text='S<sub>1</sub>',
+    fig.add_scatter3d(x=[distance * 1.2], y=[0], z=[0], text='S<sub>1</sub>',
                       mode="text",
                       textposition="top right",
                       textfont=dict(size=36), showlegend=False)
@@ -310,7 +311,7 @@ def PS5():
             "yaxis": {"showbackground": False, "showticklabels": False, "visible": False},
             "zaxis": {"showbackground": False, "showticklabels": False, "visible": False},
             'camera_eye': {"x": 1, "y": 1, "z": 1},
-            "aspectratio": {"x": 1, "y": 1, "z": 1}
+            "aspectratio": {"x": 1.2, "y": 1, "z": 1}
         },
         showlegend=False,
     )
@@ -427,7 +428,7 @@ def main():
             ax.legend()
             fig_name = plt_name + '_PS0a' + plt_fmt
             #      plt.savefig(fig_name, dpi = plt_res)
-            if True:
+            if False:
                 fig02.update_layout(showlegend=True,
                                     legend=dict(
                                         x=0.2,
@@ -439,14 +440,15 @@ def main():
                                             color="black"),
                                         itemsizing='constant'))
             fig02.update_layout(showlegend=True)
-            fig02.show(renderers='svg')
+            fig02.show(renderers='png')
             #      fig02.write_image(fig_name)
-            #pio.write_image(fig02, fig_name, width=1200, height=1200)
-            pio.write_image(fig02, fig_name.split(".")[0]+".6x6.svg", width=500, height=500, scale=1)
+            pio.write_image(fig02, fig_name, width=1920, height=1920)
+
 
 #      pio.write_image(fig02, fig_name )
 
 
 if (__name__ == "__main__"):
     main()
+    print(time.time() - start)
     plt.show()
