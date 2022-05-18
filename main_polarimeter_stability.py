@@ -71,8 +71,8 @@ switch_osfolder()
 #foldername = '//Laser_stability_test_cascadedpol'
 
 #foldername = '//Data_Stability/EDFA_TEST_2004'
-foldername = '//Data_Stability/Stability_again2'
 #foldername = '//Stability_total_manualPC'
+foldername = '//Data_Stability/Stability_again'
 
 path_dir = os.getcwd() + foldername + '_edited'
 
@@ -114,35 +114,25 @@ for nn in range(len(file_list)):
     S1 = pd.to_numeric(data['S1'])
     S2 = pd.to_numeric(data['S2'])
     S3 = pd.to_numeric(data['S3'])
-
     time = np.arange(0, len(S00), 1) / 1800
 
+    ndata = 720  # for one hour
+    #ndata = len(S0) - 720 # for all data
 
     Sn = np.ones((len(S00)))
-    SS = np.vstack((Sn[0::2], S1[0::2], S2[0::2], S3[0::2]))
-    # SS = np.vstack((Sn[1800::2], S1[1800::2], S2[1800::2], S3[1800::2]))
+    # SS = np.vstack((Sn[::2], S1[::2], S2[::2], S3[::2]))
+    SS = np.vstack((Sn[1800::2], S1[1800::2], S2[1800::2], S3[1800::2]))
     #SS = np.vstack((Sn[720::2], S1[720::2], S2[720::2], S3[720::2]))
     #SS = np.vstack((Sn[720:720+ndata:2], S1[720:720+ndata:2], S2[720:720+ndata:2], S3[720:720+ndata:2]))
     Out = Sv.from_matrix(SS.T)
 
     #draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 4])
     Out = basis_calibration.calib_basis2(Out)
-
-    # draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 5])
-    if nn >0 :
-        draw_stokes_points(fig2[0], Out[0:665], kind='line', color_line=cstm_color[nn % 5])
-        draw_stokes_points(fig2[0], Out[665:], kind='line', color_line=cstm_color[nn % 5+1])
-    else:
-        Out = basis_calibration.calib_basis2(Out[900:])
-        draw_stokes_points(fig2[0], Out[0:], kind='line', color_line=cstm_color[nn % 5])
-
-
     S0 = Out.parameters.matrix()[0]
     S1 = Out.parameters.matrix()[1]
     S2 = Out.parameters.matrix()[2]
     S3 = Out.parameters.matrix()[3]
-
-
+    draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 5])
 
     azi_V = Out.parameters.azimuth()
     ellip_V = Out.parameters.ellipticity_angle()
@@ -163,39 +153,34 @@ for nn in range(len(file_list)):
     #     tmpfig = fig_2
         strlabel= '1st'
 
-    if nn == 0:
-        time = time[0:1800:2] *2
-        S00 = S00[0:1800:2]
-    else:
-        time = time[0::2]
-        S00 = S00[0::2]
-    tmpax[0].plot(time, S00, label=strlabel)
-    tmpax[0].set_ylabel("S" + str(0))
-    tmpax[0].legend(loc='upper right')
-    # ax[0].set(xlim=(0, 0.5), ylim=(-1, 1))
-    tmpax[1].plot(time, S1)
-    tmpax[1].set_ylabel("S" + str(1))
-    # ax[1].set(xlim=(0, 0.5), ylim=(-1, 1))
-    tmpax[2].plot(time, S2)
-    tmpax[2].set_ylabel("S" + str(2))
-    # ax[2].set(xlim=(0, 0.5), ylim=(-1, 1))
-    tmpax[3].plot(time, S3)
-    tmpax[3].set_ylabel("S" + str(3))
-    # ax[3].set(xlim=(0, 0.5), ylim=(-1, 1))
 
-    # tmpax[0].plot(time[1800::2], S00[1800::2], label=strlabel)
+    # tmpax[0].plot(time[::2], S00[::2], label=strlabel)
     # tmpax[0].set_ylabel("S" + str(0))
     # tmpax[0].legend(loc='upper right')
     # # ax[0].set(xlim=(0, 0.5), ylim=(-1, 1))
-    # tmpax[1].plot(time[1800::2], S1)
+    # tmpax[1].plot(time[::2], S1)
     # tmpax[1].set_ylabel("S" + str(1))
     # # ax[1].set(xlim=(0, 0.5), ylim=(-1, 1))
-    # tmpax[2].plot(time[1800::2], S2)
+    # tmpax[2].plot(time[::2], S2)
     # tmpax[2].set_ylabel("S" + str(2))
     # # ax[2].set(xlim=(0, 0.5), ylim=(-1, 1))
-    # tmpax[3].plot(time[1800::2], S3)
+    # tmpax[3].plot(time[::2], S3)
     # tmpax[3].set_ylabel("S" + str(3))
     # # ax[3].set(xlim=(0, 0.5), ylim=(-1, 1))
+
+    tmpax[0].plot(time[1800::2], S00[1800::2], label=strlabel)
+    tmpax[0].set_ylabel("S" + str(0))
+    tmpax[0].legend(loc='upper right')
+    # ax[0].set(xlim=(0, 0.5), ylim=(-1, 1))
+    tmpax[1].plot(time[1800::2], S1)
+    tmpax[1].set_ylabel("S" + str(1))
+    # ax[1].set(xlim=(0, 0.5), ylim=(-1, 1))
+    tmpax[2].plot(time[1800::2], S2)
+    tmpax[2].set_ylabel("S" + str(2))
+    # ax[2].set(xlim=(0, 0.5), ylim=(-1, 1))
+    tmpax[3].plot(time[1800::2], S3)
+    tmpax[3].set_ylabel("S" + str(3))
+    # ax[3].set(xlim=(0, 0.5), ylim=(-1, 1))
     '''
     tmpax[0].plot(time[720:720+ndata], S0[720:720+ndata])
     tmpax[0].set_ylabel("S" + str(0))
@@ -229,8 +214,8 @@ custom_lines = [Line2D([0], [0], color=cstm_color[0], lw=4),
 
 #fig2[0].legend(custom_lines, ['Pol.1', 'Pol.1+SOP Controller(w/o FB)', 'Pol.1+SOP Controller(w FB)'], loc='right')
 #fig2[0].legend(custom_lines, ['Pol.1', 'Pol.1+Manual Controller', 'Pol.2+Manual Controller', 'Pol.1+Pol.2+ Manual Controller'], loc='right')
-#fig2[0].legend(custom_lines, ['Measurement2', 'Measurement1'], loc='right')
-fig2[0].legend(custom_lines, ['w/o polarizer', 'with polarizer poor alignment', 'with polarizer good alignment'], loc='right')
+fig2[0].legend(custom_lines, ['Measurement2', 'Measurement1'], loc='right')
+
 '''
 for nn in range(3):
     delta = max_diff_S[:, nn].max()
@@ -255,6 +240,5 @@ plt.subplots_adjust(left=0.125, bottom=0.14, right=0.9, top=0.9, wspace=0.2, hsp
 
 
 plt.show()
-
 
 
