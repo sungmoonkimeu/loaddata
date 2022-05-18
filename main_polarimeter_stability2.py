@@ -71,7 +71,7 @@ switch_osfolder()
 #foldername = '//Laser_stability_test_cascadedpol'
 
 #foldername = '//Data_Stability/EDFA_TEST_2004'
-foldername = '//Data_Stability/Stability_again2'
+foldername = '//Data_Stability/Stability_again2_edited/dd'
 #foldername = '//Stability_total_manualPC'
 
 path_dir = os.getcwd() + foldername + '_edited'
@@ -128,13 +128,7 @@ for nn in range(len(file_list)):
     #draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 4])
     Out = basis_calibration.calib_basis2(Out)
 
-    # draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 5])
-    if nn >0 :
-        draw_stokes_points(fig2[0], Out[0:665], kind='line', color_line=cstm_color[nn % 5])
-        draw_stokes_points(fig2[0], Out[665:], kind='line', color_line=cstm_color[nn % 5+1])
-    else:
-        Out = basis_calibration.calib_basis2(Out[900:])
-        draw_stokes_points(fig2[0], Out[0:], kind='line', color_line=cstm_color[nn % 5])
+    draw_stokes_points(fig2[0], Out, kind='line', color_line=cstm_color[nn % 5])
 
 
     S0 = Out.parameters.matrix()[0]
@@ -163,12 +157,8 @@ for nn in range(len(file_list)):
     #     tmpfig = fig_2
         strlabel= '1st'
 
-    if nn == 0:
-        time = time[0:1800:2] *2
-        S00 = S00[0:1800:2]
-    else:
-        time = time[0::2]
-        S00 = S00[0::2]
+    time = time[::2]*20
+    S00 = S00[::2]
     tmpax[0].plot(time, S00, label=strlabel)
     tmpax[0].set_ylabel("S" + str(0))
     tmpax[0].legend(loc='upper right')
@@ -210,7 +200,7 @@ for nn in range(len(file_list)):
     tmpax[3].set_ylabel("S" + str(3))
     # ax[3].set(xlim=(0, 0.5), ylim=(-1, 1))
     '''
-    tmpax[3].set_xlabel("Time (h)")
+    tmpax[3].set_xlabel("Time (s)")
     tmpfig.align_ylabels()
     '''
     max_diff_S[nn][0] = S1.max() - S1.min()
