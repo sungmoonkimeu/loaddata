@@ -143,7 +143,8 @@ if __name__ == '__main__':
     ms = 4
     ax[0].plot(freq, alpha1, lw='1', label="Max. SOP change", marker='o', color='k', markersize=ms)
     ax[0].set_xlabel('Frequency (Hz)')
-    ax[0].set_ylabel('Max. SOP change (deg)')
+    #ax[0].set_ylabel('Max. SOP change (deg)')
+    ax[0].set_ylabel(r'$\alpha$ (deg)')
     #ax[0].set_title('Input signal')
     ax[0].set(xlim=(10, 30), ylim=(0, 2))
     lns01 = ax[0].lines
@@ -159,7 +160,9 @@ if __name__ == '__main__':
 
     ax[1].plot(freq, alpha2, lw='1', label="Max. SOP change", marker='o', color='k', markersize=ms)
     ax[1].set_xlabel('Frequency (Hz)')
-    ax[1].set_ylabel('Max. SOP change (deg)')
+
+    #ax[1].set_ylabel('Max. SOP change (deg)')
+    ax[1].set_ylabel(r'$\alpha$ (deg)')
     #ax[1].set_title('Measured signal')
     ax[1].set(xlim=(10, 30), ylim=(0, 2))
     lns11 = ax[1].lines

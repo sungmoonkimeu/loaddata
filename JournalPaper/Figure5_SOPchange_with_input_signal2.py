@@ -256,7 +256,9 @@ if __name__ == '__main__':
     ms = 4
     ax[0].plot(freq, alpha1, lw='1', label="Max. SOP change", marker='o', color='k', markersize=ms)
     ax[0].set_xlabel('Frequency (Hz)')
-    ax[0].set_ylabel('Max. SOP change (deg)')
+    #ax[0].set_ylabel('Max. SOP change (deg)')
+    ax[0].set_ylabel(r'$\alpha$ (deg)')
+
     #ax[0].set_title('Input signal')
     ax[0].set(xlim=(10, 30), ylim=(0, 2))
     lns01 = ax[0].lines
@@ -272,8 +274,10 @@ if __name__ == '__main__':
 
     ax[1].plot(freq, alpha2, lw='1', label="Max. SOP change", marker='o', color='k', markersize=ms)
     ax[1].set_xlabel('Frequency (Hz)')
-    ax[1].set_ylabel('Max. SOP change (deg)')
-    #ax[1].set_title('Measured signal')
+    # ax[1].set_ylabel('Max. SOP change (deg)')
+    ax[1].set_ylabel(r'$\alpha$ (deg)')
+
+    # ax[1].set_title('Measured signal')
     ax[1].set(xlim=(10, 30), ylim=(0, 2))
     lns11 = ax[1].lines
     ax1 = ax[1].twinx()
@@ -297,10 +301,11 @@ if __name__ == '__main__':
     ms = 4
     ax[0].plot(displacement, alpha1, lw='1', label="Max. SOP change", marker='o', color='k', markersize=ms)
     ax[0].set_xlabel('Displacement (mm)')
-    ax[0].set_ylabel('Max. SOP change (deg)')
+    #ax[0].set_ylabel('Max. SOP change (deg)')
+    ax[0].set_ylabel(r'$\alpha$ (deg)')
     ax[0].set(xlim=(1, 90), ylim=(0, 2))
     secax1 = ax[0].secondary_xaxis('top', functions=(disp2freq, freq2disp))
-    secax1.set_xlabel('Frequency [Hz]')
+    secax1.set_xlabel('Frequency H(z)')
     #secax1.xaxis.set_major_locator(MaxNLocator(6))
     secax1.set_xticks([30, 20, 16, 12, 10])
     secax1.set_xticklabels([30, 20, 16, 12, 10])
@@ -310,10 +315,11 @@ if __name__ == '__main__':
 
     ax[1].plot(acceleration, alpha2, lw='1', label="Max. SOP change", marker='o', color='k', markersize=ms)
     ax[1].set_xlabel('Acceleration (g)')
-    ax[1].set_ylabel('Max. SOP change (deg)')
+    #ax[1].set_ylabel('Max. SOP change (deg)')
+    ax[1].set_ylabel(r'$\alpha$ (deg)')
     ax[1].set(xlim=(0, 20), ylim=(0, 2))
     secax2 = ax[1].secondary_xaxis('top', functions=(acc2freq, freq2acc))
-    secax2.set_xlabel('Frequency [Hz]')
+    secax2.set_xlabel('Frequency H(z)')
 
     fig.align_ylabels()
     fig_name = 'Figure 5(ab)' + plt_fmt
