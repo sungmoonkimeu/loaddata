@@ -79,10 +79,10 @@ def read_shakerinputsignal(foldername, fig=None):
         y1[nn] = (max(signal0) - min(signal0))
         print(y1[nn])
 
-    fig, ax = plt.subplots(2, figsize=(6/2.54, 9/2.54))
+    fig, ax = plt.subplots(2, figsize=(6.3/2.54, 9/2.54))
 
     fig.set_dpi(91.79)  # DPI of My office monitor
-    plt.subplots_adjust(left=0.19, bottom=0.13, right=0.78, top=0.93, wspace=0.2, hspace=0.75)
+    plt.subplots_adjust(left=0.23, bottom=0.13, right=0.78, top=0.93, wspace=0.2, hspace=0.75)
     plt.subplots_adjust(bottom=0.155)
 
     ms = 3
@@ -92,11 +92,13 @@ def read_shakerinputsignal(foldername, fig=None):
     ax[0].set_title('Input signal')
     ax[0].set(xlim=(10, 30), ylim=(0, 12))
 
-    ax[1].plot(x0, y0, lw='1', label="Acceleration", marker='o', color='k', markersize=ms)
+    ax[1].plot(x0, y0*10, lw='1', label="Acceleration", marker='o', color='k', markersize=ms)
     ax[1].set_xlabel('Frequency (Hz)')
-    ax[1].set_ylabel('Acceleration (g)')
+    #ax[1].set_ylabel('Acceleration (g)')
+    ax[1].set_ylabel(r'Acceleration (m/s$^2$)')
+
     ax[1].set_title('Vibration signal')
-    ax[1].set(xlim=(10, 30), ylim=(0, 30))
+    ax[1].set(xlim=(10, 30), ylim=(0, 30*10))
     lns1 = ax[1].lines
     ax2 = ax[1].twinx()
     lns2 = ax2.plot(x0, y0 / (x0 ** 2) * 1000, lw='1', label="Displacment", marker='o', color='r', markersize=ms)

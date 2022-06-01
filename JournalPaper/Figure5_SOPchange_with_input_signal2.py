@@ -176,12 +176,14 @@ def freq2disp(x):
 
 
 def freq2acc(x):
+    x =x/10
     d = 20e-3
     a = d*(x**2)
     return a
 
 
 def acc2freq(x):
+    x /= 10
     d = 20e-3
     return np.sqrt(x/d)
 
@@ -299,25 +301,45 @@ if __name__ == '__main__':
     plt.subplots_adjust(left=0.11, bottom=0.22, right=0.96, top=0.81, wspace=0.4, hspace=0.502)
 
     ms = 4
-    ax[0].plot(displacement, alpha1, lw='1', label="Max. SOP change", marker='o', color='k', markersize=ms)
+    ax[0].plot(displacement, alpha1, lw='1', label=r'SOP change ($\alpha$)', marker='o', color='k', markersize=ms)
+
+    coef = np.polyfit(displacement,alpha1,1)
+    poly1d_fn = np.poly1d(coef)
+    x = np.hstack((np.array([5]), displacement, np.array([82.5])))
+    ax[0].plot(x, poly1d_fn(x), lw='1', label="Linear fitting", color='r')
+    #print(coef)
+    ax[0].text(8, 1.7, r'y='+str(coef[0])[0:7]+'x + '+str(coef[1])[0:7])
+    # ax[0].text(8, 1.8, r'an equation: $E=mc^2$', fontsize=15)
+
     ax[0].set_xlabel('Displacement (mm)')
     #ax[0].set_ylabel('Max. SOP change (deg)')
     ax[0].set_ylabel(r'$\alpha$ (deg)')
     ax[0].set(xlim=(1, 90), ylim=(0, 2))
+    ax[0].xaxis.set_major_locator(MaxNLocator(5))
+    ax[0].text(0, -0.27, '0')
+
     secax1 = ax[0].secondary_xaxis('top', functions=(disp2freq, freq2disp))
     secax1.set_xlabel('Frequency H(z)')
     #secax1.xaxis.set_major_locator(MaxNLocator(6))
     secax1.set_xticks([30, 20, 16, 12, 10])
     secax1.set_xticklabels([30, 20, 16, 12, 10])
-
-
+    ax[0].legend(bbox_to_anchor=(1.05, -0.1), loc='lower right', frameon=False)
     #secax1.set(xlim=(30, 10))
 
-    ax[1].plot(acceleration, alpha2, lw='1', label="Max. SOP change", marker='o', color='k', markersize=ms)
-    ax[1].set_xlabel('Acceleration (g)')
+    ax[1].plot(acceleration*10, alpha2, lw='1', label=r'SOP change ($\alpha$)', marker='o', color='k', markersize=ms)
+    coef = np.polyfit(acceleration*10,alpha2,1)
+    poly1d_fn = np.poly1d(coef)
+    x = np.hstack((np.array([10]), acceleration*10, np.array([190])))
+    ax[1].plot(x, poly1d_fn(x), lw='1', label="Linear fitting", color='r')
+    ax[1].text(10, 1.7, r'y='+str(coef[0])[0:7]+'x + '+str(coef[1])[0:7])
+    ax[1].legend(bbox_to_anchor=(1.05, -0.1), loc='lower right', frameon=False)
+
+    #ax[1].set_xlabel('Acceleration (g)')
+    ax[1].set_xlabel(r'Acceleration (m/s$^2$)')
+
     #ax[1].set_ylabel('Max. SOP change (deg)')
     ax[1].set_ylabel(r'$\alpha$ (deg)')
-    ax[1].set(xlim=(0, 20), ylim=(0, 2))
+    ax[1].set(xlim=(0, 200), ylim=(0, 2))
     secax2 = ax[1].secondary_xaxis('top', functions=(acc2freq, freq2acc))
     secax2.set_xlabel('Frequency H(z)')
 
