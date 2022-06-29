@@ -477,8 +477,8 @@ def main():
 
       fig02.update_layout(showlegend=True,
                           autosize=False,
-                          width=1980,
-                          height=1980,
+                          width=640,
+                          height=640,
                           legend=dict(
                               x=0.2,
                               y=0.8,
@@ -491,7 +491,7 @@ def main():
 
       fig02.update_scenes(camera_projection_type='orthographic')
       fig02.show()
-      plotly.offline.plot(fig02, filename='xx.html')
+      #plotly.offline.plot(fig02, filename='xx.html')
 
 if (__name__ == "__main__"):
     main()

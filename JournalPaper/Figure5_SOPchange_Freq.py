@@ -150,8 +150,8 @@ plt.rc('legend', fontsize=fsize)  # f-size legend
 plt.rc('axes', titlesize=6)  # f-size of the axes title (??)
 plt.rc('figure', titlesize=6)  # f-size of the figure title
 
-V_foldername = ['Const_disp_Polarimeter2']
-#V_foldername = ['Const_acc_Polarimeter']
+#V_foldername = ['Const_disp_Polarimeter2']
+V_foldername = ['Const_acc_Polarimeter']
 
 #fig3, ax3 = plt.subplots(2, figsize=(8 / 2.54, 7 / 2.54))
 fig3, ax3 = plt.subplots(2, figsize=(10 / 2.54, 7 / 2.54))
@@ -215,13 +215,14 @@ for n_iter, foldername in enumerate(V_foldername):
             ax3[0].plot(time, azi_V*180/pi, col, zorder=10-nn, label=legend0)
             ax3[0].set_xlabel("Time (s)")
             ax3[0].set_ylabel(r'$\psi$'+' (deg)')
-            ax3[0].set_ylim((azi_V.min()*180/pi*0.999, azi_V.max()*180/pi*1.001))
+            print(azi_V.min()*180/pi)
+            ax3[0].set_ylim((azi_V.min()*180/pi-0.5, azi_V.max()*180/pi+0.5))
             ax3[0].legend(bbox_to_anchor=(-0.4, 1.7), loc='upper left', fancybox=False, ncol=2, frameon=False)
 
             ax3[1].plot(time, ellip_V*180/pi, col, zorder=10-nn)
             ax3[1].set_xlabel("Time (s)")
             ax3[1].set_ylabel(r'$\chi$'+' (deg)')
-            ax3[1].set_ylim(( ellip_V.min()*180/pi * 0.90, ellip_V.max()*180/pi* 1.1))
+            ax3[1].set_ylim(( ellip_V.min()*180/pi -0.5, ellip_V.max()*180/pi + 0.5))
 
 
     for nn in range(len(ax)):

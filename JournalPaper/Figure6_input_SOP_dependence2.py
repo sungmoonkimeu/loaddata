@@ -272,7 +272,7 @@ if __name__ == '__main__':
 
     # fig, ax = plt.subplots(figsize=(6, 5))
     # ax2, fig2 = PS3('0')
-    opacity = 1
+    opacity = 0.8
     fig3 = PS.PS5(opacity)
 
     for mm in range(2):
@@ -287,8 +287,8 @@ if __name__ == '__main__':
 
         try:
             file_list = sorted(file_list, key=lambda x: int(os.path.splitext(x)[0].split('_')[0][2:]))
-            file_list = file_list[::2] if mm == 1 else file_list
-            #file_list = file_list[::2]
+            # file_list = file_list[::2] if mm == 1 else file_list
+            file_list = file_list[::2]
 
             # ang_SOP = arange(0, 361, 5)
             ang_SOP = np.array([int(os.path.splitext(x)[0].split('_')[0][2:]) for x in file_list])
@@ -340,10 +340,29 @@ if __name__ == '__main__':
             S2 = pd.to_numeric(data['S2'])
             S3 = pd.to_numeric(data['S3'])
 
+
+            Sn = np.ones((len(S0)))
+
+            # SS = np.vstack((Sn, S1, S2, S3))
+            # Out = Sv.from_matrix(SS.T)
+
+            nwindow = 20
+            rS1 = S1.rolling(window=nwindow)
+            rS2 = S2.rolling(window=nwindow)
+            rS3 = S3.rolling(window=nwindow)
+
+            new_S1 = rS1.mean()
+            new_S2 = rS2.mean()
+            new_S3 = rS3.mean()
+            new_S1[0:nwindow] = new_S1[nwindow]
+            new_S2[0:nwindow] = new_S2[nwindow]
+            new_S3[0:nwindow] = new_S3[nwindow]
+
             # ######################################################################################
             # Plotting the Stokes points on the poincare sphere using PLOTLY
 
-            fig3.add_scatter3d(x=S1[::10], y=S2[::10], z=S3[::10], mode="markers",
+            #fig3.add_scatter3d(x=S1[::10], y=S2[::10], z=S3[::10], mode="markers",
+            fig3.add_scatter3d(x=new_S1[::10], y=new_S2[::10], z=new_S3[::10], mode="markers",
                                marker=dict(size=2.5, opacity=1,
                                            color=rgb2hex(colors_hsv[nn] if mm==0 else colors_IceFire[nn])),
                                name='F1')
@@ -374,26 +393,11 @@ if __name__ == '__main__':
             # ######################################################################################
             # ######################################################################################
 
-            Sn = np.ones((len(S0)))
 
-            # SS = np.vstack((Sn, S1, S2, S3))
-            # Out = Sv.from_matrix(SS.T)
-
-            nwindow = 5
-            rS1 = S1.rolling(window=nwindow)
-            rS2 = S2.rolling(window=nwindow)
-            rS3 = S3.rolling(window=nwindow)
-
-            new_S1 = rS1.mean()
-            new_S2 = rS2.mean()
-            new_S3 = rS3.mean()
-            new_S1[0:nwindow] = new_S1[nwindow]
-            new_S2[0:nwindow] = new_S2[nwindow]
-            new_S3[0:nwindow] = new_S3[nwindow]
 
             SS = np.vstack((Sn, new_S1, new_S2, new_S3))
             Out = Sv.from_matrix(SS.T)
-            #Out = basistonormal(Out)
+            Out = basistonormal(Out)
             azi_V = Out.parameters.azimuth()
             ellip_V = Out.parameters.ellipticity_angle()
             diff_azi_V[nn] = azi_V.max() - azi_V.min()
@@ -466,7 +470,7 @@ if __name__ == '__main__':
             ax.plot(ang_SOP, alpha * 180 / pi, 'k' if mm == 0 else 'r', label=legend_SOP)
             # ax2.plot(ang_SOP, diff_azi_V * 180 / pi)
             # ax2.plot(ang_SOP, diff_ellip_V * 180 / pi)
-            ax.set_xlabel('Azimuth angle of input SOP (deg)')
+            ax.set_xlabel('Azimuth of input SOP (2$\psi$) (deg)')
             ax.set_ylabel('SOP change (deg)')
             ax.set(xlim=(0, 360), ylim=(0, 2))
             ax.xaxis.set_major_locator(MultipleLocator(90))

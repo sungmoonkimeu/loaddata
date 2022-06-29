@@ -308,7 +308,8 @@ if __name__ == '__main__':
     x = np.hstack((np.array([5]), displacement, np.array([82.5])))
     ax[0].plot(x, poly1d_fn(x), lw='1', label="Linear fitting", color='r')
     #print(coef)
-    ax[0].text(8, 1.7, r'y='+str(coef[0])[0:7]+'x + '+str(coef[1])[0:7])
+    ax[0].text(7.5, 1.75, r'y='+str(coef[0])[0:7]+'x + '+str(coef[1])[0:7])
+    ax[0].text(7.5, 1.5, '\n@80 m/s$^2$ acceleration')
     # ax[0].text(8, 1.8, r'an equation: $E=mc^2$', fontsize=15)
 
     ax[0].set_xlabel('Displacement (mm)')
@@ -331,7 +332,8 @@ if __name__ == '__main__':
     poly1d_fn = np.poly1d(coef)
     x = np.hstack((np.array([10]), acceleration*10, np.array([190])))
     ax[1].plot(x, poly1d_fn(x), lw='1', label="Linear fitting", color='r')
-    ax[1].text(10, 1.7, r'y='+str(coef[0])[0:7]+'x + '+str(coef[1])[0:7])
+    ax[1].text(10, 1.5, r'y='+str(coef[0])[0:7]+'x + '+str(coef[1])[0:7] + '\n@20 mm displacement')
+
     ax[1].legend(bbox_to_anchor=(1.05, -0.1), loc='lower right', frameon=False)
 
     #ax[1].set_xlabel('Acceleration (g)')
