@@ -287,7 +287,7 @@ if __name__ == '__main__':
 
         try:
             file_list = sorted(file_list, key=lambda x: int(os.path.splitext(x)[0].split('_')[0][2:]))
-            # file_list = file_list[::2] if mm == 1 else file_list
+            #file_list = file_list[::2] if mm == 1 else file_list
             file_list = file_list[::2]
 
             # ang_SOP = arange(0, 361, 5)
@@ -463,7 +463,7 @@ if __name__ == '__main__':
             # ax2.plot(freq, diff_azi_V * 180 / pi)
             # ax2.plot(freq, diff_ellip_V * 180 / pi)
             ax.set_xlabel('Frequency (Hz)')
-            ax.set_ylabel('SOP change (deg)')
+            ax.set_ylabel(r'$\alpha$ (deg)')
             ax.set(xlim=(9.5, 30.5), ylim=(0, 2))
         else:
             legend_SOP = 'Before stretching' if mm == 0 else 'After stretching'
@@ -471,7 +471,7 @@ if __name__ == '__main__':
             # ax2.plot(ang_SOP, diff_azi_V * 180 / pi)
             # ax2.plot(ang_SOP, diff_ellip_V * 180 / pi)
             ax.set_xlabel('Azimuth of input SOP (2$\psi$) (deg)')
-            ax.set_ylabel('SOP change (deg)')
+            ax.set_ylabel(r'$\alpha$ (deg)')
             ax.set(xlim=(0, 360), ylim=(0, 2))
             ax.xaxis.set_major_locator(MultipleLocator(90))
 
